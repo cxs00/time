@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="番茄时钟 - 提高工作效率的时间管理工具">
+    <title>番茄时钟 | Pomodoro Timer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="logo">
+                <span class="tomato-icon">🍅</span>
+                <h1>番茄时钟</h1>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn" id="statsBtn">
+                    <span>📊</span>
+                    <span>统计</span>
+                </button>
+                <button class="nav-btn" id="settingsBtn">
+                    <span>⚙️</span>
+                    <span>设置</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content" id="timerPage">
+            <!-- 状态标签 -->
+            <div class="status-tabs">
+                <button class="tab-btn active" data-mode="work">工作</button>
+                <button class="tab-btn" data-mode="shortBreak">短休息</button>
+                <button class="tab-btn" data-mode="longBreak">长休息</button>
+            </div>
+
+            <!-- 计时器显示 -->
+            <div class="timer-display">
+                <svg class="progress-ring" width="260" height="260" viewBox="0 0 260 260">
+                    <circle class="progress-ring__circle-bg" 
+                            stroke="#ffffff20" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                            r="122" 
+                            cx="130" 
+                            cy="130"/>
+                    <circle class="progress-ring__circle" 
+                            stroke="url(#gradient)" 
+                            stroke-width="8" 
+                            fill="transparent" 
+                            r="122" 
+                            cx="130" 
+                            cy="130"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#E74C3C;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="time-text">
+                    <div class="time" id="timeDisplay">25:00</div>
+                    <div class="mode-label" id="modeLabel">工作时间</div>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="controls">
+                <button class="control-btn start-btn" id="startBtn">
+                    <span class="btn-icon">▶️</span>
+                    <span class="btn-text">开始</span>
+                </button>
+                <button class="control-btn pause-btn hidden" id="pauseBtn">
+                    <span class="btn-icon">⏸️</span>
+                    <span class="btn-text">暂停</span>
+                </button>
+                <button class="control-btn reset-btn" id="resetBtn">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">重置</span>
+                </button>
+                <button class="control-btn skip-btn" id="skipBtn">
+                    <span class="btn-icon">⏭️</span>
+                    <span class="btn-text">跳过</span>
+                </button>
+            </div>
+
+            <!-- 番茄计数 -->
+            <div class="pomodoro-counter">
+                <div class="counter-label">今日完成</div>
+                <div class="counter-display">
+                    <span class="tomato-icons" id="tomatoIcons"></span>
+                    <span class="counter-text" id="counterText">0/8</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- 统计页面 -->
+        <section class="stats-page hidden" id="statsPage">
+            <div class="page-header">
+                <button class="back-btn" id="statsBackBtn">← 返回</button>
+                <h2>统计数据</h2>
+            </div>
+
+            <div class="stats-content">
+                <!-- 今日统计 -->
+                <div class="stat-card">
+                    <h3>📅 今日统计</h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="todayPomodoros">0</div>
+                            <div class="stat-label">完成番茄</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="todayTime">0</div>
+                            <div class="stat-label">工作时长(分钟)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="todayBreakTime">0</div>
+                            <div class="stat-label">休息时长(分钟)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 本周统计 -->
+                <div class="stat-card">
+                    <h3>📊 本周统计</h3>
+                    <div class="chart-container">
+                        <canvas id="weekChart"></canvas>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="weekPomodoros">0</div>
+                            <div class="stat-label">本周番茄</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="weekAvg">0</div>
+                            <div class="stat-label">日均番茄</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 历史统计 -->
+                <div class="stat-card">
+                    <h3>🏆 历史记录</h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalPomodoros">0</div>
+                            <div class="stat-label">总计番茄</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalDays">0</div>
+                            <div class="stat-label">使用天数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="streak">0</div>
+                            <div class="stat-label">连续天数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最近记录 -->
+                <div class="stat-card">
+                    <h3>📝 最近记录</h3>
+                    <div class="recent-list" id="recentList">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 设置页面 -->
+        <section class="settings-page hidden" id="settingsPage">
+            <div class="page-header">
+                <button class="back-btn" id="settingsBackBtn">← 返回</button>
+                <h2>设置</h2>
+            </div>
+
+            <div class="settings-content">
+                <!-- 时间设置 -->
+                <div class="setting-card">
+                    <h3>⏱️ 时间设置</h3>
+                    <div class="setting-item">
+                        <label for="workDuration">工作时长 (分钟)</label>
+                        <input type="number" id="workDuration" min="1" max="60" value="25">
+                    </div>
+                    <div class="setting-item">
+                        <label for="shortBreakDuration">短休息时长 (分钟)</label>
+                        <input type="number" id="shortBreakDuration" min="1" max="30" value="5">
+                    </div>
+                    <div class="setting-item">
+                        <label for="longBreakDuration">长休息时长 (分钟)</label>
+                        <input type="number" id="longBreakDuration" min="1" max="60" value="15">
+                    </div>
+                    <div class="setting-item">
+                        <label for="longBreakInterval">长休息间隔 (个番茄)</label>
+                        <input type="number" id="longBreakInterval" min="2" max="10" value="4">
+                    </div>
+                </div>
+
+                <!-- 功能设置 -->
+                <div class="setting-card">
+                    <h3>🔔 功能设置</h3>
+                    <div class="setting-item toggle-item">
+                        <label for="notificationEnabled">启用通知</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="notificationEnabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item toggle-item">
+                        <label for="soundEnabled">启用音效</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="soundEnabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item toggle-item">
+                        <label for="autoStartBreaks">自动开始休息</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="autoStartBreaks">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item toggle-item">
+                        <label for="autoStartPomodoros">自动开始工作</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="autoStartPomodoros">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item toggle-item">
+                        <label for="adsEnabled">显示广告（支持开发）</label>
+                        <label class="toggle">
+                            <input type="checkbox" id="adsEnabled" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 主题设置 -->
+                <div class="setting-card">
+                    <h3>🎨 主题设置</h3>
+                    <div class="setting-item">
+                        <label for="theme">主题模式</label>
+                        <select id="theme">
+                            <option value="light">浅色</option>
+                            <option value="dark">深色</option>
+                            <option value="auto">跟随系统</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 数据管理 -->
+                <div class="setting-card">
+                    <h3>💾 数据管理</h3>
+                    <div class="setting-item">
+                        <button class="action-btn" id="exportDataBtn">导出数据</button>
+                        <button class="action-btn danger" id="clearDataBtn">清除所有数据</button>
+                    </div>
+                </div>
+
+                <!-- 保存按钮 -->
+                <button class="save-btn" id="saveSettingsBtn">保存设置</button>
+            </div>
+        </section>
+
+        <!-- 页脚 - 移到广告上方 -->
+        <footer class="footer">
+            <p>专注工作，高效生活</p>
+        </footer>
+    </div>
+
+    <!-- 通知提示 -->
+    <div class="toast hidden" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <!-- 广告容器 -->
+    <div id="banner-ad-container" class="ad-container banner-ad"></div>
+
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/adsense.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
