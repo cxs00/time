@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>番茄时钟演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .demo-step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-step:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .demo-step h3 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .demo-step p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .start-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .start-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .open-app {
+            background: #E74C3C;
+            margin-top: 15px;
+        }
+        
+        .feature-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            color: #1976d2;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🍅 番茄时钟功能演示</h1>
+        
+        <div class="status">
+            📱 iPhone模拟器已准备就绪
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(1)">
+            <h3>
+                <span class="step-number">1</span>
+                启动计时器
+                <span class="feature-badge">核心功能</span>
+            </h3>
+            <p>点击"开始"按钮，启动25分钟工作计时。观察圆形进度条动画和倒计时。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(2)">
+            <h3>
+                <span class="step-number">2</span>
+                暂停和继续
+                <span class="feature-badge">控制功能</span>
+            </h3>
+            <p>点击"暂停"按钮暂停计时，再次点击"开始"继续。支持随时控制。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(3)">
+            <h3>
+                <span class="step-number">3</span>
+                切换模式
+                <span class="feature-badge">多模式</span>
+            </h3>
+            <p>顶部标签切换：工作(25分)、短休息(5分)、长休息(15分)。背景色自动变化。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(4)">
+            <h3>
+                <span class="step-number">4</span>
+                查看统计
+                <span class="feature-badge">数据分析</span>
+            </h3>
+            <p>点击右上角"📊统计"，查看今日完成番茄数、本周图表、历史记录。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(5)">
+            <h3>
+                <span class="step-number">5</span>
+                深色模式
+                <span class="feature-badge">主题切换</span>
+            </h3>
+            <p>点击"⚙️设置"，切换到深色模式。界面自动适配，文字清晰可见。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(6)">
+            <h3>
+                <span class="step-number">6</span>
+                自定义设置
+                <span class="feature-badge">个性化</span>
+            </h3>
+            <p>在设置中调整工作时长、休息时长、通知、音效、广告等选项。</p>
+        </div>
+        
+        <div class="demo-step" onclick="showFeature(7)">
+            <h3>
+                <span class="step-number">7</span>
+                添加到主屏幕
+                <span class="feature-badge">PWA体验</span>
+            </h3>
+            <p>Safari中点击"分享"→"添加到主屏幕"，像原生应用一样使用。</p>
+        </div>
+        
+        <button class="start-demo" onclick="startDemo()">
+            🎬 开始自动演示
+        </button>
+        
+        <button class="start-demo open-app" onclick="openApp()">
+            🍅 打开番茄时钟应用
+        </button>
+    </div>
+    
+    <script>
+        function showFeature(step) {
+            const messages = {
+                1: '✅ 第1步：点击"开始"按钮启动计时器\n观察：时间从25:00开始倒计时，圆形进度条顺时针转动',
+                2: '✅ 第2步：测试暂停功能\n点击"暂停"按钮停止计时，再点击"开始"继续',
+                3: '✅ 第3步：切换不同模式\n点击顶部"短休息"或"长休息"标签，观察背景颜色变化',
+                4: '✅ 第4步：查看统计数据\n点击右上角"📊统计"按钮，查看详细的使用统计',
+                5: '✅ 第5步：体验深色模式\n点击"⚙️设置"→主题设置→选择"深色"',
+                6: '✅ 第6步：自定义配置\n在设置中调整时长、开启/关闭通知、音效等',
+                7: '✅ 第7步：添加到主屏幕\nSafari底部点击"分享"→"添加到主屏幕"→全屏使用'
+            };
+            
+            alert(messages[step]);
+        }
+        
+        function startDemo() {
+            alert('🎬 自动演示开始！\n\n请在iPhone模拟器中观看以下操作：\n\n1. 启动计时器 ▶️\n2. 观察进度条动画 🔄\n3. 切换不同模式 🎨\n4. 查看统计数据 📊\n5. 体验深色模式 🌙\n\n现在请切换到iPhone模拟器窗口，手动操作体验完整功能！');
+        }
+        
+        function openApp() {
+            window.location.href = '/index.html';
+        }
+    </script>
+</body>
+</html>
+
