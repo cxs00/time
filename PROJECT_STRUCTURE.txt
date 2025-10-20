@@ -1,0 +1,66 @@
+TIME 项目最终目录结构
+====================
+
+根目录（核心文件）
+------------------
+README.md           - 项目主文档
+CHANGELOG.md        - 项目时间线和历史
+index.html          - Web应用入口
+deploy.sh           - 自动部署脚本
+netlify.toml        - Netlify配置
+.gitignore          - Git忽略规则
+demo.html           - 演示页面
+
+css/                - 样式文件
+  └── style.css     - 主样式（紫色主题）
+
+js/                 - JavaScript文件
+  ├── app.js        - 主应用
+  ├── timer.js      - 计时器
+  ├── storage.js    - 数据存储
+  ├── statistics.js - 统计功能
+  ├── analytics.js  - 数据分析
+  ├── notification.js - 通知系统
+  └── adsense.js    - 广告管理
+
+time/               - iOS/macOS应用
+  ├── time.xcodeproj/      - Xcode项目
+  └── time/
+      ├── timeApp.swift           - 应用入口
+      ├── ContentView.swift       - 主视图
+      ├── TimeWebView.swift       - WebView封装
+      └── Web/                    - 内嵌资源
+          ├── index.html
+          ├── css/
+          └── js/
+
+docs/               - 所有文档（新整理）
+  ├── README.md               - 文档索引
+  ├── deployment/    (21个)  - 部署相关
+  │   ├── AdSense配置
+  │   ├── GitHub推送指南
+  │   ├── Netlify部署
+  │   └── 广告配置
+  ├── development/   (12个)  - 开发相关
+  │   ├── iOS-App配置
+  │   ├── macOS配置
+  │   ├── Xcode指南
+  │   └── 问题修复
+  ├── guides/        (8个)   - 使用指南
+  │   ├── 使用指南
+  │   ├── 快速开始
+  │   ├── 测试指南
+  │   └── Debug指南
+  └── archive/       (15个)  - 归档文档
+      ├── 项目总结
+      ├── 完成清单
+      └── 历史记录
+
+总计：
+- 核心文件: 8个
+- 应用代码: 20+文件
+- 文档: 57个
+- 总文件数: 85+个
+
+====================
+最后更新: 2025-10-20
