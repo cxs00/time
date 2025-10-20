@@ -317,7 +317,7 @@ body.long-break-mode .pause-btn {
 }
 
 /* 声明页面样式 */
-.declaration-page {
+.declaration-page, .analytics-page {
     flex: 1;
     width: 100%;
     max-width: 800px;
@@ -374,6 +374,78 @@ body.long-break-mode .pause-btn {
 
 .declaration-content a:hover {
     text-decoration: underline;
+}
+
+/* ==================== 数据分析页面 ==================== */
+.analytics-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 20px;
+}
+
+/* 数据卡片组 */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.stat-card-mini {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card-mini:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-value-mini {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--work-primary);
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* 图表卡片 */
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    flex-shrink: 0;
+}
+
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.chart-card.half {
+    min-height: 300px;
 }
 
 .page-header {
@@ -871,9 +943,36 @@ body[data-theme="dark"] .banner-ad {
     }
     
     /* 设置页面优化 */
-    .stats-page, .settings-page, .declaration-page {
+    .stats-page, .settings-page, .declaration-page, .analytics-page {
         padding: 8px;
         padding-bottom: 150px; /* 为广告和页脚留出足够空间 */
+    }
+    
+    /* 数据分析页面移动端优化 */
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .stat-card-mini {
+        padding: 12px;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-value-mini {
+        font-size: 1.5rem;
+    }
+    
+    .chart-card {
+        padding: 15px;
+    }
+    
+    .charts-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
     
     .page-header {

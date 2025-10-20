@@ -115,6 +115,17 @@ function bindEventListeners() {
         showPage('timer');
     });
     
+    // ========== 数据分析页面 ==========
+    
+    // 数据分析
+    document.getElementById('analyticsBtn')?.addEventListener('click', () => {
+        showPage('analytics');
+    });
+    
+    document.getElementById('analyticsBackBtn')?.addEventListener('click', () => {
+        showPage('timer');
+    });
+    
     // ========== 声明页面 ==========
     
     // 隐私声明
@@ -238,6 +249,7 @@ function showPage(pageName) {
     document.getElementById('timerPage')?.classList.add('hidden');
     document.getElementById('statsPage')?.classList.add('hidden');
     document.getElementById('settingsPage')?.classList.add('hidden');
+    document.getElementById('analyticsPage')?.classList.add('hidden');
     document.getElementById('privacyPage')?.classList.add('hidden');
     document.getElementById('openSourcePage')?.classList.add('hidden');
     document.getElementById('adsPage')?.classList.add('hidden');
@@ -254,6 +266,15 @@ function showPage(pageName) {
         case 'settings':
             document.getElementById('settingsPage')?.classList.remove('hidden');
             loadSettings();
+            break;
+        case 'analytics':
+            document.getElementById('analyticsPage')?.classList.remove('hidden');
+            // 初始化图表
+            if (typeof analyticsManager !== 'undefined') {
+                setTimeout(() => {
+                    analyticsManager.initCharts();
+                }, 100);
+            }
             break;
         case 'privacy':
             document.getElementById('privacyPage')?.classList.remove('hidden');
