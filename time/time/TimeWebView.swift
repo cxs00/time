@@ -1,15 +1,15 @@
 //
-//  PomodoroWebView.swift
-//  time
+//  TimeWebView.swift
+//  TIME
 //
-//  番茄时钟 WebView 封装
+//  TIME 应用 WebView 封装
 //
 
 import SwiftUI
 import WebKit
 
 #if os(iOS)
-struct PomodoroWebView: UIViewRepresentable {
+struct TimeWebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         // 创建配置
         let configuration = WKWebViewConfiguration()
@@ -87,7 +87,7 @@ struct PomodoroWebView: UIViewRepresentable {
     }
 }
 #elseif os(macOS)
-struct PomodoroWebView: NSViewRepresentable {
+struct TimeWebView: NSViewRepresentable {
     func makeNSView(context: Context) -> WKWebView {
         // 创建配置 - macOS专用优化
         let configuration = WKWebViewConfiguration()

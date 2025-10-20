@@ -1,15 +1,15 @@
 //
 //  ContentView.swift
-//  time
+//  TIME
 //
-//  番茄时钟主视图
+//  TIME 应用主视图
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        PomodoroWebView()
+        TimeWebView()
             .ignoresSafeArea()
     }
 }
