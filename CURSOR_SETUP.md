@@ -91,7 +91,7 @@ cursor .
   },
   {
     "key": "ctrl+shift+b",
-    "command": "workbench.action.tasks.runTask", 
+    "command": "workbench.action.tasks.runTask",
     "args": "版本管理"
   }
 ]
