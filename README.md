@@ -318,3 +318,43 @@ MIT License - 可自由使用、修改和分发
 Made with ❤️ for productivity enthusiasts
 
 🌐 [在线体验](https://time-2025.netlify.app) | 📦 [GitHub](https://github.com/cxs00/time) | 📚 [文档](https://github.com/cxs00/time/wiki)
+
+## 👥 开发者指南
+
+### 快速开始
+1. **克隆项目**: `git clone https://github.com/cxs00/time.git`
+2. **打开项目**: `cursor .`
+3. **启动开发**: `python -m http.server 8000`
+4. **访问应用**: http://localhost:8000
+
+### 版本管理
+```bash
+# 查看所有版本
+./scripts/version-traveler.sh list
+
+# 跳转到历史版本
+./scripts/version-traveler.sh go v1.0.0
+
+# 创建新版本
+./scripts/version-traveler.sh create v1.1.0
+```
+
+### 开发文档
+- 📖 [快速开始指南](QUICK_START.md) - 5分钟上手
+- 🛠️ [开发者指南](DEVELOPER_GUIDE.md) - 完整开发文档
+- ⚙️ [Cursor配置](CURSOR_SETUP.md) - IDE设置指南
+- 📚 [详细文档](docs/) - 项目完整文档
+
+### 技术栈
+- **前端**: HTML5, CSS3, JavaScript ES6+
+- **原生**: SwiftUI (iOS/macOS)
+- **数据**: LocalStorage, ECharts
+- **工具**: Git, Xcode, Cursor
+
+### 项目特色
+- 🔄 **版本时间旅行**: 支持任意版本间跳转
+- 📱 **跨平台**: Web + iOS + macOS
+- 🎨 **响应式设计**: 适配各种设备
+- 📊 **数据分析**: 完整的使用统计
+- 🚀 **一键部署**: 自动部署到Netlify
+
