@@ -155,7 +155,7 @@ window.addEventListener('error', function(event) {
         line: event.lineno,
         column: event.colno
     };
-    
+
     // 发送错误报告
     sendAnalytics('error', errorData);
 });
@@ -172,7 +172,7 @@ function trackUserAction(action, data) {
         userAgent: navigator.userAgent,
         url: window.location.href
     };
-    
+
     // 发送分析数据
     sendAnalytics('user_action', analyticsData);
 }
@@ -190,9 +190,9 @@ function trackUserAction(action, data) {
 ### 2. 内容安全策略
 ```html
 <!-- 设置CSP头 -->
-<meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; 
-               script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; 
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self';
+               script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
                style-src 'self' 'unsafe-inline';">
 ```
 

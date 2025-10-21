@@ -7,7 +7,7 @@
 // 计时器状态管理
 const TimerState = {
   WORK: 'work',
-  SHORT_BREAK: 'shortBreak', 
+  SHORT_BREAK: 'shortBreak',
   LONG_BREAK: 'longBreak',
   PAUSED: 'paused'
 };
@@ -74,7 +74,7 @@ const StatisticsData = {
 // 存储数据结构
 const StorageKeys = {
   SETTINGS: 'timeSettings',
-  SESSIONS: 'timeSessions', 
+  SESSIONS: 'timeSessions',
   STATISTICS: 'timeStatistics',
   THEME: 'timeTheme'
 };

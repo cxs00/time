@@ -139,9 +139,9 @@ const config = {
 </main>
 
 <!-- 添加必要的属性 -->
-<button 
-    class="start-btn" 
-    type="button" 
+<button
+    class="start-btn"
+    type="button"
     aria-label="开始计时"
     data-action="start"
 >

@@ -148,15 +148,15 @@ observer.observe({entryTypes: ['measure', 'navigation']});
 // 测试计时器功能
 function testTimer() {
     const timer = new Timer();
-    
+
     // 测试开始计时
     timer.start(25 * 60);
     assert(timer.isRunning === true);
-    
+
     // 测试暂停
     timer.pause();
     assert(timer.isRunning === false);
-    
+
     // 测试重置
     timer.reset();
     assert(timer.getRemainingTime() === 25 * 60);
@@ -169,15 +169,15 @@ function testTimer() {
 function testCompleteFlow() {
     // 1. 开始计时
     startTimer();
-    
+
     // 2. 等待一段时间
     setTimeout(() => {
         // 3. 检查状态
         assert(timer.getState() === 'work');
-        
+
         // 4. 完成计时
         completeTimer();
-        
+
         // 5. 检查数据
         assert(statistics.getTodaySessions() > 0);
     }, 1000);
@@ -190,13 +190,13 @@ function testCompleteFlow() {
 function testUIInteraction() {
     // 点击开始按钮
     document.getElementById('start-btn').click();
-    
+
     // 检查UI状态
     assert(document.getElementById('start-btn').textContent === '暂停');
-    
+
     // 点击暂停按钮
     document.getElementById('start-btn').click();
-    
+
     // 检查UI状态
     assert(document.getElementById('start-btn').textContent === '开始');
 }
