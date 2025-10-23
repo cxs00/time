@@ -17,7 +17,7 @@ if ! git diff --quiet; then
     git diff --name-only
     echo ""
     read -p "是否提交这些更改？(y/N): " commit_confirm
-    
+
     if [[ $commit_confirm == [yY] ]]; then
         git add .
         git commit -m "快速部署: $(date '+%Y-%m-%d %H:%M:%S')"

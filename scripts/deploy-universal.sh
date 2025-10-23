@@ -7,27 +7,27 @@ echo "================================="
 # 检测可用的部署平台
 detect_platforms() {
     platforms=()
-    
+
     if [ -f "netlify.toml" ]; then
         platforms+=("Netlify")
     fi
-    
+
     if [ -f "vercel.json" ]; then
         platforms+=("Vercel")
     fi
-    
+
     if [ -f "firebase.json" ]; then
         platforms+=("Firebase")
     fi
-    
+
     if [ -f ".github/workflows/deploy.yml" ]; then
         platforms+=("GitHub Pages")
     fi
-    
+
     if [ -f "docker-compose.yml" ]; then
         platforms+=("Docker")
     fi
-    
+
     echo "${platforms[@]}"
 }
 
@@ -111,7 +111,7 @@ read -p "确认部署到 $selected_platform？(y/N): " deploy_confirm
 
 if [[ $deploy_confirm == [yY] ]]; then
     echo "✅ 用户确认部署，开始 $selected_platform 部署..."
-    
+
     # 执行平台特定的部署
     case $selected_platform in
         "Netlify")
@@ -149,7 +149,7 @@ if [[ $deploy_confirm == [yY] ]]; then
             echo "✅ Docker部署完成"
             ;;
     esac
-    
+
     echo "⏱️ 部署通常需要1-2分钟"
 else
     echo "❌ 用户取消 $selected_platform 部署"
