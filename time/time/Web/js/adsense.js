@@ -10,7 +10,7 @@ class AdSenseManager {
         };
         this.adsEnabled = true;
         this.initialized = false;
-        
+
         console.log('🎯 AdSense管理器初始化');
         console.log(`📊 客户端ID: ${this.adClient}`);
         console.log(`📱 横幅广告位ID: ${this.adSlots.banner}`);
