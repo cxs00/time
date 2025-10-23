@@ -1,0 +1,48 @@
+{
+  "Environment": "Production",
+  "Platform": "Cross-Platform",
+  "Targets": {
+    "Netlify": {
+      "URL": "https://time-2025.netlify.app",
+      "AutoDeploy": true,
+      "Branch": "main"
+    },
+    "Vercel": {
+      "URL": "",
+      "AutoDeploy": false,
+      "ProjectName": "time-app"
+    },
+    "Local": {
+      "Port": 8000,
+      "AutoStart": true,
+      "PythonPath": "python3"
+    }
+  },
+  "Security": {
+    "CSPEnabled": true,
+    "RateLimitEnabled": true,
+    "SecurityHeaders": true,
+    "MaxRequestsPerMinute": 60,
+    "AllowedDomains": [
+      "localhost",
+      "time-2025.netlify.app",
+      "*.vercel.app"
+    ]
+  },
+  "Monitoring": {
+    "HealthCheckInterval": 60,
+    "EnableAlerts": true,
+    "LogLevel": "Info",
+    "Thresholds": {
+      "ResponseTime": 5000,
+      "ErrorRate": 5,
+      "MemoryUsage": 80,
+      "CPUUsage": 90
+    }
+  },
+  "Backup": {
+    "AutoBackup": true,
+    "BackupPath": "~/Desktop/TIME-History",
+    "RetentionDays": 30
+  }
+}

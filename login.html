@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIME - 用户登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .demo-accounts {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .demo-accounts h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .demo-accounts p {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="icon">⏰</div>
+            <h1>TIME</h1>
+            <p>时间管理应用</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="login-btn">登录</button>
+            
+            <div class="error" id="errorMessage"></div>
+            <div class="success" id="successMessage"></div>
+        </form>
+        
+        <div class="demo-accounts">
+            <h3>演示账户</h3>
+            <p><strong>管理员:</strong> admin / admin123</p>
+            <p><strong>用户:</strong> user / user123</p>
+            <p><strong>访客:</strong> guest / guest123</p>
+        </div>
+    </div>
+
+    <script>
+        // 演示账户数据
+        const accounts = {
+            'admin': { password: 'admin123', role: 'admin', name: '管理员' },
+            'user': { password: 'user123', role: 'user', name: '普通用户' },
+            'guest': { password: 'guest123', role: 'guest', name: '访客' }
+        };
+        
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            // 隐藏之前的消息
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            
+            // 验证账户
+            if (accounts[username] && accounts[username].password === password) {
+                const user = accounts[username];
+                
+                // 保存登录状态
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', username);
+                localStorage.setItem('userRole', user.role);
+                localStorage.setItem('userName', user.name);
+                
+                successDiv.textContent = `欢迎回来，${user.name}！正在跳转...`;
+                successDiv.style.display = 'block';
+                
+                // 延迟跳转到主应用
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                errorDiv.textContent = '用户名或密码错误，请重试';
+                errorDiv.style.display = 'block';
+            }
+        });
+        
+        // 检查是否已登录
+        if (localStorage.getItem('isLoggedIn') === 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

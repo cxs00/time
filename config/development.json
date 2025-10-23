@@ -1,0 +1,43 @@
+{
+  "Environment": "Development",
+  "Platform": "macOS",
+  "Targets": {
+    "Local": {
+      "Port": 8000,
+      "AutoStart": true,
+      "PythonPath": "python3",
+      "DebugMode": true
+    },
+    "Netlify": {
+      "URL": "https://time-2025.netlify.app",
+      "AutoDeploy": false,
+      "Branch": "main"
+    }
+  },
+  "Security": {
+    "CSPEnabled": true,
+    "RateLimitEnabled": false,
+    "SecurityHeaders": true,
+    "MaxRequestsPerMinute": 120,
+    "AllowedDomains": [
+      "localhost",
+      "127.0.0.1"
+    ]
+  },
+  "Monitoring": {
+    "HealthCheckInterval": 30,
+    "EnableAlerts": false,
+    "LogLevel": "Debug",
+    "Thresholds": {
+      "ResponseTime": 10000,
+      "ErrorRate": 10,
+      "MemoryUsage": 90,
+      "CPUUsage": 95
+    }
+  },
+  "Backup": {
+    "AutoBackup": false,
+    "BackupPath": "~/Desktop/TIME-History/dev",
+    "RetentionDays": 7
+  }
+}
