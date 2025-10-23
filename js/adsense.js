@@ -10,10 +10,14 @@ class AdSenseManager {
         };
         this.adsEnabled = true;
         this.initialized = false;
+        
+        console.log('🎯 AdSense管理器初始化');
+        console.log(`📊 客户端ID: ${this.adClient}`);
+        console.log(`📱 横幅广告位ID: ${this.adSlots.banner}`);
     }
 
     // ==================== 初始化AdSense ====================
-    
+
     init() {
         if (this.initialized) {
             console.log('AdSense已初始化');
@@ -35,30 +39,57 @@ class AdSenseManager {
     }
 
     // ==================== 加载AdSense脚本 ====================
-    
+
     loadAdSenseScript() {
+        console.log('🔧 开始加载AdSense脚本...');
+
+        // 检查是否已经加载
+        if (window.adsbygoogle) {
+            console.log('✅ AdSense脚本已存在');
+            return;
+        }
+
+        console.log(`📡 加载AdSense脚本: https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${this.adClient}`);
+
         const script = document.createElement('script');
         script.async = true;
         script.crossOrigin = 'anonymous';
         script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${this.adClient}`;
-        
-        script.onerror = () => {
-            console.error('AdSense脚本加载失败');
+
+        script.onload = () => {
+            console.log('✅ AdSense脚本加载成功');
+            // 确保adsbygoogle数组存在
+            window.adsbygoogle = window.adsbygoogle || [];
+            console.log(`📊 adsbygoogle数组长度: ${window.adsbygoogle.length}`);
         };
-        
+
+        script.onerror = (error) => {
+            console.error('❌ AdSense脚本加载失败:', error);
+            console.log('🔄 尝试显示占位广告...');
+            this.showPlaceholderAd();
+        };
+
         document.head.appendChild(script);
+        console.log('📤 AdSense脚本已添加到页面');
     }
 
     // ==================== 创建广告单元 ====================
-    
+
     createAdUnit(container, slotId, format = 'auto', style = {}) {
-        if (!this.adsEnabled) return;
+        console.log(`🎯 创建广告单元: ${container}, 广告位ID: ${slotId}`);
+
+        if (!this.adsEnabled) {
+            console.log('⚠️ 广告已被禁用');
+            return;
+        }
 
         const adContainer = document.getElementById(container);
         if (!adContainer) {
-            console.error(`广告容器 ${container} 不存在`);
+            console.error(`❌ 广告容器 ${container} 不存在`);
             return;
         }
+
+        console.log(`📦 找到广告容器: ${container}`);
 
         // 创建广告HTML
         const adHTML = `
@@ -70,18 +101,29 @@ class AdSenseManager {
                  data-full-width-responsive="true"></ins>
         `;
 
+        console.log(`📝 设置广告HTML: ${adHTML.substring(0, 100)}...`);
         adContainer.innerHTML = adHTML;
 
         // 推送广告
         try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
+            if (window.adsbygoogle) {
+                console.log('🚀 推送广告到AdSense...');
+                window.adsbygoogle.push({});
+                console.log('✅ AdSense广告已推送，广告位ID:', slotId);
+            } else {
+                console.error('❌ AdSense脚本未加载，无法推送广告');
+                console.log('🔄 显示占位广告...');
+                this.showPlaceholderAd();
+            }
         } catch (e) {
-            console.error('广告推送失败:', e);
+            console.error('❌ 广告推送失败:', e);
+            console.log('🔄 显示占位广告...');
+            this.showPlaceholderAd();
         }
     }
 
     // ==================== 显示横幅广告 ====================
-    
+
     showBannerAd() {
         // 如果未配置广告位ID，显示提示
         if (this.adSlots.banner === 'XXXXXXXXXX') {
@@ -90,27 +132,42 @@ class AdSenseManager {
             this.createAdUnit('banner-ad-container', this.adSlots.banner, 'horizontal', {
                 'min-height': '50px'
             });
-            
-            // 延迟检查广告是否加载，如果没有则显示占位符
+
+            // 延迟检查广告是否加载，给AdSense更多时间
             setTimeout(() => {
                 const adContainer = document.getElementById('banner-ad-container');
                 const adIns = adContainer?.querySelector('ins.adsbygoogle');
-                
-                // 如果广告没有填充内容，显示占位广告
-                if (adIns && (!adIns.getAttribute('data-ad-status') || 
-                    adIns.getAttribute('data-ad-status') === 'unfilled')) {
-                    this.showPlaceholderAd();
+
+                // 检查广告状态
+                if (adIns) {
+                    const adStatus = adIns.getAttribute('data-ad-status');
+                    console.log('AdSense广告状态:', adStatus);
+
+                    // 只有在明确失败时才显示占位广告，给AdSense更多时间加载
+                    if (adStatus === 'error' || adStatus === 'blocked') {
+                        console.log('AdSense广告加载失败，显示占位广告');
+                        this.showPlaceholderAd();
+                    } else if (!adStatus || adStatus === 'unfilled') {
+                        // 如果还没有状态，再等待一段时间
+                        console.log('AdSense广告仍在加载中...');
+                        setTimeout(() => {
+                            const finalStatus = adIns.getAttribute('data-ad-status');
+                            if (finalStatus === 'error' || finalStatus === 'blocked') {
+                                this.showPlaceholderAd();
+                            }
+                        }, 10000); // 再等待10秒
+                    }
                 }
-            }, 3000); // 等待3秒检查
+            }, 5000); // 延长到5秒检查
         }
     }
-    
+
     // ==================== 显示占位广告 ====================
-    
+
     showPlaceholderAd() {
         const adContainer = document.getElementById('banner-ad-container');
         if (!adContainer) return;
-        
+
         adContainer.innerHTML = `
             <div style="
                 display: flex;
@@ -131,8 +188,8 @@ class AdSenseManager {
                     <polyline points="21 15 16 10 5 21"></polyline>
                 </svg>
                 <div style="flex: 1; line-height: 1.4;">
-                    <div style="font-weight: 600; font-size: 12px;">🎯 广告位预留 · AdSense ID: 1459432262</div>
-                    <div style="font-size: 10px; opacity: 0.9;">等待Google审核激活 | 真实广告即将展示</div>
+                    <div style="font-weight: 600; font-size: 12px;">🎯 广告位 · AdSense ID: 1459432262</div>
+                    <div style="font-size: 10px; opacity: 0.9;">广告加载中，请稍候...</div>
                 </div>
                 <div style="
                     background: rgba(255,255,255,0.2);
@@ -142,7 +199,7 @@ class AdSenseManager {
                     font-weight: 600;
                     animation: pulse 2s infinite;
                 ">
-                    审核中
+                    加载中
                 </div>
             </div>
             <style>
@@ -154,13 +211,13 @@ class AdSenseManager {
         `;
         adContainer.style.display = 'flex';
     }
-    
+
     // ==================== 显示配置提示广告 ====================
-    
+
     showSetupAd() {
         const adContainer = document.getElementById('banner-ad-container');
         if (!adContainer) return;
-        
+
         adContainer.innerHTML = `
             <div style="
                 display: flex;
@@ -198,7 +255,7 @@ class AdSenseManager {
     }
 
     // ==================== 显示侧边栏广告 ====================
-    
+
     showSidebarAd() {
         this.createAdUnit('sidebar-ad-container', this.adSlots.sidebar, 'rectangle', {
             'width': '300px',
@@ -207,7 +264,7 @@ class AdSenseManager {
     }
 
     // ==================== 显示信息流广告 ====================
-    
+
     showInFeedAd() {
         this.createAdUnit('infeed-ad-container', this.adSlots.inFeed, 'fluid', {
             'min-height': '100px'
@@ -215,7 +272,7 @@ class AdSenseManager {
     }
 
     // ==================== 工具方法 ====================
-    
+
     styleToString(styleObj) {
         return Object.entries(styleObj)
             .map(([key, value]) => `${key}:${value}`)
@@ -223,7 +280,7 @@ class AdSenseManager {
     }
 
     // ==================== 启用/禁用广告 ====================
-    
+
     setAdsEnabled(enabled) {
         this.adsEnabled = enabled;
         const settings = storage.getSettings();
@@ -240,7 +297,7 @@ class AdSenseManager {
     }
 
     // ==================== 隐藏所有广告 ====================
-    
+
     hideAllAds() {
         const adContainers = [
             'banner-ad-container',
@@ -258,13 +315,13 @@ class AdSenseManager {
     }
 
     // ==================== 刷新广告 ====================
-    
+
     refreshAds() {
         if (!this.adsEnabled) return;
-        
+
         // 移除旧广告
         this.hideAllAds();
-        
+
         // 重新加载广告
         setTimeout(() => {
             this.showBannerAd();
