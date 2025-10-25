@@ -9,6 +9,34 @@
 - 数据：LocalStorage, ECharts
 - 工具：Git, Xcode, Cursor
 
+## 🚀 自动化工作流程
+
+### 自动仿真规则 - MUST FOLLOW
+**每次Cursor完成代码修改后，必须自动运行仿真验证**
+
+```bash
+# 标准流程：
+1. 完成代码修改
+2. 等待10秒（确保文件保存完成）
+3. 自动运行Mac和iPhone仿真
+4. 显示验证清单
+
+# 执行命令：
+sleep 10 && cd /Users/shanwanjun/Desktop/cxs/time/time && echo "3" | ./run-simulation.sh
+```
+
+**例外情况（不运行仿真）：**
+- 仅修改文档文件（*.md）
+- 仅修改配置文件（.cursorrules, .gitignore等）
+- 用户明确说明"不要运行仿真"
+- 仅进行Git操作（commit, tag等）
+
+**仿真验证要点：**
+- 检查编译是否成功
+- 检查应用是否正常启动
+- 检查控制台是否有错误
+- 提醒用户验证修改的功能
+
 ## 🚨 关键开发规范（避免错误）
 
 ### 1. 数据存储规范 - MUST FOLLOW
@@ -415,7 +443,7 @@ body {
     padding-right: max(2rem, env(safe-area-inset-right));
     z-index: 1000;
   }
-  
+
   .page, .container, .project-card {
     position: relative;
     z-index: 1;
