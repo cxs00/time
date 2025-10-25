@@ -536,19 +536,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.progress-bar {
-    height: 8px;
-    background: var(--bg-secondary);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-}
-
-.progress-fill {
-    height: 100%;
-    background: var(--gradient);
-    transition: width 0.3s;
-}
+/* 旧的进度条样式已移除，使用项目专用的进度条样式 */
 
 .progress-text {
     font-size: 0.875rem;
@@ -855,158 +843,166 @@ body {
 }
 
 /* ==================== 项目进度条和卡片样式 ==================== */
-.project-progress {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin: 1rem 0;
+.project-card .project-progress {
+    display: flex !important;
+    align-items: center !important;
+    gap: 1rem !important;
+    margin: 1rem 0 !important;
+    width: 100% !important;
 }
 
-.progress-bar {
-  flex: 1;
-  height: 10px;
-  background: #e0e0e0;
-  border-radius: 5px;
-  overflow: hidden;
+.project-card .project-progress .progress-bar {
+    flex: 1 !important;
+    height: 12px !important;
+    background: #e0e0e0 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    min-width: 100px !important;
 }
 
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  transition: width 0.3s ease;
-  border-radius: 5px;
+.project-card .project-progress .progress-fill {
+    height: 100% !important;
+    background: linear-gradient(90deg, #667eea, #764ba2) !important;
+    transition: width 0.3s ease !important;
+    border-radius: 6px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    min-width: 2px !important;
 }
 
-.progress-text {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #667eea;
-  min-width: 50px;
-  text-align: right;
+.project-card .project-progress .progress-text {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #667eea !important;
+    min-width: 50px !important;
+    text-align: right !important;
+    margin-left: 0.5rem !important;
 }
 
 .project-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: all 0.2s;
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
 }
 
 .project-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .project-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .project-name {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
 }
 
 .project-status {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 .project-status.active {
-  background: #e3f2fd;
-  color: #1976d2;
+    background: #e3f2fd;
+    color: #1976d2;
 }
 
 .project-milestones {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0;
 }
 
 .milestone {
-  padding: 0.4rem 0.8rem;
-  background: #f5f5f5;
-  border-radius: 8px;
-  font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 0.85rem;
 }
 
 .project-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
-.btn-edit, .btn-pause {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
+.btn-edit,
+.btn-pause {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
 }
 
 /* ==================== 日记卡片样式 ==================== */
 .diary-item {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .diary-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .diary-item-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
 }
 
 .diary-item-header h4 {
-  margin: 0;
-  color: #333;
-  font-size: 1.1rem;
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
 }
 
 .diary-date {
-  font-size: 0.9rem;
-  color: #999;
+    font-size: 0.9rem;
+    color: #999;
 }
 
 .diary-mood {
-  font-size: 1.5rem;
-  margin: 0.5rem 0;
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
 }
 
 .diary-preview {
-  color: #666;
-  line-height: 1.6;
-  margin: 0.5rem 0;
+    color: #666;
+    line-height: 1.6;
+    margin: 0.5rem 0;
 }
 
 .diary-tags {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-top: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
 }
 
 .tag {
-  padding: 0.25rem 0.75rem;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  border-radius: 12px;
-  font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.8rem;
 }

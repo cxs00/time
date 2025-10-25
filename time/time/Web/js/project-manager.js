@@ -237,11 +237,11 @@ class ProjectManager {
                     <h3 class="project-name">${project.name}</h3>
                     <span class="project-status ${statusClass}">${statusText}</span>
                 </div>
-                <div class="project-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${project.progress}%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                <div class="project-progress" style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0; width: 100%;">
+                    <div class="progress-bar" style="flex: 1; height: 12px; background: #e0e0e0; border-radius: 6px; overflow: hidden; position: relative; min-width: 100px;">
+                        <div class="progress-fill" style="width: ${project.progress}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 6px; transition: width 0.3s ease; position: relative; z-index: 1; min-width: 2px;"></div>
                     </div>
-                    <span class="progress-text">${Math.round(project.progress)}%</span>
+                    <span class="progress-text" style="font-size: 1rem; font-weight: 600; color: #667eea; min-width: 50px; text-align: right; margin-left: 0.5rem;">${Math.round(project.progress)}%</span>
                 </div>
                 ${project.milestones && project.milestones.length > 0 ? `
                     <div class="project-milestones">
