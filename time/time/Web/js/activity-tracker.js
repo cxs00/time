@@ -299,7 +299,7 @@ class SmartActivityTracker {
   // 处理添加自定义分类
   handleAddCustomCategory() {
     const categoryName = prompt('请输入自定义分类名称：');
-    
+
     if (!categoryName || !categoryName.trim()) {
       return;
     }
@@ -606,6 +606,6 @@ class SmartActivityTracker {
   }
 }
 
-// 导出单例
-const smartActivityTracker = new SmartActivityTracker();
+// 暴露类供 app-main.js 统一初始化
+window.SmartActivityTracker = SmartActivityTracker;
 

@@ -295,8 +295,8 @@ class App {
     switch (pageName) {
       case 'home':
         console.log('🏠 更新主页UI');
-        if (typeof smartActivityTracker !== 'undefined') {
-          smartActivityTracker.updateUI();
+        if (window.smartActivityTracker) {
+          window.smartActivityTracker.updateUI();
         }
         break;
       case 'projects':
@@ -1810,6 +1810,14 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('✅ DiaryMemoManager初始化成功');
     } else {
       console.warn('⚠️ DiaryMemoManager类未定义');
+    }
+
+    console.log('🧠 初始化SmartActivityTracker...');
+    if (typeof SmartActivityTracker !== 'undefined') {
+      window.smartActivityTracker = new SmartActivityTracker();
+      console.log('✅ SmartActivityTracker初始化成功');
+    } else {
+      console.warn('⚠️ SmartActivityTracker类未定义');
     }
 
     console.log('🚀 初始化App...');
