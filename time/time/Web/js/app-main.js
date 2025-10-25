@@ -1332,7 +1332,7 @@ function generateProjectData() {
       id: 'project-1',
       name: '前端开发项目',
       description: '开发Activity Tracker的前端界面和交互逻辑',
-      status: '进行中',
+      status: 'active',
       progress: 75,
       milestones: [
         { name: '需求分析', completed: true },
@@ -1347,7 +1347,7 @@ function generateProjectData() {
       id: 'project-2',
       name: '技能提升计划',
       description: '学习新的编程语言和框架，提升个人技术栈',
-      status: '进行中',
+      status: 'active',
       progress: 40,
       milestones: [
         { name: '基础知识学习', completed: true },
@@ -1361,7 +1361,7 @@ function generateProjectData() {
       id: 'project-3',
       name: '健康管理',
       description: '通过规律运动和健康饮食，改善身体状况',
-      status: '进行中',
+      status: 'active',
       progress: 60,
       milestones: [
         { name: '建立运动习惯', completed: true },
@@ -1375,7 +1375,7 @@ function generateProjectData() {
       id: 'project-4',
       name: '移动应用开发',
       description: '开发iOS和Android原生应用',
-      status: '进行中',
+      status: 'active',
       progress: 25,
       milestones: [
         { name: '技术选型', completed: true },
@@ -1390,7 +1390,7 @@ function generateProjectData() {
       id: 'project-5',
       name: '数据可视化平台',
       description: '构建企业级数据分析和可视化平台',
-      status: '进行中',
+      status: 'active',
       progress: 50,
       milestones: [
         { name: '需求调研', completed: true },
@@ -1405,7 +1405,7 @@ function generateProjectData() {
       id: 'project-6',
       name: '机器学习模型',
       description: '开发智能推荐系统',
-      status: '进行中',
+      status: 'active',
       progress: 30,
       milestones: [
         { name: '数据收集', completed: true },
@@ -1420,7 +1420,7 @@ function generateProjectData() {
       id: 'project-7',
       name: '微服务架构',
       description: '重构现有系统为微服务架构',
-      status: '进行中',
+      status: 'active',
       progress: 65,
       milestones: [
         { name: '服务拆分', completed: true },
@@ -1435,7 +1435,7 @@ function generateProjectData() {
       id: 'project-8',
       name: '区块链应用',
       description: '开发去中心化应用',
-      status: '进行中',
+      status: 'active',
       progress: 20,
       milestones: [
         { name: '技术调研', completed: true },
@@ -1450,7 +1450,7 @@ function generateProjectData() {
       id: 'project-9',
       name: 'AI聊天机器人',
       description: '开发智能客服系统',
-      status: '进行中',
+      status: 'active',
       progress: 45,
       milestones: [
         { name: 'NLP模型', completed: true },
@@ -1465,7 +1465,7 @@ function generateProjectData() {
       id: 'project-10',
       name: '物联网平台',
       description: '构建IoT设备管理平台',
-      status: '进行中',
+      status: 'active',
       progress: 35,
       milestones: [
         { name: '设备接入', completed: true },
@@ -1480,7 +1480,7 @@ function generateProjectData() {
       id: 'project-11',
       name: '云原生应用',
       description: '基于Kubernetes的云原生应用开发',
-      status: '进行中',
+      status: 'active',
       progress: 55,
       milestones: [
         { name: '容器化', completed: true },
@@ -1495,7 +1495,7 @@ function generateProjectData() {
       id: 'project-12',
       name: '大数据分析',
       description: '构建实时数据处理和分析系统',
-      status: '进行中',
+      status: 'active',
       progress: 40,
       milestones: [
         { name: '数据采集', completed: true },

@@ -423,7 +423,7 @@ class SmartActivityTracker {
 
   loadProjects() {
     try {
-      const data = localStorage.getItem('projects');
+      const data = localStorage.getItem('activityTracker_projects');
       return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('加载项目数据失败:', error);
@@ -433,7 +433,7 @@ class SmartActivityTracker {
 
   saveProjects() {
     try {
-      localStorage.setItem('projects', JSON.stringify(this.projects));
+      localStorage.setItem('activityTracker_projects', JSON.stringify(this.projects));
     } catch (error) {
       console.error('保存项目数据失败:', error);
     }
@@ -441,7 +441,7 @@ class SmartActivityTracker {
 
   loadCustomCategories() {
     try {
-      const data = localStorage.getItem('customCategories');
+      const data = localStorage.getItem('activityTracker_customCategories');
       return data ? JSON.parse(data) : [];
     } catch (error) {
       console.error('加载自定义分类失败:', error);
@@ -451,7 +451,7 @@ class SmartActivityTracker {
 
   saveCustomCategories() {
     try {
-      localStorage.setItem('customCategories', JSON.stringify(this.customCategories));
+      localStorage.setItem('activityTracker_customCategories', JSON.stringify(this.customCategories));
     } catch (error) {
       console.error('保存自定义分类失败:', error);
     }
