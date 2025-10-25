@@ -327,12 +327,126 @@ if (!element) {
 
 ---
 
+## 🐛 已解决的历史问题记录
+
+### 问题1：暂停按钮无响应（已解决 ✅）
+**问题描述：** 记录界面中的暂停按钮点击后无任何反应
+**根本原因：**
+- 暂停按钮缺少事件监听器绑定
+- 缺少 `pauseActivity()` 和 `resumeActivity()` 方法实现
+- UI未根据暂停状态动态更新
+
+**解决方案：**
+```javascript
+// 1. 在setupEventListeners()中添加事件监听器
+const pauseBtn = document.getElementById('pauseActivity');
+if (pauseBtn) {
+  pauseBtn.addEventListener('click', () => this.handlePauseActivity());
+}
+
+// 2. 实现暂停/继续逻辑
+handlePauseActivity() {
+  if (this.currentActivity.isPaused) {
+    this.resumeActivity();
+  } else {
+    this.pauseActivity();
+  }
+}
+
+// 3. 暂停时调整时间，排除暂停时长
+pauseActivity() {
+  this.currentActivity.isPaused = true;
+  this.currentActivity.pauseTime = new Date();
+  this.stopTimer();
+}
+
+resumeActivity() {
+  const pauseDuration = new Date() - this.currentActivity.pauseTime;
+  this.currentActivity.startTime = new Date(this.currentActivity.startTime.getTime() + pauseDuration);
+  this.currentActivity.isPaused = false;
+  this.startTimer();
+}
+
+// 4. UI动态更新
+if (this.currentActivity.isPaused) {
+  pauseBtn.textContent = '▶️ 继续';
+  pauseBtn.classList.add('btn-resume');
+} else {
+  pauseBtn.textContent = '⏸️ 暂停';
+  pauseBtn.classList.add('btn-pause');
+}
+```
+
+**预防措施：**
+- 所有按钮必须在 `setupEventListeners()` 中绑定事件
+- 按钮功能必须有对应的处理方法
+- UI状态必须与数据状态同步更新
+
+### 问题2：选项卡超出系统状态栏（已解决 ✅）
+**问题描述：** iPhone上滑动时，内容卡片会显示在系统状态栏上方
+**根本原因：**
+- 缺少 `viewport-fit=cover` 启用iOS安全区域
+- 未使用 `env(safe-area-inset-*)` 处理刘海屏/灵动岛
+- 导航栏 `z-index` 不够高，被滚动内容覆盖
+
+**解决方案：**
+```html
+<!-- 1. HTML meta标签 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+```
+
+```css
+/* 2. 内联CSS - 基础安全区域 */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.navbar {
+  padding-top: max(1rem, env(safe-area-inset-top));
+  z-index: 1000; /* 确保最高层级 */
+}
+
+/* 3. 外部CSS - 完整支持 */
+@supports (padding: env(safe-area-inset-top)) {
+  .navbar {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+    z-index: 1000;
+  }
+  
+  .page, .container, .project-card {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* 4. 移动端优化 */
+@media (max-width: 768px) {
+  @supports (padding: env(safe-area-inset-top)) {
+    .navbar {
+      padding-top: max(0.75rem, env(safe-area-inset-top));
+    }
+  }
+}
+```
+
+**预防措施：**
+- 所有iOS/macOS应用必须添加 `viewport-fit=cover`
+- 导航栏必须使用 `z-index: 1000` 或更高
+- 使用 `@supports` 进行渐进增强
+- 移动端必须单独优化安全区域
+
+---
+
 **重要提醒：**
 - 每次修改前必须阅读本规范
-- 遇到问题时首先检查本规范
+- 遇到问题时首先检查本规范和历史问题记录
 - 定期更新和优化本规范
 - 所有开发人员必须遵循本规范
+- 新问题解决后必须记录到此处
 
 **最后更新：** 2025年10月25日
-**版本：** v2.1.0
+**版本：** v2.2.0
 **状态：** ✅ 生效中
