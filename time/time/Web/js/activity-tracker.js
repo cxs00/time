@@ -13,6 +13,7 @@ class SmartActivityTracker {
   init() {
     console.log('🧠 智能活动记录系统初始化');
     this.setupEventListeners();
+    this.updateCategorySelector();
     this.updateUI();
   }
 
@@ -41,6 +42,12 @@ class SmartActivityTracker {
       activityInput.addEventListener('input', (e) => {
         this.showSmartSuggestions(e.target.value);
       });
+    }
+
+    // 添加自定义分类按钮
+    const addCustomCategoryBtn = document.getElementById('addCustomCategory');
+    if (addCustomCategoryBtn) {
+      addCustomCategoryBtn.addEventListener('click', () => this.handleAddCustomCategory());
     }
   }
 
@@ -287,6 +294,71 @@ class SmartActivityTracker {
         milestone.progress = 0;
       }
     });
+  }
+
+  // 处理添加自定义分类
+  handleAddCustomCategory() {
+    const categoryName = prompt('请输入自定义分类名称：');
+    
+    if (!categoryName || !categoryName.trim()) {
+      return;
+    }
+
+    const trimmedName = categoryName.trim();
+
+    // 检查是否已存在
+    if (this.customCategories.includes(trimmedName)) {
+      this.showNotification('该分类已存在', 'warning');
+      return;
+    }
+
+    // 添加到自定义分类
+    this.customCategories.push(trimmedName);
+    this.saveCustomCategories();
+
+    // 更新分类选择器
+    this.updateCategorySelector();
+
+    this.showNotification(`已添加自定义分类: ${trimmedName}`, 'success');
+    console.log('✅ 添加自定义分类:', trimmedName);
+  }
+
+  // 更新分类选择器
+  updateCategorySelector() {
+    const categorySelect = document.getElementById('categorySelect');
+    if (!categorySelect) {
+      console.warn('⚠️ 分类选择器不存在');
+      return;
+    }
+
+    // 保存当前选中的值
+    const currentValue = categorySelect.value;
+
+    // 获取默认分类（前5个选项）
+    const defaultOptions = Array.from(categorySelect.options).slice(0, 5);
+
+    // 清空选择器
+    categorySelect.innerHTML = '';
+
+    // 重新添加默认分类
+    defaultOptions.forEach(option => {
+      categorySelect.appendChild(option.cloneNode(true));
+    });
+
+    // 添加自定义分类
+    this.customCategories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = `⭐ ${category}`;
+      categorySelect.appendChild(option);
+    });
+
+    // 恢复之前的选中值
+    if (currentValue) {
+      categorySelect.value = currentValue;
+    }
+
+    console.log(`📊 分类选择器已更新，包含 ${this.customCategories.length} 个自定义分类`);
   }
 
   // 显示智能建议
