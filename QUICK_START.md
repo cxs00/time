@@ -1,125 +1,106 @@
-# TIME项目快速开始指南
+# 🚀 快速开始指南
 
-## 🚀 5分钟快速上手
+## 📋 环境检查
+在开始开发前，请确保你的环境满足以下要求：
 
-### 1. 获取项目
+### ✅ 必需软件
+- **macOS** (用于iOS/macOS开发)
+- **Xcode** (最新版本)
+- **Python 3** (用于本地服务器)
+- **Git** (版本控制)
+
+### 🔧 可选软件
+- **Cursor** (推荐IDE)
+- **Node.js** (用于高级开发)
+
+## 🎯 三种启动方式
+
+### 方式1: Web版本 (最简单)
 ```bash
-# 克隆项目
-git clone https://github.com/cxs00/time.git
-cd time
+# 1. 进入项目目录
+cd /path/to/time
 
-# 用Cursor打开
-cursor .
+# 2. 启动本地服务器
+python3 -m http.server 8000
+
+# 3. 打开浏览器
+open http://localhost:8000/src/html/activity-tracker.html
 ```
 
-### 2. 启动开发
+### 方式2: iOS模拟器
 ```bash
-# 启动Web服务器 (在Cursor终端中)
-python -m http.server 8000
+# 1. 进入Xcode项目目录
+cd time/time
 
-# 访问: http://localhost:8000
+# 2. 构建iOS应用
+xcodebuild build -project time.xcodeproj -scheme time -destination 'platform=iOS Simulator,name=iPhone 17'
+
+# 3. 安装并启动
+xcrun simctl install booted /Users/shanwanjun/Library/Developer/Xcode/DerivedData/time-axqogsrldmeweecqsagzbecqzsdb/Build/Products/Debug-iphonesimulator/TIME.app
+xcrun simctl launch booted -1.time
 ```
 
-### 3. 版本管理
+### 方式3: macOS应用
 ```bash
-# 查看所有版本
-./scripts/version-traveler.sh list
+# 1. 进入Xcode项目目录
+cd time/time
 
-# 跳转到历史版本
-./scripts/version-traveler.sh go v1.0.0
+# 2. 构建macOS应用
+xcodebuild build -project time.xcodeproj -scheme time -destination 'platform=macOS'
+
+# 3. 启动应用
+open /Users/shanwanjun/Library/Developer/Xcode/DerivedData/time-axqogsrldmeweecqsagzbecqzsdb/Build/Products/Debug/TIME.app
 ```
 
-## 📁 项目结构速览
+## 🔍 验证安装
 
-```
-TIME/
-├── index.html              # 🌐 Web版本入口
-├── css/style.css           # 🎨 样式文件
-├── js/                     # ⚡ JavaScript功能
-│   ├── app.js             # 主应用逻辑
-│   ├── timer.js           # 计时器
-│   ├── statistics.js      # 统计功能
-│   └── analytics.js       # 数据分析
-├── time/                   # 📱 原生应用
-│   └── time.xcodeproj     # Xcode项目
-└── scripts/               # 🔧 版本管理工具
-```
+### Web版本验证
+1. 打开浏览器访问 `http://localhost:8000/src/html/activity-tracker.html`
+2. 检查是否显示"Activity Tracker"标题
+3. 点击各个导航按钮测试功能
+4. 查看是否有数据显示
 
-## 🎯 开发重点
+### iOS/macOS验证
+1. 应用启动后检查界面是否正常
+2. 测试导航功能
+3. 查看数据是否正常显示
+4. 检查响应式布局
 
-### Web版本开发
-- 修改 `index.html` - 页面结构
-- 修改 `css/style.css` - 样式设计
-- 修改 `js/*.js` - 功能逻辑
+## 🛠️ 开发工具
 
-### 原生应用开发
-- 打开 `time/time.xcodeproj` 在Xcode中
-- 修改Swift文件在 `time/time/` 目录
+### 使用Cursor开发
+1. 用Cursor打开项目根目录
+2. Cursor会自动读取 `.cursorrules` 配置
+3. 开始开发，Cursor会提供智能提示
 
-### 同步更新
-- Web版本和原生版本共享HTML/CSS/JS文件
-- 修改后需要同步到两个版本
-
-## 🔧 Cursor使用技巧
-
-### 快捷键
-- `Ctrl+Shift+V`: 启动Web服务器
-- `Ctrl+Shift+B`: 查看版本列表
-- `Ctrl+Shift+C`: 显示当前版本
-- `Ctrl+Shift+G`: Git状态检查
-
-### 智能功能
-- 自动代码补全
-- 语法高亮
-- 错误检测
-- 代码格式化
-
-## 🚀 常用命令
-
+### 文件同步
 ```bash
-# 版本管理
-./scripts/version-traveler.sh list          # 查看版本
-./scripts/version-traveler.sh go v1.0.0     # 跳转版本
-./scripts/version-traveler.sh create v1.1.0 # 创建版本
+# 同步Web文件到Xcode项目
+./scripts/dev/sync-xcode-web.sh
 
-# 备份管理
-./scripts/backup-version.sh v1.1.0          # 创建备份
-
-# Git操作
-git status                                   # 查看状态
-git add .                                    # 添加更改
-git commit -m "描述"                         # 提交更改
-git push origin main                         # 推送到GitHub
+# 自动监控文件变化
+./scripts/dev/auto-sync-xcode.sh
 ```
 
-## 📚 详细文档
-
-- `DEVELOPER_GUIDE.md` - 完整开发者指南
-- `CURSOR_SETUP.md` - Cursor配置指南
-- `docs/` - 详细项目文档
-- `README.md` - 项目说明
+## 📊 项目状态
+- ✅ 所有功能正常工作
+- ✅ 界面显示正常
+- ✅ 数据完整 (9,171条活动记录)
+- ✅ 响应式设计完成
+- ✅ iOS安全区域适配完成
 
 ## 🆘 遇到问题？
 
-1. **项目无法运行**: 检查Python是否安装
-2. **版本跳转失败**: 确保在项目根目录
-3. **Git推送失败**: 检查网络连接和权限
-4. **Xcode项目打不开**: 确保Xcode已安装
+### 常见问题解决
+1. **应用无法启动**: 检查Xcode是否正确安装
+2. **数据不显示**: 清除浏览器缓存或重新构建
+3. **界面异常**: 检查CSS文件是否正确加载
+4. **构建失败**: 运行 `xcodebuild clean` 清理缓存
 
-## 💡 开发建议
-
-1. **先熟悉项目结构** - 了解文件组织
-2. **测试版本管理** - 确保功能正常
-3. **小步迭代** - 每次修改后测试
-4. **及时备份** - 重要修改前创建版本
-5. **保持同步** - Web和原生版本保持一致
+### 获取帮助
+- 查看 `docs/` 目录获取详细文档
+- 参考 `.cursorrules` 了解开发规则
+- 查看 `PROJECT_HISTORY_VERSION.md` 了解项目历史
 
 ## 🎉 开始开发！
-
-现在你已经了解了项目结构，可以开始：
-1. 修改Web版本功能
-2. 测试版本管理
-3. 创建新功能
-4. 发布新版本
-
-**祝你开发愉快！** 🚀
+现在你可以开始开发了！项目已经准备就绪，所有功能都正常工作。

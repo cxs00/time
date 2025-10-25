@@ -45,6 +45,359 @@ TIME/
 └── scripts/                        # 工具脚本
 ```
 
+## iOS安全区域开发规则
+
+### 必须遵循的规则：
+
+#### 1. Viewport Meta标签
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+```
+- 必须包含 `viewport-fit=cover` 启用安全区域支持
+
+#### 2. CSS安全区域支持
+```css
+body {
+    /* 必须添加安全区域支持 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+.navbar {
+    /* 导航栏必须考虑安全区域 */
+    padding-top: max(1rem, env(safe-area-inset-top));
+    z-index: 1000; /* 确保在系统状态栏之上 */
+}
+```
+
+#### 3. 内联CSS规则
+- 内联CSS必须包含安全区域支持
+- 内联CSS的z-index不能低于1000
+- 优先使用外部CSS文件，避免内联CSS覆盖
+
+#### 4. 移动端特殊处理
+```css
+@media (max-width: 768px) {
+    .navbar {
+        padding-top: max(0.5rem, env(safe-area-inset-top));
+    }
+}
+```
+
+#### 5. 测试验证
+- 必须在iPhone模拟器上测试
+- 验证系统状态栏不被覆盖
+- 验证导航栏在安全区域内显示
+- 验证应用内容在安全区域内显示
+
+### 常见错误：
+❌ 忘记添加 `viewport-fit=cover`
+❌ 内联CSS覆盖外部CSS的安全区域设置
+❌ z-index设置过低
+❌ 没有在移动端媒体查询中处理安全区域
+
+## 项目开发中遇到的错误及解决方案
+
+### 1. iOS安全区域问题
+**错误现象**: 应用内容覆盖系统状态栏（时间、WiFi、电池图标）
+**根本原因**:
+- 缺少 `viewport-fit=cover` 属性
+- 内联CSS覆盖外部CSS的安全区域设置
+- z-index设置过低
+
+**解决方案**:
+```html
+<!-- 必须添加viewport-fit=cover -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+```
+```css
+/* 内联CSS必须包含安全区域支持 */
+body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+}
+
+.navbar {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    z-index: 1000; /* 确保在系统状态栏之上 */
+}
+```
+
+### 2. 项目进度条不显示问题
+**错误现象**: 项目界面有数据但没有显示进度条
+**根本原因**: CSS样式被覆盖，进度条样式优先级不够
+
+**解决方案**:
+```css
+/* 使用!important确保样式优先级 */
+.project-card .project-progress .progress-bar {
+    flex: 1 !important;
+    height: 12px !important;
+    background: #e0e0e0 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    position: relative !important;
+    min-width: 100px !important;
+}
+
+.project-card .project-progress .progress-fill {
+    height: 100% !important;
+    background: linear-gradient(90deg, #667eea, #764ba2) !important;
+    transition: width 0.3s ease !important;
+    border-radius: 6px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    min-width: 2px !important;
+}
+```
+
+### 3. 导航栏层级问题
+**错误现象**: 项目卡片在滑动时覆盖导航栏
+**根本原因**: z-index层级设置不当
+
+**解决方案**:
+```css
+.navbar {
+    z-index: 1000; /* 导航栏最高层级 */
+}
+
+.project-card {
+    position: relative;
+    z-index: 1; /* 项目卡片较低层级 */
+}
+
+.page {
+    position: relative;
+    z-index: 1;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+}
+```
+
+### 4. 数据不显示问题
+**错误现象**: 项目、统计、日记页面没有数据显示
+**根本原因**:
+- localStorage key不匹配
+- 管理器类没有正确实例化
+- UI更新时机不对
+
+**解决方案**:
+```javascript
+// 确保localStorage key一致
+const projects = JSON.parse(localStorage.getItem('activityTracker_projects') || '[]');
+const activities = JSON.parse(localStorage.getItem('activityTracker_activities') || '[]');
+const diaries = JSON.parse(localStorage.getItem('activityTracker_diary') || '[]');
+
+// 确保管理器正确实例化
+window.projectManager = new ProjectManager();
+window.diaryMemoManager = new DiaryMemoManager();
+window.chartManager = new ChartManager();
+
+// 在页面切换时更新UI
+onPageChange(pageId) {
+    // 隐藏所有页面
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // 显示目标页面
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+
+        // 页面切换时更新UI
+        if (pageId === 'projects' && window.projectManager) {
+            window.projectManager.updateUI();
+        }
+        if (pageId === 'diary' && window.diaryMemoManager) {
+            window.diaryMemoManager.updateUI();
+        }
+        if (pageId === 'stats' && window.chartManager) {
+            this.loadStatistics();
+        }
+    }
+}
+```
+
+### 5. 统计图表不显示问题
+**错误现象**: 统计页面没有图表显示
+**根本原因**:
+- 图表容器高度为0
+- ChartManager未正确初始化
+- 数据读取key错误
+
+**解决方案**:
+```javascript
+// 确保图表容器有高度
+updateActivityPieChart(activities) {
+    const container = document.getElementById('activityPieChart');
+    if (!container) return;
+
+    // 确保容器有高度
+    if (container.style.height === '' || container.style.height === '0px') {
+        container.style.height = '400px';
+    }
+
+    // 初始化图表
+    if (!this.charts.pieChart) {
+        this.charts.pieChart = echarts.init(container);
+    }
+
+    // 设置图表选项
+    this.charts.pieChart.setOption(option);
+}
+
+// 强制重新渲染图表
+forceRenderCharts() {
+    const charts = document.querySelectorAll('.chart');
+    charts.forEach((chart, index) => {
+        if (chart.style.height === '' || chart.style.height === '0px') {
+            chart.style.height = '400px';
+        }
+    });
+
+    if (window.chartManager && window.chartManager.charts) {
+        Object.values(window.chartManager.charts).forEach((chart, index) => {
+            if (chart && chart.resize) {
+                chart.resize();
+            }
+        });
+    }
+}
+```
+
+### 6. 语法错误问题
+**错误现象**: `SyntaxError: Invalid character '\u2705'`
+**根本原因**: 在JavaScript中使用了中文引号而不是反引号
+
+**解决方案**:
+```javascript
+// ❌ 错误写法
+console.log("✅ 已渲染 ${count} 个项目");
+
+// ✅ 正确写法
+console.log(`✅ 已渲染 ${count} 个项目`);
+```
+
+### 7. 函数调用错误
+**错误现象**: `TypeError: this.initTodayDistributionChart is not a function`
+**根本原因**: 将全局函数当作类方法调用
+
+**解决方案**:
+```javascript
+// ❌ 错误写法
+this.initTodayDistributionChart();
+
+// ✅ 正确写法
+initTodayDistributionChart();
+```
+
+### 8. 重复DOM事件监听器
+**错误现象**: 功能冲突，管理器初始化失败
+**根本原因**: 多个DOMContentLoaded事件监听器
+
+**解决方案**:
+```javascript
+// 统一使用一个DOMContentLoaded监听器
+document.addEventListener('DOMContentLoaded', () => {
+    // 初始化所有管理器
+    window.chartManager = new ChartManager();
+    window.projectManager = new ProjectManager();
+    window.diaryMemoManager = new DiaryMemoManager();
+
+    // 初始化应用
+    window.app = new App();
+    window.app.init();
+});
+```
+
+### 9. 文件路径问题
+**错误现象**: `cp: time/time/Web/js/app-main.js: No such file or directory`
+**根本原因**: 对Xcode项目内部结构理解错误
+
+**解决方案**:
+- 直接修改Xcode项目内的文件，而不是复制
+- 使用正确的文件路径：`time/time/Web/js/app-main.js`
+- 确认文件存在后再进行操作
+
+### 10. 构建和部署问题
+**错误现象**: 应用显示旧版本内容
+**根本原因**: 缓存问题，文件同步问题
+
+**解决方案**:
+```bash
+# 清理构建缓存
+xcodebuild clean
+
+# 重新构建
+xcodebuild build -project time.xcodeproj -scheme time -destination 'platform=iOS Simulator,name=iPhone 17'
+
+# 重新安装应用
+xcrun simctl install booted /path/to/app
+```
+
+### 11. 响应式设计问题
+**错误现象**: 移动端布局在不同设备上显示异常
+**根本原因**: 缺少针对不同屏幕尺寸的媒体查询
+
+**解决方案**:
+```css
+/* 大屏幕设备 (桌面端) */
+@media (min-width: 1024px) {
+    .navbar { z-index: 1000; }
+}
+
+/* 中等屏幕设备 (平板端) */
+@media (max-width: 1023px) and (min-width: 769px) {
+    .navbar { padding: 0.8rem 1.5rem; }
+}
+
+/* 小屏幕设备 (手机端) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding-top: max(0.5rem, env(safe-area-inset-top));
+    }
+}
+
+/* 超小屏幕设备 (小屏手机) */
+@media (max-width: 480px) {
+    .navbar { padding: 0.4rem 0.8rem; }
+}
+```
+
+## 开发最佳实践
+
+### 1. 文件同步
+- 修改Web文件后，确保Xcode项目中的文件也同步更新
+- 使用脚本自动同步：`./scripts/dev/sync-xcode-web.sh`
+
+### 2. 数据管理
+- 使用一致的localStorage key前缀：`activityTracker_`
+- 确保数据生成和读取使用相同的key
+
+### 3. 错误处理
+- 添加try-catch块处理潜在错误
+- 使用console.log进行调试
+- 添加空值检查
+
+### 4. 性能优化
+- 避免重复的DOM查询
+- 使用事件委托
+- 合理使用CSS选择器
+
+### 5. 测试验证
+- 每次修改后都要在iPhone模拟器和Mac上测试
+- 验证不同屏幕尺寸的显示效果
+- 检查控制台是否有错误信息
+
 ## 认证信息自动导入
 当检测到 ~/.cxs-auth/ 目录时，自动执行以下操作：
 
