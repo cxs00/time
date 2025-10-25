@@ -18,6 +18,34 @@ class ProjectManager {
     if (createBtn) {
       createBtn.addEventListener('click', () => this.showCreateProjectDialog());
     }
+
+    // 使用事件委托处理项目卡片中的按钮
+    const projectsGrid = document.getElementById('projectsGrid');
+    if (projectsGrid) {
+      projectsGrid.addEventListener('click', (e) => {
+        const target = e.target;
+        
+        // 检查是否点击了编辑按钮
+        if (target.classList.contains('btn-edit') || target.closest('.btn-edit')) {
+          const button = target.classList.contains('btn-edit') ? target : target.closest('.btn-edit');
+          const projectId = button.getAttribute('data-project-id');
+          if (projectId) {
+            console.log('🖱️ 点击编辑按钮:', projectId);
+            this.editProject(projectId);
+          }
+        }
+        
+        // 检查是否点击了暂停/继续按钮
+        if (target.classList.contains('btn-pause') || target.closest('.btn-pause')) {
+          const button = target.classList.contains('btn-pause') ? target : target.closest('.btn-pause');
+          const projectId = button.getAttribute('data-project-id');
+          if (projectId) {
+            console.log('🖱️ 点击暂停/继续按钮:', projectId);
+            this.toggleProjectStatus(projectId);
+          }
+        }
+      });
+    }
   }
 
   // 创建项目
@@ -254,8 +282,8 @@ class ProjectManager {
                     </div>
                 ` : ''}
                 <div class="project-actions">
-                    <button class="btn-edit" onclick="projectManager.editProject('${project.id}')">编辑</button>
-                    <button class="btn-pause" onclick="projectManager.toggleProjectStatus('${project.id}')">
+                    <button class="btn-edit" data-action="edit" data-project-id="${project.id}">编辑</button>
+                    <button class="btn-pause" data-action="toggle" data-project-id="${project.id}">
                         ${project.status === 'paused' ? '继续' : '暂停'}
                     </button>
                 </div>
@@ -320,6 +348,6 @@ class ProjectManager {
   }
 }
 
-// 导出单例
-const projectManager = new ProjectManager();
+// 注意：不在这里创建实例，而是在app-main.js中创建并赋值给window.projectManager
+// 这样可以确保在DOMContentLoaded后初始化，并且全局可访问
 

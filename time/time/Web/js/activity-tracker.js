@@ -124,13 +124,13 @@ class SmartActivityTracker {
 
     this.currentActivity.isPaused = true;
     this.currentActivity.pauseTime = new Date();
-    
+
     // 停止计时器
     this.stopTimer();
-    
+
     // 更新UI
     this.updateCurrentActivityDisplay();
-    
+
     this.showNotification('活动已暂停', 'info');
     console.log('⏸️ 活动暂停');
   }
@@ -140,19 +140,19 @@ class SmartActivityTracker {
     if (!this.currentActivity || !this.currentActivity.isPaused) return;
 
     const pauseDuration = new Date() - this.currentActivity.pauseTime;
-    
+
     // 调整开始时间，排除暂停时长
     this.currentActivity.startTime = new Date(this.currentActivity.startTime.getTime() + pauseDuration);
-    
+
     this.currentActivity.isPaused = false;
     delete this.currentActivity.pauseTime;
-    
+
     // 重新启动计时器
     this.startTimer();
-    
+
     // 更新UI
     this.updateCurrentActivityDisplay();
-    
+
     this.showNotification('活动已继续', 'success');
     console.log('▶️ 活动继续');
   }
