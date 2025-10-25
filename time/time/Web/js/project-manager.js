@@ -185,8 +185,8 @@ class ProjectManager {
                             </select>
                         </div>
                         <div class="form-actions">
-                            <button type="submit">创建</button>
-                            <button type="button" onclick="document.getElementById('createProjectModal').remove()">取消</button>
+                            <button type="submit" class="btn-primary">创建</button>
+                            <button type="button" class="btn-secondary" id="cancelCreateBtn">取消</button>
                         </div>
                     </form>
                 </div>
@@ -196,6 +196,9 @@ class ProjectManager {
     document.body.insertAdjacentHTML('beforeend', dialog);
 
     const form = document.getElementById('createProjectForm');
+    const cancelBtn = document.getElementById('cancelCreateBtn');
+
+    // 表单提交事件
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -208,6 +211,11 @@ class ProjectManager {
       };
 
       this.createProject(projectData);
+      document.getElementById('createProjectModal').remove();
+    });
+
+    // 取消按钮事件
+    cancelBtn.addEventListener('click', () => {
       document.getElementById('createProjectModal').remove();
     });
   }
@@ -359,14 +367,12 @@ class ProjectManager {
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>项目进度 (${project.progress}%)</label>
-                            <input type="range" id="editProjectProgress" min="0" max="100" value="${project.progress}" 
-                                   oninput="document.getElementById('progressValue').textContent = this.value + '%'">
-                            <span id="progressValue">${project.progress}%</span>
+                            <label>项目进度 (<span id="progressValue">${project.progress}</span>%)</label>
+                            <input type="range" id="editProjectProgress" min="0" max="100" value="${project.progress}">
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="btn-primary">保存</button>
-                            <button type="button" class="btn-secondary" onclick="document.getElementById('editProjectModal').remove()">取消</button>
+                            <button type="button" class="btn-secondary" id="cancelEditBtn">取消</button>
                         </div>
                     </form>
                 </div>
@@ -376,6 +382,16 @@ class ProjectManager {
     document.body.insertAdjacentHTML('beforeend', dialog);
 
     const form = document.getElementById('editProjectForm');
+    const cancelBtn = document.getElementById('cancelEditBtn');
+    const progressSlider = document.getElementById('editProjectProgress');
+    const progressValue = document.getElementById('progressValue');
+
+    // 进度滑块实时更新
+    progressSlider.addEventListener('input', (e) => {
+      progressValue.textContent = e.target.value;
+    });
+
+    // 表单提交事件
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -399,6 +415,11 @@ class ProjectManager {
       if (typeof window.app !== 'undefined' && window.app.showNotification) {
         window.app.showNotification('项目已更新', 'success');
       }
+    });
+
+    // 取消按钮事件
+    cancelBtn.addEventListener('click', () => {
+      document.getElementById('editProjectModal').remove();
     });
   }
 

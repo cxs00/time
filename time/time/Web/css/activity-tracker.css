@@ -1083,10 +1083,10 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    animation: fadeIn 0.3s ease;
+    animation: modalFadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
+@keyframes modalFadeIn {
     from {
         opacity: 0;
     }
@@ -1104,10 +1104,10 @@ body {
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    animation: slideUp 0.3s ease;
+    animation: modalSlideUp 0.3s ease;
 }
 
-@keyframes slideUp {
+@keyframes modalSlideUp {
     from {
         transform: translateY(50px);
         opacity: 0;
