@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Tracker - 功能演示</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .demo-container {
+        background: white;
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 2rem;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .feature-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        transition: transform 0.3s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .feature-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+
+      .feature-desc {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .demo-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+      }
+
+      .demo-section h3 {
+        margin-bottom: 1rem;
+        color: #333;
+      }
+
+      .demo-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .demo-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        transition: transform 0.2s;
+      }
+
+      .demo-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .demo-result {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        border-left: 4px solid #667eea;
+      }
+
+      .start-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 1.2rem;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+
+      .start-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+      }
+
+      @media (max-width: 768px) {
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="demo-container">
+      <h1>📊 Activity Tracker</h1>
+      <p class="subtitle">智能活动记录与进度管理系统</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI智能分类</div>
+          <div class="feature-desc">自动识别活动类型，越用越智能</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">项目管理</div>
+          <div class="feature-desc">可视化进度，智能更新</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <div class="feature-title">数据可视化</div>
+          <div class="feature-desc">多维度图表，洞察时间分配</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📖</div>
+          <div class="feature-title">日记备忘</div>
+          <div class="feature-desc">记录想法，管理待办</div>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>🧪 快速体验 AI 分类</h3>
+        <input type="text" id="demoInput" class="demo-input" placeholder="输入活动，例如：写代码、看书、跑步...">
+        <button class="demo-btn" onclick="testClassify()">测试分类</button>
+        <button class="demo-btn" onclick="testSuggest()">获取建议</button>
+        <div id="demoResult" class="demo-result" style="display:none;">
+          <strong>分类结果：</strong><span id="categoryResult"></span><br>
+          <strong>置信度：</strong><span id="confidenceResult"></span>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startApp()">
+        🚀 启动完整应用
+      </button>
+
+      <div style="text-align: center; margin-top: 2rem; color: #999; font-size: 0.9rem;">
+        <p>💡 提示：所有数据存储在本地，完全隐私安全</p>
+      </div>
+    </div>
+
+    <script>
+      // 简化的分类演示
+      function testClassify() {
+        const input = document.getElementById('demoInput');
+        const result = document.getElementById('demoResult');
+        const category = document.getElementById('categoryResult');
+        const confidence = document.getElementById('confidenceResult');
+
+        if (!input.value.trim()) {
+          alert('请输入活动内容');
+          return;
+        }
+
+        const text = input.value.toLowerCase();
+        let detectedCategory = '其他';
+        let score = 50;
+
+        const patterns = {
+          '工作': ['编程', '开发', '设计', '会议', '写代码', '测试', '部署'],
+          '学习': ['看书', '教程', '课程', '学习', '阅读', '复习'],
+          '运动': ['跑步', '健身', '游泳', '瑜伽', '锻炼'],
+          '娱乐': ['游戏', '电影', '音乐', '玩', '看剧'],
+          '生活': ['做饭', '购物', '睡觉', '吃饭', '洗衣']
+        };
+
+        for (const [cat, keywords] of Object.entries(patterns)) {
+          for (const keyword of keywords) {
+            if (text.includes(keyword)) {
+              detectedCategory = cat;
+              score = 85 + Math.floor(Math.random() * 10);
+              break;
+            }
+          }
+          if (detectedCategory !== '其他') break;
+        }
+
+        category.textContent = detectedCategory;
+        confidence.textContent = score + '%';
+        result.style.display = 'block';
+
+        // 动画效果
+        result.style.animation = 'none';
+        setTimeout(() => {
+          result.style.animation = 'fadeIn 0.5s';
+        }, 10);
+      }
+
+      function testSuggest() {
+        const suggestions = [
+          '继续昨天的项目开发',
+          '复习JavaScript基础',
+          '去健身房锻炼30分钟',
+          '阅读技术文章',
+          '写日记回顾今天'
+        ];
+
+        const random = suggestions[Math.floor(Math.random() * suggestions.length)];
+        document.getElementById('demoInput').value = random;
+        testClassify();
+      }
+
+      function startApp() {
+        window.location.href = 'activity-tracker.html';
+      }
+
+      // 添加CSS动画
+      const style = document.createElement('style');
+      style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+
+</html>

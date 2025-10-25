@@ -1,130 +1,72 @@
-# 📚 TIME 项目文档索引
+# 文档目录
 
-欢迎查看TIME项目的完整文档！
+## 📁 目录结构
+
+```
+docs/
+├── technical/                  # 技术文档
+│   ├── TECHNICAL_DEVELOPMENT_LOG.md    # 技术开发日志
+│   └── DEVELOPMENT_LOG_GUIDE.md        # 开发日志使用指南
+├── user/                      # 用户文档
+│   ├── ACTIVITY_TRACKER_README.md      # 详细使用文档
+│   ├── IMPLEMENTATION_SUMMARY.md       # 实现总结
+│   ├── PROJECT_STATUS.md               # 项目状态
+│   ├── HANDOVER_GUIDE.md               # 交接指南
+│   ├── PROJECT_COMPLETION_SUMMARY.md  # 完成总结
+│   └── RELEASE_NOTES.md               # 发布说明
+├── deployment/                # 部署文档
+│   └── (部署相关文档)
+├── development/               # 开发文档
+│   └── (开发相关文档)
+├── guides/                    # 使用指南
+│   └── (使用指南)
+└── archive/                   # 归档文档
+    └── (历史文档)
+```
+
+## 📚 文档分类
+
+### 技术文档 (`technical/`)
+- **TECHNICAL_DEVELOPMENT_LOG.md** - 技术开发日志，记录开发过程
+- **DEVELOPMENT_LOG_GUIDE.md** - 开发日志使用指南
+
+### 用户文档 (`user/`)
+- **ACTIVITY_TRACKER_README.md** - 详细使用文档
+- **IMPLEMENTATION_SUMMARY.md** - 实现总结
+- **PROJECT_STATUS.md** - 项目状态
+- **HANDOVER_GUIDE.md** - 交接指南
+- **PROJECT_COMPLETION_SUMMARY.md** - 完成总结
+- **RELEASE_NOTES.md** - 发布说明
+
+### 部署文档 (`deployment/`)
+- 包含Netlify、Vercel等部署相关文档
+
+### 开发文档 (`development/`)
+- 包含iOS/macOS应用开发相关文档
+
+### 使用指南 (`guides/`)
+- 包含用户使用指南和快速参考
+
+### 归档文档 (`archive/`)
+- 包含历史版本和旧文档
+
+## 🎯 使用建议
+
+### 开发者
+- 查看技术文档了解开发过程
+- 参考开发文档了解技术细节
+- 使用开发日志记录开发过程
+
+### 用户
+- 查看用户文档了解使用方法
+- 参考使用指南快速上手
+- 查看项目状态了解当前功能
+
+### 部署者
+- 查看部署文档了解部署流程
+- 参考交接指南了解项目交接
 
 ---
 
-## 📂 文档目录结构
-
-### 📦 deployment/ - 部署相关文档
-部署、发布、配置相关的文档
-
-**主要文档：**
-- AdSense配置指南
-- GitHub推送说明
-- Netlify部署流程
-- 自动部署配置
-
-### 💻 development/ - 开发相关文档
-应用开发、调试、修复相关的文档
-
-**主要文档：**
-- iOS应用配置步骤
-- macOS应用配置
-- Xcode操作指南
-- 各种Bug修复文档
-
-### 📖 guides/ - 使用指南
-用户使用指南和快速入门文档
-
-**主要文档：**
-- 使用指南
-- 快速开始
-- 测试指南
-- Debug指南
-
-### 📁 archive/ - 归档文档
-项目开发过程中的历史文档和总结
-
-**主要文档：**
-- 项目总结
-- 完成清单
-- 数据分析指南
-- 各阶段开发记录
-
----
-
-## 🎯 快速导航
-
-### 新用户？
-👉 **开始使用**: 查看 [根目录README.md](../README.md)  
-👉 **快速入门**: 查看 `guides/`目录
-
-### 开发者？
-👉 **技术文档**: 查看 `development/`目录  
-👉 **部署指南**: 查看 `deployment/`目录
-
-### 了解项目？
-👉 **项目时间线**: 查看 [根目录CHANGELOG.md](../CHANGELOG.md)  
-👉 **项目总结**: 查看 `archive/`目录
-
----
-
-## 📝 文档说明
-
-### deployment/ 目录
-```
-部署相关的所有配置和说明文档
-适合：需要部署项目的开发者
-```
-
-### development/ 目录
-```
-开发过程中的技术文档和问题解决方案
-适合：项目贡献者和开发者
-```
-
-### guides/ 目录
-```
-面向最终用户的使用指南
-适合：产品使用者
-```
-
-### archive/ 目录
-```
-历史文档和开发记录归档
-适合：了解项目演进历程
-```
-
----
-
-## 🔍 快速查找
-
-### 想要部署项目？
-→ `deployment/GitHub推送指南.md`  
-→ `deployment/部署指南.md`
-
-### 想要开发iOS/macOS应用？
-→ `development/iOS-App配置步骤.md`  
-→ `development/macOS版本配置步骤.md`
-
-### 遇到问题？
-→ `development/`目录中的修复文档  
-→ `guides/DEBUG_GUIDE.md`
-
-### 想要了解功能？
-→ `guides/使用指南.md`  
-→ `archive/数据分析指南.md`
-
----
-
-## 📊 文档统计
-
-- **部署文档**: 15+篇
-- **开发文档**: 20+篇
-- **使用指南**: 10+篇
-- **归档文档**: 20+篇
-- **总计**: 65+篇文档
-
----
-
-## 💡 文档维护
-
-文档会随着项目更新而更新。如果发现文档问题或需要补充，欢迎贡献！
-
-**最后更新**: 2025年10月20日
-
----
-
-**返回**: [项目主页](../README.md) | [时间线](../CHANGELOG.md)
-
+**维护者**: AI Assistant + User
+**最后更新**: 2025年10月24日

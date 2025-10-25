@@ -25,8 +25,8 @@ struct TimeWebView: UIViewRepresentable {
         webView.scrollView.isScrollEnabled = true
         webView.scrollView.bounces = true
 
-        // 尝试加载本地HTML文件（文件在Bundle根目录）
-        if let htmlPath = Bundle.main.path(forResource: "index", ofType: "html") {
+        // 尝试加载Activity Tracker HTML文件
+        if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
             let fileURL = URL(fileURLWithPath: htmlPath)
 
             // 使用loadFileURL方法（更稳定）
@@ -104,8 +104,8 @@ struct TimeWebView: NSViewRepresentable {
         // 创建WebView
         let webView = WKWebView(frame: .zero, configuration: configuration)
 
-        // macOS Resources目录在Contents/Resources下（文件在Bundle根目录）
-        if let htmlPath = Bundle.main.path(forResource: "index", ofType: "html") {
+        // macOS Resources目录在Contents/Resources下（加载Activity Tracker）
+        if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
             let fileURL = URL(fileURLWithPath: htmlPath)
 
             // macOS使用整个Web目录作为读取权限（重要！）

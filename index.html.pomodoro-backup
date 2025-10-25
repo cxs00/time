@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="TIME - 享受时光，专注当下的时间管理工具">
+        <title>TIME - 时间管理</title>
+        
+        <!-- 安全头部 -->
+        <meta http-equiv="X-Content-Type-Options" content="nosniff">
+        <meta http-equiv="X-Frame-Options" content="DENY">
+        <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+        <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+        <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+        
+        <!-- 内容安全策略 -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src 'self' https://googleads.g.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self';">
+        
+        <link rel="stylesheet" href="css/style.css">
+        
+        <script>
+            // 登录验证
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+            
+            // 显示用户信息
+            document.addEventListener('DOMContentLoaded', function() {
+                const username = localStorage.getItem('username');
+                const userName = localStorage.getItem('userName');
+                const userRole = localStorage.getItem('userRole');
+                
+                if (username) {
+                    // 在页面顶部显示用户信息
+                    const userInfo = document.createElement('div');
+                    userInfo.style.cssText = 'position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 8px 12px; border-radius: 5px; font-size: 12px; z-index: 1000;';
+                    userInfo.innerHTML = `欢迎，${userName} (${userRole}) | <a href="#" onclick="logout()" style="color: #ff6b6b;">退出</a>`;
+                    document.body.appendChild(userInfo);
+                }
+            });
+            
+            // 退出登录函数
+            function logout() {
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userName');
+                window.location.href = 'login.html';
+            }
+        </script>
+    </head>
+    </head>
+
+    <body>
+        <!-- 主容器 -->
+        <div class="container">
+            <!-- 头部导航 -->
+            <header class="header">
+                <div class="logo">
+                    <span class="tomato-icon">⏰</span>
+                    <h1>TIME</h1>
+                </div>
+                <nav class="nav">
+                    <button class="nav-btn" id="statsBtn">
+                        <span>📊</span>
+                        <span>统计</span>
+                    </button>
+                    <button class="nav-btn" id="analyticsBtn">
+                        <span>📈</span>
+                        <span>分析</span>
+                    </button>
+                    <button class="nav-btn" id="settingsBtn">
+                        <span>⚙️</span>
+                        <span>设置</span>
+                    </button>
+                </nav>
+            </header>
+
+            <!-- 主内容区 -->
+            <main class="main-content" id="timerPage">
+                <!-- 状态标签 -->
+                <div class="status-tabs">
+                    <button class="tab-btn active" data-mode="work">工作</button>
+                    <button class="tab-btn" data-mode="shortBreak">短休息</button>
+                    <button class="tab-btn" data-mode="longBreak">长休息</button>
+                </div>
+
+                <!-- 计时器显示 -->
+                <div class="timer-display">
+                    <svg class="progress-ring" width="260" height="260" viewBox="0 0 260 260">
+                        <circle class="progress-ring__circle-bg" stroke="#ffffff20" stroke-width="8" fill="transparent"
+                            r="122" cx="130" cy="130" />
+                        <circle class="progress-ring__circle" stroke="url(#gradient)" stroke-width="8"
+                            fill="transparent" r="122" cx="130" cy="130" />
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#E74C3C;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="time-text">
+                        <div class="time" id="timeDisplay">25:00</div>
+                        <div class="mode-label" id="modeLabel">工作时间</div>
+                    </div>
+                </div>
+
+                <!-- 控制按钮 -->
+                <div class="controls">
+                    <button class="control-btn start-btn" id="startBtn">
+                        <span class="btn-icon">▶️</span>
+                        <span class="btn-text">开始</span>
+                    </button>
+                    <button class="control-btn pause-btn hidden" id="pauseBtn">
+                        <span class="btn-icon">⏸️</span>
+                        <span class="btn-text">暂停</span>
+                    </button>
+                    <button class="control-btn reset-btn" id="resetBtn">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">重置</span>
+                    </button>
+                    <button class="control-btn skip-btn" id="skipBtn">
+                        <span class="btn-icon">⏭️</span>
+                        <span class="btn-text">跳过</span>
+                    </button>
+                </div>
+
+                <!-- 番茄计数 -->
+                <div class="pomodoro-counter">
+                    <div class="counter-label">今日完成</div>
+                    <div class="counter-display">
+                        <span class="tomato-icons" id="tomatoIcons"></span>
+                        <span class="counter-text" id="counterText">0/8</span>
+                    </div>
+                </div>
+            </main>
+
+            <!-- 统计页面 -->
+            <section class="stats-page hidden" id="statsPage">
+                <div class="page-header">
+                    <button class="back-btn" id="statsBackBtn">← 返回</button>
+                    <h2>统计数据</h2>
+                </div>
+
+                <div class="stats-content">
+                    <!-- 今日统计 -->
+                    <div class="stat-card">
+                        <h3>📅 今日统计</h3>
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="todayPomodoros">0</div>
+                                <div class="stat-label">完成番茄</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="todayTime">0</div>
+                                <div class="stat-label">工作时长(分钟)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="todayBreakTime">0</div>
+                                <div class="stat-label">休息时长(分钟)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 本周统计 -->
+                    <div class="stat-card">
+                        <h3>📊 本周统计</h3>
+                        <div class="chart-container">
+                            <canvas id="weekChart"></canvas>
+                        </div>
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="weekPomodoros">0</div>
+                                <div class="stat-label">本周番茄</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="weekAvg">0</div>
+                                <div class="stat-label">日均番茄</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 历史统计 -->
+                    <div class="stat-card">
+                        <h3>🏆 历史记录</h3>
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalPomodoros">0</div>
+                                <div class="stat-label">总计番茄</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="totalDays">0</div>
+                                <div class="stat-label">使用天数</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="streak">0</div>
+                                <div class="stat-label">连续天数</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 最近记录 -->
+                    <div class="stat-card">
+                        <h3>📝 最近记录</h3>
+                        <div class="recent-list" id="recentList">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 设置页面 -->
+            <section class="settings-page hidden" id="settingsPage">
+                <div class="page-header">
+                    <button class="back-btn" id="settingsBackBtn">← 返回</button>
+                    <h2>设置</h2>
+                </div>
+
+                <div class="settings-content">
+                    <!-- 时间设置 -->
+                    <div class="setting-card">
+                        <h3>⏱️ 时间设置</h3>
+                        <div class="setting-item">
+                            <label for="workDuration">工作时长 (分钟)</label>
+                            <input type="number" id="workDuration" min="1" max="60" value="25">
+                        </div>
+                        <div class="setting-item">
+                            <label for="shortBreakDuration">短休息时长 (分钟)</label>
+                            <input type="number" id="shortBreakDuration" min="1" max="30" value="5">
+                        </div>
+                        <div class="setting-item">
+                            <label for="longBreakDuration">长休息时长 (分钟)</label>
+                            <input type="number" id="longBreakDuration" min="1" max="60" value="15">
+                        </div>
+                        <div class="setting-item">
+                            <label for="longBreakInterval">长休息间隔 (个番茄)</label>
+                            <input type="number" id="longBreakInterval" min="2" max="10" value="4">
+                        </div>
+                    </div>
+
+                    <!-- 功能设置 -->
+                    <div class="setting-card">
+                        <h3>🔔 功能设置</h3>
+                        <div class="setting-item toggle-item">
+                            <label for="notificationEnabled">启用通知</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="notificationEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle-item">
+                            <label for="soundEnabled">启用音效</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="soundEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle-item">
+                            <label for="autoStartBreaks">自动开始休息</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="autoStartBreaks">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle-item">
+                            <label for="autoStartPomodoros">自动开始工作</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="autoStartPomodoros">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item toggle-item">
+                            <label for="adsEnabled">显示广告（支持开发）</label>
+                            <label class="toggle">
+                                <input type="checkbox" id="adsEnabled" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 主题设置 -->
+                    <div class="setting-card">
+                        <h3>🎨 主题设置</h3>
+                        <div class="setting-item">
+                            <label for="theme">主题模式</label>
+                            <select id="theme">
+                                <option value="light">浅色</option>
+                                <option value="dark">深色</option>
+                                <option value="auto">跟随系统</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 数据管理 -->
+                    <div class="setting-card">
+                        <h3>💾 数据管理</h3>
+                        <div class="setting-item">
+                            <button class="action-btn" id="exportDataBtn">导出数据</button>
+                            <button class="action-btn danger" id="clearDataBtn">清除所有数据</button>
+                        </div>
+                    </div>
+
+                    <!-- 保存按钮 -->
+                    <button class="save-btn" id="saveSettingsBtn">保存设置</button>
+                </div>
+            </section>
+
+            <!-- 隐私声明页面 -->
+            <section class="declaration-page hidden" id="privacyPage">
+                <div class="page-header">
+                    <button class="back-btn" id="privacyBackBtn">← 返回</button>
+                    <h2>隐私声明</h2>
+                </div>
+                <div class="declaration-content">
+                    <h3>📋 隐私政策</h3>
+                    <p>最后更新日期：2025年10月</p>
+
+                    <h4>1. 信息收集</h4>
+                    <p>TIME 是一款注重隐私保护的时间管理应用。我们承诺：</p>
+                    <ul>
+                        <li>所有数据均存储在您的设备本地</li>
+                        <li>不会收集、上传或共享您的个人信息</li>
+                        <li>不会追踪您的使用行为</li>
+                    </ul>
+
+                    <h4>2. 数据存储</h4>
+                    <p>应用使用浏览器的 LocalStorage 存储以下信息：</p>
+                    <ul>
+                        <li>您的个人设置（工作时长、休息时长等）</li>
+                        <li>统计数据（完成的番茄钟数量、使用记录等）</li>
+                        <li>所有数据仅保存在您的设备上，我们无法访问</li>
+                    </ul>
+
+                    <h4>3. 通知权限</h4>
+                    <p>应用可能请求通知权限，用于：</p>
+                    <ul>
+                        <li>提醒您工作或休息时间到了</li>
+                        <li>您可以随时在设置中关闭此功能</li>
+                    </ul>
+
+                    <h4>4. 第三方服务</h4>
+                    <p>如果您选择启用广告支持开发，我们使用 Google AdSense 展示广告。Google 可能会收集一些信息用于广告投放，详情请查看 <a
+                            href="https://policies.google.com/privacy" target="_blank">Google 隐私政策</a>。</p>
+
+                    <h4>5. 数据安全</h4>
+                    <p>您可以随时：</p>
+                    <ul>
+                        <li>导出您的数据</li>
+                        <li>清除所有数据</li>
+                        <li>关闭广告功能</li>
+                    </ul>
+
+                    <p>如有任何隐私相关问题，欢迎联系我们。</p>
+                </div>
+            </section>
+
+            <!-- 开源声明页面 -->
+            <section class="declaration-page hidden" id="openSourcePage">
+                <div class="page-header">
+                    <button class="back-btn" id="openSourceBackBtn">← 返回</button>
+                    <h2>开源声明</h2>
+                </div>
+                <div class="declaration-content">
+                    <h3>💻 开源项目</h3>
+                    <p>TIME 是一个开源项目，遵循 MIT 许可证。</p>
+
+                    <h4>1. 开源协议</h4>
+                    <p>MIT License - 您可以自由地：</p>
+                    <ul>
+                        <li>使用本软件用于任何目的</li>
+                        <li>修改本软件</li>
+                        <li>分发本软件的副本</li>
+                        <li>将本软件用于商业用途</li>
+                    </ul>
+
+                    <h4>2. 源代码</h4>
+                    <p>本项目完全开源，您可以查看、学习和改进代码。</p>
+                    <p>技术栈：</p>
+                    <ul>
+                        <li>前端：HTML5、CSS3、JavaScript</li>
+                        <li>App：Swift、SwiftUI</li>
+                        <li>存储：LocalStorage</li>
+                    </ul>
+
+                    <h4>3. 贡献</h4>
+                    <p>欢迎贡献代码、报告问题或提出建议：</p>
+                    <ul>
+                        <li>提交 Issue 报告问题</li>
+                        <li>提交 Pull Request 贡献代码</li>
+                        <li>分享您的使用体验</li>
+                    </ul>
+
+                    <h4>4. 致谢</h4>
+                    <p>感谢所有为开源社区做出贡献的开发者。本项目的诞生离不开开源精神的支持。</p>
+
+                    <h4>5. 免责声明</h4>
+                    <p>本软件按"原样"提供，不提供任何形式的明示或暗示保证。</p>
+                </div>
+            </section>
+
+            <!-- 广告声明页面 -->
+            <section class="declaration-page hidden" id="adsPage">
+                <div class="page-header">
+                    <button class="back-btn" id="adsBackBtn">← 返回</button>
+                    <h2>广告声明</h2>
+                </div>
+                <div class="declaration-content">
+                    <h3>📢 关于广告</h3>
+                    <p>TIME 是一款免费应用，我们通过展示少量广告来维持运营。</p>
+
+                    <h4>1. 为什么有广告</h4>
+                    <p>广告收入用于：</p>
+                    <ul>
+                        <li>支付服务器和域名费用</li>
+                        <li>持续改进和维护应用</li>
+                        <li>开发新功能</li>
+                        <li>保持应用免费使用</li>
+                    </ul>
+
+                    <h4>2. 广告服务</h4>
+                    <p>我们使用 Google AdSense 提供广告服务：</p>
+                    <ul>
+                        <li>广告内容由 Google 自动匹配</li>
+                        <li>广告不会干扰您的使用体验</li>
+                        <li>广告位置固定在页面底部</li>
+                    </ul>
+
+                    <h4>3. 隐私保护</h4>
+                    <p>关于广告与隐私：</p>
+                    <ul>
+                        <li>我们不会向广告商提供您的个人信息</li>
+                        <li>Google 可能使用 Cookie 来展示相关广告</li>
+                        <li>您可以访问 <a href="https://www.google.com/settings/ads" target="_blank">Google 广告设置</a> 管理广告偏好
+                        </li>
+                    </ul>
+
+                    <h4>4. 关闭广告</h4>
+                    <p>我们理解广告可能会影响体验，您可以：</p>
+                    <ul>
+                        <li>在设置中关闭广告功能</li>
+                        <li>关闭后，应用将不再显示任何广告</li>
+                        <li>您可以随时重新开启</li>
+                    </ul>
+
+                    <h4>5. 支持开发</h4>
+                    <p>如果您觉得应用有用，保持广告开启是对我们最大的支持。如果您希望通过其他方式支持，欢迎推荐给朋友使用或为项目贡献代码。</p>
+
+                    <p>感谢您的理解与支持！❤️</p>
+                </div>
+            </section>
+
+            <!-- 数据分析页面 -->
+            <section class="analytics-page hidden" id="analyticsPage">
+                <div class="page-header">
+                    <button class="back-btn" id="analyticsBackBtn">← 返回</button>
+                    <h2>📊 数据分析</h2>
+                </div>
+
+                <div class="analytics-content">
+                    <!-- 数据卡片 -->
+                    <div class="stats-cards">
+                        <div class="stat-card-mini">
+                            <div class="stat-icon">⏱️</div>
+                            <div class="stat-info">
+                                <div class="stat-value-mini" id="totalTime">0h</div>
+                                <div class="stat-label">总专注时长</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-mini">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-info">
+                                <div class="stat-value-mini" id="avgPomodoros">0</div>
+                                <div class="stat-label">日均番茄数</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-mini">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-info">
+                                <div class="stat-value-mini" id="maxPomodoros">0</div>
+                                <div class="stat-label">最高记录</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-mini">
+                            <div class="stat-icon">🔥</div>
+                            <div class="stat-info">
+                                <div class="stat-value-mini" id="streakDays">0</div>
+                                <div class="stat-label">连续天数</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7日趋势图 -->
+                    <div class="chart-card">
+                        <div id="trendChart" style="width: 100%; height: 300px;"></div>
+                    </div>
+
+                    <!-- 工作时段热力图 -->
+                    <div class="chart-card">
+                        <div id="heatmapChart" style="width: 100%; height: 400px;"></div>
+                    </div>
+
+                    <!-- 下方两个图表 -->
+                    <div class="charts-row">
+                        <!-- 类型分布饼图 -->
+                        <div class="chart-card half">
+                            <div id="pieChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+
+                        <!-- 本周对比柱状图 -->
+                        <div class="chart-card half">
+                            <div id="comparisonChart" style="width: 100%; height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 页脚 - 移到广告上方 -->
+            <footer class="footer">
+                <p>享受时光</p>
+                <div class="footer-links">
+                    <a href="#" id="privacyLink">隐私声明</a>
+                    <span>•</span>
+                    <a href="#" id="openSourceLink">开源声明</a>
+                    <span>•</span>
+                    <a href="#" id="adsLink">广告声明</a>
+                </div>
+            </footer>
+        </div>
+
+        <!-- 通知提示 -->
+        <div class="toast hidden" id="toast">
+            <span class="toast-icon">✓</span>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+
+        <!-- 广告容器 - AdSense横幅广告位 -->
+        <div id="banner-ad-container" class="ad-container banner-ad"
+            style="min-height: 50px; background: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
+            <span style="color: #666; font-size: 12px;">广告加载中...</span>
+        </div>
+
+        <!-- JavaScript -->
+        <!-- 安全模块 - 优先加载 -->
+        <script src="js/security-config.js"></script>
+        <!-- ECharts图表库 -->
+        <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+        <script src="js/storage.js"></script>
+        <script src="js/notification.js"></script>
+        <script src="js/statistics.js"></script>
+        <script src="js/analytics.js"></script>
+        <script src="js/adsense.js"></script>
+        <script src="js/timer.js"></script>
+        <script src="js/app.js"></script>
+    </body>
+
+</html>

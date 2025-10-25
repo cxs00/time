@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Tracker - 演示数据展示</title>
+    <link rel="stylesheet" href="css/activity-tracker.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+      .demo-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
+
+      .demo-banner h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .demo-banner p {
+        margin: 5px 0 0 0;
+        opacity: 0.9;
+      }
+
+      .data-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .summary-card {
+        background: white;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .summary-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .summary-label {
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .demo-section {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .demo-section h3 {
+        color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .activity-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-info {
+        flex: 1;
+      }
+
+      .activity-text {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .activity-meta {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 2px;
+      }
+
+      .activity-duration {
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .project-item {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .project-name {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .project-progress {
+        font-size: 0.9rem;
+        color: #667eea;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        transition: width 0.3s ease;
+      }
+
+      .milestone-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+
+      .milestone-status {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+      }
+
+      .milestone-completed {
+        background: #28a745;
+        color: white;
+      }
+
+      .milestone-pending {
+        background: #ffc107;
+        color: #333;
+      }
+
+      .diary-item {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      .diary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .diary-date {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .diary-mood {
+        font-size: 1.2rem;
+      }
+
+      .diary-content {
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+
+      .diary-tags {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        background: #667eea;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+      }
+
+      .memo-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .memo-item:last-child {
+        border-bottom: none;
+      }
+
+      .memo-checkbox {
+        width: 18px;
+        height: 18px;
+        border-radius: 3px;
+        border: 2px solid #667eea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+      }
+
+      .memo-checked {
+        background: #667eea;
+      }
+
+      .memo-content {
+        flex: 1;
+        color: #333;
+      }
+
+      .memo-meta {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .chart-container {
+        height: 300px;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- 演示横幅 -->
+      <div class="demo-banner">
+        <h1>🎬 Activity Tracker 演示数据展示</h1>
+        <p>以下数据展示了Activity Tracker的完整功能效果</p>
+      </div>
+
+      <!-- 数据概览 -->
+      <div class="data-summary">
+        <div class="summary-card">
+          <div class="summary-number" id="totalActivities">0</div>
+          <div class="summary-label">活动记录</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-number" id="totalProjects">0</div>
+          <div class="summary-label">项目数量</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-number" id="totalTime">0h</div>
+          <div class="summary-label">总时间</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-number" id="efficiency">0%</div>
+          <div class="summary-label">平均效率</div>
+        </div>
+      </div>
+
+      <!-- 活动记录展示 -->
+      <div class="demo-section">
+        <h3>📝 最近活动记录</h3>
+        <div id="activitiesList">
+          <!-- 活动列表将通过JavaScript动态生成 -->
+        </div>
+      </div>
+
+      <!-- 项目进度展示 -->
+      <div class="demo-section">
+        <h3>🎯 项目进度管理</h3>
+        <div id="projectsList">
+          <!-- 项目列表将通过JavaScript动态生成 -->
+        </div>
+      </div>
+
+      <!-- 数据可视化图表 -->
+      <div class="demo-section">
+        <h3>📊 数据可视化</h3>
+        <div class="chart-container">
+          <div id="categoryChart" style="width: 100%; height: 300px;"></div>
+        </div>
+      </div>
+
+      <!-- 日记展示 -->
+      <div class="demo-section">
+        <h3>📖 心情日记</h3>
+        <div id="diaryList">
+          <!-- 日记列表将通过JavaScript动态生成 -->
+        </div>
+      </div>
+
+      <!-- 备忘录展示 -->
+      <div class="demo-section">
+        <h3>📋 待办事项</h3>
+        <div id="memosList">
+          <!-- 备忘录列表将通过JavaScript动态生成 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/ai-classifier.js"></script>
+    <script src="js/activity-tracker.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/diary-memo.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="../../scripts/demo/create-demo-data.js"></script>
+
+    <script>
+      // 初始化演示数据
+      let demoData;
+
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', function () {
+        initializeDemo();
+      });
+
+      function initializeDemo() {
+        console.log('🎬 初始化Activity Tracker演示...');
+
+        // 生成演示数据
+        const generator = new DemoDataGenerator();
+        demoData = generator.getDemoData();
+
+        // 显示数据概览
+        displayDataSummary();
+
+        // 显示各个模块的数据
+        displayActivities();
+        displayProjects();
+        displayDiary();
+        displayMemos();
+
+        // 初始化图表
+        initializeCharts();
+
+        console.log('✅ 演示初始化完成！');
+      }
+
+      function displayDataSummary() {
+        const totalActivities = demoData.activities.length;
+        const totalProjects = demoData.projects.length;
+        const totalMinutes = demoData.activities.reduce((sum, activity) => sum + activity.duration, 0);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const avgEfficiency = Math.round(demoData.activities.reduce((sum, activity) => sum + activity.efficiency, 0) / totalActivities);
+
+        document.getElementById('totalActivities').textContent = totalActivities;
+        document.getElementById('totalProjects').textContent = totalProjects;
+        document.getElementById('totalTime').textContent = totalHours + 'h';
+        document.getElementById('efficiency').textContent = avgEfficiency + '%';
+      }
+
+      function displayActivities() {
+        const container = document.getElementById('activitiesList');
+        const recentActivities = demoData.activities.slice(-8); // 显示最近8条
+
+        container.innerHTML = recentActivities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div class="activity-text">${activity.text}</div>
+                        <div class="activity-meta">
+                            ${activity.category} • ${activity.startTime.toLocaleTimeString()} • 效率 ${activity.efficiency}%
+                        </div>
+                    </div>
+                    <div class="activity-duration">${activity.duration}分钟</div>
+                </div>
+            `).join('');
+      }
+
+      function displayProjects() {
+        const container = document.getElementById('projectsList');
+
+        container.innerHTML = demoData.projects.map(project => `
+                <div class="project-item">
+                    <div class="project-header">
+                        <div class="project-name">${project.name}</div>
+                        <div class="project-progress">${project.progress}%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${project.progress}%"></div>
+                    </div>
+                    <div class="milestones">
+                        ${project.milestones.map(milestone => `
+                            <div class="milestone-item">
+                                <div class="milestone-status ${milestone.completed ? 'milestone-completed' : 'milestone-pending'}">
+                                    ${milestone.completed ? '✓' : '⏳'}
+                                </div>
+                                <span>${milestone.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+      }
+
+      function displayDiary() {
+        const container = document.getElementById('diaryList');
+
+        container.innerHTML = demoData.diary.map(entry => `
+                <div class="diary-item">
+                    <div class="diary-header">
+                        <div class="diary-date">${entry.date.toLocaleDateString()}</div>
+                        <div class="diary-mood">${getMoodEmoji(entry.mood)}</div>
+                    </div>
+                    <div class="diary-content">${entry.content}</div>
+                    <div class="diary-tags">
+                        ${entry.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+      }
+
+      function displayMemos() {
+        const container = document.getElementById('memosList');
+
+        container.innerHTML = demoData.memos.map(memo => `
+                <div class="memo-item">
+                    <div class="memo-checkbox ${memo.completed ? 'memo-checked' : ''}">
+                        ${memo.completed ? '✓' : ''}
+                    </div>
+                    <div class="memo-content">
+                        <div>${memo.content}</div>
+                        <div class="memo-meta">${memo.category} • ${memo.priority}优先级</div>
+                    </div>
+                </div>
+            `).join('');
+      }
+
+      function initializeCharts() {
+        // 活动分类饼图
+        const categoryChart = echarts.init(document.getElementById('categoryChart'));
+
+        const categoryStats = {};
+        demoData.activities.forEach(activity => {
+          categoryStats[activity.category] = (categoryStats[activity.category] || 0) + 1;
+        });
+
+        const chartData = Object.entries(categoryStats).map(([name, value]) => ({
+          name,
+          value
+        }));
+
+        const option = {
+          title: {
+            text: '活动分类分布',
+            left: 'center'
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: '{a} <br/>{b}: {c} ({d}%)'
+          },
+          legend: {
+            orient: 'vertical',
+            left: 'left'
+          },
+          series: [{
+            name: '活动分类',
+            type: 'pie',
+            radius: '50%',
+            data: chartData,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }]
+        };
+
+        categoryChart.setOption(option);
+      }
+
+      function getMoodEmoji(mood) {
+        const moodMap = {
+          'productive': '😊',
+          'happy': '😄',
+          'tired': '😴',
+          'focused': '🤔',
+          'relaxed': '😌'
+        };
+        return moodMap[mood] || '😐';
+      }
+    </script>
+  </body>
+
+</html>

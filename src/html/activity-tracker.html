@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
+    <title>Activity Tracker - 智能活动记录</title>
+
+    <!-- 安全头部 -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+    <link rel="stylesheet" href="css/activity-tracker.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  </head>
+
+  <body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="brand-icon">📊</span>
+        <span class="brand-name">Activity Tracker</span>
+      </div>
+      <div class="nav-links">
+        <a href="#home" class="nav-link active" data-page="home">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">记录</span>
+        </a>
+        <a href="#projects" class="nav-link" data-page="projects">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-text">项目</span>
+        </a>
+        <a href="#stats" class="nav-link" data-page="stats">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">统计</span>
+        </a>
+        <a href="#diary" class="nav-link" data-page="diary">
+          <span class="nav-icon">📖</span>
+          <span class="nav-text">日记</span>
+        </a>
+        <a href="#settings" class="nav-link" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">设置</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- 主页面 - 活动记录 -->
+    <main id="home" class="page active">
+      <div class="container">
+        <!-- 当前活动状态 -->
+        <section class="current-activity-card card">
+          <h3 class="card-title">📊 当前活动</h3>
+          <div id="currentActivity" class="activity-display">
+            <div class="activity-info">
+              <span class="activity-name">暂无活动</span>
+              <span class="activity-duration">00:00:00</span>
+            </div>
+            <div class="activity-controls">
+              <button id="pauseActivity" class="btn btn-pause" disabled>⏸️ 暂停</button>
+              <button id="endActivity" class="btn btn-end" disabled>⏹️ 结束</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 快速记录 -->
+        <section class="quick-record-card card">
+          <h3 class="card-title">⚡ 快速记录</h3>
+          <div class="record-form">
+            <div class="input-group">
+              <input type="text" id="activityInput" placeholder="现在在做什么？" class="activity-input">
+              <div class="smart-suggestions" id="smartSuggestions"></div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>分类：</label>
+                <select id="categorySelect" class="select-input">
+                  <option value="">智能推荐</option>
+                  <option value="工作">💼 工作</option>
+                  <option value="学习">📚 学习</option>
+                  <option value="运动">🏃 运动</option>
+                  <option value="娱乐">🎮 娱乐</option>
+                  <option value="生活">🏠 生活</option>
+                </select>
+                <button id="addCustomCategory" class="btn btn-secondary">+ 自定义</button>
+              </div>
+
+              <div class="form-group">
+                <label>关联项目：</label>
+                <select id="projectSelect" class="select-input">
+                  <option value="">自动关联</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="startActivity" class="btn btn-primary btn-start">🚀 开始记录</button>
+          </div>
+        </section>
+
+        <!-- 今日概览 -->
+        <section class="today-overview-card card">
+          <h3 class="card-title">📈 今日概览</h3>
+          <div class="activity-summary">
+            <div class="summary-stats">
+              <div class="stat-item">
+                <span class="stat-label">总时间</span>
+                <span class="stat-value" id="totalTime">0小时</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">活动数</span>
+                <span class="stat-value" id="activityCount">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">效率</span>
+                <span class="stat-value" id="efficiency">0%</span>
+              </div>
+            </div>
+            <!-- 今日活动分布饼图 -->
+            <div class="activity-distribution">
+              <h4 class="distribution-title">📊 今日活动分布</h4>
+              <div class="chart-container-small">
+                <div id="todayDistributionChart" style="width: 100%; height: 200px;"></div>
+              </div>
+            </div>
+            <div class="activity-timeline" id="activityTimeline"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- 项目页面 -->
+    <main id="projects" class="page">
+      <div class="container">
+        <div class="page-header">
+          <h2>🎯 项目进度</h2>
+          <button id="createProject" class="btn btn-primary">+ 新建项目</button>
+        </div>
+        <div class="projects-grid" id="projectsGrid">
+          <p class="no-projects">还没有创建任何项目</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- 统计页面 -->
+    <main id="stats" class="page">
+      <div class="container">
+        <section class="time-selector-card card">
+          <h3 class="card-title">📊 活动统计</h3>
+          <div class="time-range-selector">
+            <select id="timeRange" class="select-input">
+              <option value="today">今天</option>
+              <option value="week">本周</option>
+              <option value="month">本月</option>
+              <option value="quarter">本季度</option>
+              <option value="year">今年</option>
+              <option value="custom">自定义</option>
+            </select>
+            <input type="date" id="startDate" class="date-input" style="display:none;">
+            <input type="date" id="endDate" class="date-input" style="display:none;">
+            <button id="applyTimeRange" class="btn btn-primary" style="display:none;">应用</button>
+          </div>
+        </section>
+
+        <div class="charts-container">
+          <section class="chart-card card">
+            <h3 class="card-title">📊 活动时间分布</h3>
+            <div id="activityPieChart" class="chart"></div>
+          </section>
+
+          <section class="chart-card card">
+            <h3 class="card-title">📈 时间趋势</h3>
+            <div id="trendLineChart" class="chart"></div>
+          </section>
+
+          <section class="chart-card card">
+            <h3 class="card-title">🔥 活动热力图</h3>
+            <div id="activityHeatmap" class="chart"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- 日记页面 -->
+    <main id="diary" class="page">
+      <div class="container">
+        <div class="diary-memo-grid">
+          <!-- 日记功能 -->
+          <section class="diary-card card">
+            <h3 class="card-title">📖 今日日记</h3>
+            <div class="diary-editor">
+              <div class="diary-header">
+                <span class="diary-date" id="diaryDate"></span>
+                <div class="mood-selector">
+                  <label>心情：</label>
+                  <select id="moodSelect" class="select-input">
+                    <option value="😊">😊 开心</option>
+                    <option value="😐">😐 平静</option>
+                    <option value="😔">😔 低落</option>
+                    <option value="😤">😤 愤怒</option>
+                    <option value="😴">😴 疲惫</option>
+                  </select>
+                </div>
+              </div>
+              <textarea id="diaryContent" class="diary-textarea" placeholder="记录今天的心情和想法..."></textarea>
+              <div class="diary-actions">
+                <button id="saveDiary" class="btn btn-primary">💾 保存</button>
+                <button id="aiSuggest" class="btn btn-secondary">🤖 AI建议</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 备忘录功能 -->
+          <section class="memo-card card">
+            <h3 class="card-title">📌 备忘录</h3>
+            <div class="memo-input-group">
+              <input type="text" id="memoInput" class="memo-input" placeholder="记录想法或提醒...">
+              <button id="addMemo" class="btn btn-primary">+</button>
+            </div>
+            <div class="memo-list" id="memoList">
+              <p class="no-memos">还没有添加任何备忘录</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- 设置页面 -->
+    <main id="settings" class="page">
+      <div class="container">
+        <section class="settings-card card">
+          <h3 class="card-title">⚙️ 设置</h3>
+          <div class="settings-content">
+            <div class="setting-item">
+              <label>数据导出</label>
+              <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
+            </div>
+            <div class="setting-item">
+              <label>数据导入</label>
+              <button class="btn btn-secondary" onclick="importData()">导入数据</button>
+            </div>
+            <div class="setting-item">
+              <label>清除所有数据</label>
+              <button class="btn btn-danger" onclick="clearAllData()">清除数据</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Toast通知 -->
+    <div class="toast" id="toast">
+      <span class="toast-icon">✓</span>
+      <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/ai-classifier.js"></script>
+    <script src="js/activity-tracker.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/diary-memo.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="../../scripts/demo/load-test-data.js"></script>
+    <script src="js/app-main.js"></script>
+  </body>
+
+</html>

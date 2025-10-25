@@ -1,7 +1,7 @@
-# Cursor AI助手配置
+# Cursor AI 助手配置 - Activity Tracker 项目
 
 ## 项目类型
-这是一个跨平台时间管理应用，包含Web版本和原生iOS/macOS应用。
+这是一个智能活动记录与进度管理系统，包含Web版本和原生iOS/macOS应用。
 
 ## 技术栈
 - 前端：HTML5, CSS3, JavaScript ES6+
@@ -16,8 +16,10 @@
 - 支持多设备适配
 
 ## 功能要求
-- 计时器功能（番茄工作法）
+- 智能活动记录（AI分类）
+- 项目进度管理
 - 数据统计和分析
+- 日记和备忘录
 - 响应式UI设计
 - 跨平台兼容性
 
@@ -30,12 +32,44 @@
 ## 项目结构
 ```
 TIME/
-├── index.html              # Web版本入口
-├── css/style.css           # 样式文件
-├── js/                     # JavaScript功能
-├── time/                   # iOS/macOS项目
-└── scripts/                # 版本管理工具
+├── activity-tracker.html          # 主应用入口
+├── demo-activity-tracker.html     # 功能演示页面
+├── css/activity-tracker.css       # 样式文件
+├── js/                            # JavaScript功能
+│   ├── activity-tracker.js        # 活动记录核心
+│   ├── project-manager.js         # 项目管理
+│   ├── diary-memo.js              # 日记备忘
+│   ├── ai-classifier.js           # AI分类器
+│   └── app-main.js                # 主应用逻辑
+├── time/                          # iOS/macOS项目
+└── scripts/                        # 工具脚本
 ```
+
+## 认证信息自动导入
+当检测到 ~/.cxs-auth/ 目录时，自动执行以下操作：
+
+1. **检测认证目录**
+   ```bash
+   if [ -d ~/.cxs-auth ]; then
+     echo "检测到认证目录，开始导入..."
+     ./scripts/auto-import-auth.sh
+   fi
+   ```
+
+2. **导入GitHub认证**
+   - 自动设置Git用户名和邮箱
+   - 配置GitHub Token
+   - 设置远程仓库
+
+3. **导入Netlify认证**
+   - 设置环境变量
+   - 配置部署信息
+   - 启用自动部署
+
+4. **导入其他认证**
+   - Vercel认证（可选）
+   - Cursor配置
+   - 项目特定设置
 
 ## 开发原则
 - 代码简洁可读
@@ -49,3 +83,33 @@ TIME/
 - 解释实现原理
 - 给出优化建议
 - 提供测试方法
+
+## 认证信息处理
+- 检测到认证目录时自动导入
+- 不询问用户确认（静默导入）
+- 显示导入状态和结果
+- 验证认证信息有效性
+
+## 隐私保护
+- 认证信息存储在 ~/.cxs-auth/ 目录
+- 该目录不上传Git仓库
+- 本地加密存储（可选）
+- 自动清理过期Token
+
+## 项目状态
+- 当前版本：v2.0.0
+- 开发状态：核心功能完成
+- 下一步：部署使用或继续开发
+- 文档：查看 PROJECT_STATUS.md
+
+## 快速开始
+1. 检测认证目录：~/.cxs-auth/
+2. 自动导入认证信息
+3. 启动开发环境
+4. 开始开发或部署
+
+## 注意事项
+- 认证信息不上传Git
+- 本地开发环境配置
+- 跨平台兼容性
+- 性能优化考虑
