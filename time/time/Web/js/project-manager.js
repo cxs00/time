@@ -24,7 +24,7 @@ class ProjectManager {
     if (projectsGrid) {
       projectsGrid.addEventListener('click', (e) => {
         const target = e.target;
-        
+
         // 检查是否点击了编辑按钮
         if (target.classList.contains('btn-edit') || target.closest('.btn-edit')) {
           const button = target.classList.contains('btn-edit') ? target : target.closest('.btn-edit');
@@ -34,7 +34,7 @@ class ProjectManager {
             this.editProject(projectId);
           }
         }
-        
+
         // 检查是否点击了暂停/继续按钮
         if (target.classList.contains('btn-pause') || target.closest('.btn-pause')) {
           const button = target.classList.contains('btn-pause') ? target : target.closest('.btn-pause');
@@ -322,10 +322,84 @@ class ProjectManager {
   // 编辑项目
   editProject(projectId) {
     const project = this.projects.find(p => p.id === projectId);
-    if (!project) return;
+    if (!project) {
+      console.error('❌ 项目不存在:', projectId);
+      return;
+    }
 
-    console.log('编辑项目:', project);
-    // TODO: 实现编辑对话框
+    console.log('📝 编辑项目:', project);
+    this.showEditProjectDialog(project);
+  }
+
+  // 显示编辑项目对话框
+  showEditProjectDialog(project) {
+    const dialog = `
+            <div class="modal" id="editProjectModal">
+                <div class="modal-content">
+                    <h3>编辑项目</h3>
+                    <form id="editProjectForm">
+                        <div class="form-group">
+                            <label>项目名称</label>
+                            <input type="text" id="editProjectName" value="${project.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>项目描述</label>
+                            <textarea id="editProjectDescription">${project.description || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>目标日期</label>
+                            <input type="date" id="editProjectTargetDate" value="${project.targetDate ? new Date(project.targetDate).toISOString().split('T')[0] : ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>优先级</label>
+                            <select id="editProjectPriority">
+                                <option value="high" ${project.priority === 'high' ? 'selected' : ''}>高</option>
+                                <option value="medium" ${project.priority === 'medium' ? 'selected' : ''}>中</option>
+                                <option value="low" ${project.priority === 'low' ? 'selected' : ''}>低</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>项目进度 (${project.progress}%)</label>
+                            <input type="range" id="editProjectProgress" min="0" max="100" value="${project.progress}" 
+                                   oninput="document.getElementById('progressValue').textContent = this.value + '%'">
+                            <span id="progressValue">${project.progress}%</span>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">保存</button>
+                            <button type="button" class="btn-secondary" onclick="document.getElementById('editProjectModal').remove()">取消</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+    document.body.insertAdjacentHTML('beforeend', dialog);
+
+    const form = document.getElementById('editProjectForm');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // 更新项目数据
+      project.name = document.getElementById('editProjectName').value;
+      project.description = document.getElementById('editProjectDescription').value;
+      project.targetDate = document.getElementById('editProjectTargetDate').value;
+      project.priority = document.getElementById('editProjectPriority').value;
+      project.progress = parseInt(document.getElementById('editProjectProgress').value);
+
+      // 保存并更新UI
+      this.saveProjects();
+      this.updateUI();
+
+      // 关闭对话框
+      document.getElementById('editProjectModal').remove();
+
+      console.log('✅ 项目已更新:', project);
+
+      // 显示通知
+      if (typeof window.app !== 'undefined' && window.app.showNotification) {
+        window.app.showNotification('项目已更新', 'success');
+      }
+    });
   }
 
   // 数据持久化
