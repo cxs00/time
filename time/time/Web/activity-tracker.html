@@ -3,7 +3,7 @@
 
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
     <title>Activity Tracker - 智能活动记录</title>
 
@@ -23,6 +23,9 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         background: #f8f9fa;
+        /* iOS安全区域支持 */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
       /* 导航栏 */
@@ -30,9 +33,11 @@
         background: #ffffff;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         padding: 1rem;
+        /* iOS安全区域顶部支持 */
+        padding-top: max(1rem, env(safe-area-inset-top));
         position: sticky;
         top: 0;
-        z-index: 100;
+        z-index: 1000;
       }
 
       .nav-brand {

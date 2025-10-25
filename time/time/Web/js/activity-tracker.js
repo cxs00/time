@@ -29,6 +29,12 @@ class SmartActivityTracker {
       endBtn.addEventListener('click', () => this.handleEndActivity());
     }
 
+    // 暂停/继续按钮
+    const pauseBtn = document.getElementById('pauseActivity');
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', () => this.handlePauseActivity());
+    }
+
     // 活动输入框实时建议
     const activityInput = document.getElementById('activityInput');
     if (activityInput) {
@@ -96,6 +102,59 @@ class SmartActivityTracker {
 
     this.endCurrentActivity();
     this.showNotification('活动已结束', 'success');
+  }
+
+  // 暂停/继续当前活动
+  handlePauseActivity() {
+    if (!this.currentActivity) {
+      this.showNotification('当前没有正在进行的活动', 'warning');
+      return;
+    }
+
+    if (this.currentActivity.isPaused) {
+      this.resumeActivity();
+    } else {
+      this.pauseActivity();
+    }
+  }
+
+  // 暂停活动
+  pauseActivity() {
+    if (!this.currentActivity || this.currentActivity.isPaused) return;
+
+    this.currentActivity.isPaused = true;
+    this.currentActivity.pauseTime = new Date();
+    
+    // 停止计时器
+    this.stopTimer();
+    
+    // 更新UI
+    this.updateCurrentActivityDisplay();
+    
+    this.showNotification('活动已暂停', 'info');
+    console.log('⏸️ 活动暂停');
+  }
+
+  // 继续活动
+  resumeActivity() {
+    if (!this.currentActivity || !this.currentActivity.isPaused) return;
+
+    const pauseDuration = new Date() - this.currentActivity.pauseTime;
+    
+    // 调整开始时间，排除暂停时长
+    this.currentActivity.startTime = new Date(this.currentActivity.startTime.getTime() + pauseDuration);
+    
+    this.currentActivity.isPaused = false;
+    delete this.currentActivity.pauseTime;
+    
+    // 重新启动计时器
+    this.startTimer();
+    
+    // 更新UI
+    this.updateCurrentActivityDisplay();
+    
+    this.showNotification('活动已继续', 'success');
+    console.log('▶️ 活动继续');
   }
 
   // 结束当前活动（内部方法）
@@ -281,7 +340,7 @@ class SmartActivityTracker {
   // 计时器
   startTimer() {
     this.timer = setInterval(() => {
-      if (this.currentActivity) {
+      if (this.currentActivity && !this.currentActivity.isPaused) {
         const duration = Math.floor((new Date() - this.currentActivity.startTime) / 1000);
         this.updateTimerDisplay(duration);
       }
@@ -324,13 +383,30 @@ class SmartActivityTracker {
         activityNameElement.textContent = this.currentActivity.activity;
       }
       if (endBtn) endBtn.disabled = false;
-      if (pauseBtn) pauseBtn.disabled = false;
+      if (pauseBtn) {
+        pauseBtn.disabled = false;
+        // 根据暂停状态更新按钮文本和样式
+        if (this.currentActivity.isPaused) {
+          pauseBtn.textContent = '▶️ 继续';
+          pauseBtn.classList.remove('btn-pause');
+          pauseBtn.classList.add('btn-resume');
+        } else {
+          pauseBtn.textContent = '⏸️ 暂停';
+          pauseBtn.classList.remove('btn-resume');
+          pauseBtn.classList.add('btn-pause');
+        }
+      }
     } else {
       if (activityNameElement) {
         activityNameElement.textContent = '暂无活动';
       }
       if (endBtn) endBtn.disabled = true;
-      if (pauseBtn) pauseBtn.disabled = true;
+      if (pauseBtn) {
+        pauseBtn.disabled = true;
+        pauseBtn.textContent = '⏸️ 暂停';
+        pauseBtn.classList.remove('btn-resume');
+        pauseBtn.classList.add('btn-pause');
+      }
 
       const durationElement = document.querySelector('.activity-duration');
       if (durationElement) {

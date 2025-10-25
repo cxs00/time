@@ -1006,3 +1006,67 @@ body {
     border-radius: 12px;
     font-size: 0.8rem;
 }
+
+/* ==================== iOS 安全区域支持 ==================== */
+@supports (padding: env(safe-area-inset-top)) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .navbar {
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-left: max(2rem, env(safe-area-inset-left));
+        padding-right: max(2rem, env(safe-area-inset-right));
+        z-index: 1000;
+    }
+
+    .page {
+        position: relative;
+        z-index: 1;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    .project-card,
+    .activity-card,
+    .diary-item {
+        position: relative;
+        z-index: 1;
+    }
+}
+
+/* ==================== 移动端安全区域优化 ==================== */
+@media (max-width: 768px) {
+    @supports (padding: env(safe-area-inset-top)) {
+        .navbar {
+            padding-top: max(0.75rem, env(safe-area-inset-top));
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+        }
+
+        /* 确保内容不会被导航栏遮挡 */
+        .page {
+            padding-top: 1rem;
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+
+        /* 防止卡片滑动时显示在系统状态栏上 */
+        .project-card,
+        .activity-card,
+        .diary-item {
+            margin-bottom: 1rem;
+        }
+
+        /* 确保滚动容器不超出安全区域 */
+        .projects-grid,
+        .activity-list,
+        .diary-list {
+            padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+    }
+}
