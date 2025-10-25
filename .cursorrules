@@ -9,6 +9,96 @@
 - 数据：LocalStorage, ECharts
 - 工具：Git, Xcode, Cursor
 
+## 🚨 关键开发规范（避免错误）
+
+### 1. 数据存储规范 - MUST FOLLOW
+```javascript
+// ✅ 正确：统一使用前缀键名
+const STORAGE_KEYS = {
+  ACTIVITIES: 'activityTracker_activities',
+  PROJECTS: 'activityTracker_projects',
+  DIARY: 'activityTracker_diary',
+  MEMOS: 'activityTracker_memos'
+};
+localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+const projects = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+
+// ❌ 错误：使用简单键名
+localStorage.setItem('projects', ...); // 禁止
+localStorage.getItem('projects'); // 禁止
+```
+
+### 2. 项目状态规范 - MUST FOLLOW
+```javascript
+// ✅ 正确：统一使用英文状态
+const PROJECT_STATUS = {
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+  PAUSED: 'paused'
+};
+{ id: 1, name: '项目1', status: 'active' }
+
+// ❌ 错误：使用中文状态
+{ id: 1, name: '项目1', status: '进行中' } // 禁止
+```
+
+### 3. JavaScript语法规范 - MUST FOLLOW
+```javascript
+// ✅ 正确：使用反引号或英文引号
+console.log(`✅ 数据加载完成`);
+const message = "Hello World";
+
+// ❌ 错误：使用中文引号
+console.log(`✅ 数据加载完成"); // 禁止
+```
+
+### 4. 全局变量引用规范 - MUST FOLLOW
+```javascript
+// ✅ 正确：使用window.前缀
+if (typeof window.chartManager === 'undefined') {
+  console.error('图表管理器未加载');
+  return;
+}
+window.chartManager.updateActivityPieChart(activities);
+
+// ❌ 错误：直接引用
+if (typeof chartManager === 'undefined') // 禁止
+chartManager.updateActivityPieChart(activities); // 禁止
+```
+
+### 5. 数据验证规范 - MUST FOLLOW
+```javascript
+// ✅ 必须添加数据验证
+function validateProjectData(project) {
+  if (!project || typeof project !== 'object') {
+    throw new Error('Project data must be an object');
+  }
+  if (!project.id || !project.name) {
+    throw new Error('Project must have id and name');
+  }
+  if (!['active', 'completed', 'paused'].includes(project.status)) {
+    throw new Error('Invalid project status');
+  }
+  return true;
+}
+```
+
+## 🔧 开发流程规范
+
+### 修改前检查清单
+- [ ] 数据键名是否使用统一前缀
+- [ ] 项目状态是否使用英文值
+- [ ] JavaScript语法是否正确（无中文引号）
+- [ ] 全局变量是否使用window.前缀
+- [ ] 是否添加了数据验证
+
+### 修改后验证清单
+- [ ] 项目选择器是否显示正确数量的项目
+- [ ] 界面切换是否正常工作
+- [ ] 图表是否正常显示
+- [ ] 控制台是否有错误信息
+- [ ] 数据是否正确保存和读取
+
 ## 开发规范
 - 使用现代JavaScript语法
 - 遵循响应式设计原则
@@ -113,3 +203,136 @@ TIME/
 - 本地开发环境配置
 - 跨平台兼容性
 - 性能优化考虑
+
+## 📊 数据一致性规范
+
+### 标准项目数据结构
+```javascript
+const standardProject = {
+  id: 'string',           // 唯一标识符
+  name: 'string',         // 项目名称
+  description: 'string',  // 项目描述
+  status: 'active',       // 状态：active/completed/paused
+  progress: 0,            // 进度：0-100
+  priority: 'medium',     // 优先级：high/medium/low
+  startDate: 'ISOString', // 开始日期
+  targetDate: 'ISOString' // 目标日期
+};
+```
+
+### 标准活动数据结构
+```javascript
+const standardActivity = {
+  id: 'string',           // 唯一标识符
+  text: 'string',         // 活动描述
+  category: 'string',     // 活动分类
+  startTime: 'ISOString', // 开始时间
+  endTime: 'ISOString',   // 结束时间
+  duration: 0,            // 持续时间（分钟）
+  project: 'string'       // 关联项目ID
+};
+```
+
+## 🚨 常见错误预防
+
+### 错误1：数据键名不一致
+```javascript
+// ❌ 错误
+localStorage.setItem('projects', data);
+const projects = localStorage.getItem('activityTracker_projects');
+
+// ✅ 正确
+localStorage.setItem('activityTracker_projects', data);
+const projects = localStorage.getItem('activityTracker_projects');
+```
+
+### 错误2：项目状态不统一
+```javascript
+// ❌ 错误
+{ status: '进行中' }
+projects.filter(p => p.status === 'active');
+
+// ✅ 正确
+{ status: 'active' }
+projects.filter(p => p.status === 'active');
+```
+
+### 错误3：中文引号语法错误
+```javascript
+// ❌ 错误
+console.log(`数据加载完成");
+
+// ✅ 正确
+console.log(`数据加载完成`);
+```
+
+### 错误4：全局变量引用错误
+```javascript
+// ❌ 错误
+if (typeof chartManager === 'undefined')
+
+// ✅ 正确
+if (typeof window.chartManager === 'undefined')
+```
+
+## 🧪 测试规范
+
+### 功能测试清单
+- [ ] 项目选择器显示正确的项目数量
+- [ ] 项目状态过滤功能正常
+- [ ] 活动记录功能正常
+- [ ] 数据保存和读取正常
+- [ ] 界面切换流畅
+- [ ] 图表显示正常
+- [ ] 移动端适配正常
+
+### 错误处理规范
+```javascript
+// ✅ 必须添加错误处理
+try {
+  const data = JSON.parse(localStorage.getItem('activityTracker_projects') || '[]');
+  return data;
+} catch (error) {
+  console.error('加载项目数据失败:', error);
+  return [];
+}
+
+// ✅ 必须添加空值检查
+const element = document.getElementById('projectSelect');
+if (!element) {
+  console.error('元素未找到');
+  return;
+}
+```
+
+## 🚀 快速修复指南
+
+### 遇到项目选择器问题时
+1. 检查localStorage键名是否一致
+2. 检查项目状态是否为'active'
+3. 检查数据加载时机是否正确
+4. 检查DOM元素是否存在
+
+### 遇到界面切换问题时
+1. 检查JavaScript语法错误
+2. 检查全局变量引用
+3. 检查事件监听器是否正确绑定
+4. 检查CSS样式是否正确加载
+
+### 遇到图表显示问题时
+1. 检查ECharts是否正确加载
+2. 检查图表容器是否存在
+3. 检查数据格式是否正确
+4. 检查图表初始化时机
+
+---
+
+**重要提醒：**
+- 每次修改前必须阅读本规范
+- 遇到问题时首先检查本规范
+- 定期更新和优化本规范
+- 所有开发人员必须遵循本规范
+
+**最后更新：** 2025年10月25日
+**版本：** v2.1.0
+**状态：** ✅ 生效中
