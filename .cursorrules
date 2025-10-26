@@ -822,16 +822,25 @@ git log --oneline -n 20 > "$BACKUP_DIR/git-history.txt"
 **重要版本必须打 Tag**：
 
 ```bash
-# 标记版本
-git tag -a v2.4.0 -m "功能: 完善验证流程和知识库系统"
-git push origin v2.4.0
+# 标记版本（命名规则：项目名称-v版本号）
+git tag -a Activity-Tracker-v2.5.0 -m "Activity Tracker v2.5.0 - 功能描述"
+git push origin Activity-Tracker-v2.5.0
 
-# 版本号规则
-v{主版本}.{次版本}.{修订版本}
+# Tag 命名规则
+{项目名称}-v{主版本}.{次版本}.{修订版本}
 
-主版本：重大架构变更
-次版本：新功能添加
-修订版本：Bug修复
+示例：
+  • Activity-Tracker-v2.5.0
+  • Activity-Tracker-v3.0.0
+
+版本号规则：
+  主版本：重大架构变更
+  次版本：新功能添加
+  修订版本：Bug修复
+
+项目名称：
+  • Activity-Tracker（活动追踪器）
+  • 其他项目使用对应的英文名称
 ```
 
 ---
