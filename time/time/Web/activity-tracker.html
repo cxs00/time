@@ -128,13 +128,19 @@
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
-        z-index: 10001 !important; /* 高于调试面板(10000) */
+        z-index: 10001 !important;
+        /* 高于调试面板(10000) */
         animation: modalFadeIn 0.3s ease;
       }
 
       @keyframes modalFadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
       }
 
       .modal-content {
@@ -156,6 +162,7 @@
           transform: translateY(50px);
           opacity: 0;
         }
+
         to {
           transform: translateY(0);
           opacity: 1;
@@ -681,14 +688,14 @@
       console.log('🐛 调试面板已初始化');
     </script>
 
-    <script src="storage.js"></script>
-    <script src="notification.js"></script>
-    <script src="ai-classifier.js"></script>
-    <script src="activity-tracker.js"></script>
-    <script src="project-manager.js"></script>
-    <script src="diary-memo.js"></script>
-    <script src="statistics.js"></script>
-    <script src="app-main.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/ai-classifier.js"></script>
+    <script src="js/activity-tracker.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/diary-memo.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/app-main.js"></script>
   </body>
 
 </html>
