@@ -62,11 +62,12 @@ grep -i "JavaScript\|CSS\|HTML\|BEM" .cursorrules
 
 ### 📊 规则统计
 - 总行数：1500+行
-- 规则版本：Activity-Tracker-Rules-v5.1.0
+- 规则版本：Activity-Tracker-Rules-v5.2.0
 - 主要章节：8个
 - 检查点：4个
 - 代码示例：50+个
 - 强制仿真：已启用 🔴
+- Tags自动推送：已启用 🔴
 
 ---
 
@@ -1105,12 +1106,33 @@ push_rules_to_remote() {
         if git push origin main; then
             echo "✅ 规则已同步到云端"
 
-            # 5. 询问是否打Tag
-            read -p "是否为此规则版本打Tag? (y/N): " tag_choice
-            if [ "$tag_choice" = "y" ] || [ "$tag_choice" = "Y" ]; then
-                git tag -a "Activity-Tracker-Rules-$current_version" -m "规则系统 $current_version"
-                git push origin "Activity-Tracker-Rules-$current_version"
-                echo "✅ Tag已推送"
+            # 5. 自动创建并推送Tag（强制执行）
+            if [ -n "$current_version" ]; then
+                local tag_name="Activity-Tracker-Rules-$current_version"
+                echo "🏷️  自动创建Tag: $tag_name"
+                
+                # 如果Tag已存在，先删除
+                if git rev-parse "$tag_name" >/dev/null 2>&1; then
+                    echo "⚠️  Tag已存在，删除旧Tag"
+                    git tag -d "$tag_name"
+                    git push origin ":refs/tags/$tag_name" 2>/dev/null || true
+                fi
+                
+                # 创建新Tag
+                git tag -a "$tag_name" -m "规则系统 $current_version - 自动标记
+
+📋 规则更新：$(date +%Y-%m-%d)
+🔄 自动同步到GitHub
+✅ 包含所有规则变更"
+                
+                # 推送Tag到远程
+                if git push origin "$tag_name"; then
+                    echo "✅ Tag已自动推送到GitHub"
+                else
+                    echo "⚠️  Tag推送失败，但代码已推送"
+                fi
+            else
+                echo "⚠️  未检测到版本号，跳过Tag创建"
             fi
         else
             echo "❌ 推送失败，请检查网络或权限"
@@ -2103,6 +2125,6 @@ main
 
 ---
 
-**最后更新：** 2025年10月27日00:00
-**规则版本：** Activity-Tracker-Rules-v5.1.0
-**状态：** ✅ 生效中（强制仿真已启用 🔴）
+**最后更新：** 2025年10月27日
+**规则版本：** Activity-Tracker-Rules-v5.2.0
+**状态：** ✅ 生效中（强制仿真 + Tags自动推送已启用 🔴）
