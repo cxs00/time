@@ -7,33 +7,50 @@ class SmartActivityTracker {
     this.customCategories = this.loadCustomCategories();
     this.projects = this.loadProjects();
     this.timer = null;
-    this.init();
+    this._initialized = false;
+    // ⚠️ 不在构造函数中调用 init()，由外部在 DOM 完全准备好后调用
   }
 
   init() {
+    if (this._initialized) {
+      console.warn('⚠️ SmartActivityTracker 已经初始化，跳过重复初始化');
+      return;
+    }
+
     console.log('🧠 智能活动记录系统初始化');
+    console.log('🔍 [init] DOM 状态:', document.readyState);
+    console.log('🔍 [init] 主页面:', document.getElementById('home'));
+
     this.setupEventListeners();
     this.updateCategorySelector();
     this.updateUI();
+
+    this._initialized = true;
+    console.log('✅ [init] 初始化完成');
   }
 
   setupEventListeners() {
+    console.log('🔧 [setupEventListeners] 开始绑定事件监听器...');
+
     // 开始记录按钮
     const startBtn = document.getElementById('startActivity');
     if (startBtn) {
       startBtn.addEventListener('click', () => this.handleStartActivity());
+      console.log('✅ [setupEventListeners] 开始记录按钮已绑定');
     }
 
     // 结束活动按钮
     const endBtn = document.getElementById('endActivity');
     if (endBtn) {
       endBtn.addEventListener('click', () => this.handleEndActivity());
+      console.log('✅ [setupEventListeners] 结束活动按钮已绑定');
     }
 
     // 暂停/继续按钮
     const pauseBtn = document.getElementById('pauseActivity');
     if (pauseBtn) {
       pauseBtn.addEventListener('click', () => this.handlePauseActivity());
+      console.log('✅ [setupEventListeners] 暂停按钮已绑定');
     }
 
     // 活动输入框实时建议
@@ -42,13 +59,44 @@ class SmartActivityTracker {
       activityInput.addEventListener('input', (e) => {
         this.showSmartSuggestions(e.target.value);
       });
+      console.log('✅ [setupEventListeners] 输入框建议已绑定');
     }
 
-    // 添加自定义分类按钮
+    // 添加自定义分类按钮 - 使用事件委托
+    console.log('🔍 [setupEventListeners] 设置自定义分类按钮事件委托...');
+
+    // 方案1: 直接绑定（如果按钮存在）
     const addCustomCategoryBtn = document.getElementById('addCustomCategory');
+    console.log('🔍 [setupEventListeners] 按钮元素:', addCustomCategoryBtn);
+
     if (addCustomCategoryBtn) {
-      addCustomCategoryBtn.addEventListener('click', () => this.handleAddCustomCategory());
+      console.log('✅ [setupEventListeners] 按钮找到，直接绑定事件...');
+      addCustomCategoryBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🎯 [EVENT] 自定义分类按钮被点击（直接绑定）！');
+        this.handleAddCustomCategory();
+      });
+      console.log('✅ [setupEventListeners] 直接绑定成功');
+
+      const isVisible = addCustomCategoryBtn.offsetParent !== null;
+      console.log('🔍 [setupEventListeners] 按钮可见性:', isVisible);
+    } else {
+      console.warn('⚠️ [setupEventListeners] 按钮未找到，将使用事件委托');
     }
+
+    // 方案2: 事件委托（备用方案，确保一定能工作）
+    document.body.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'addCustomCategory') {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('🎯 [EVENT] 自定义分类按钮被点击（事件委托）！');
+        this.handleAddCustomCategory();
+      }
+    });
+    console.log('✅ [setupEventListeners] 事件委托已设置（body级别）');
+
+    console.log('✅ [setupEventListeners] 事件监听器绑定完成');
   }
 
   // 开始新活动
@@ -298,29 +346,103 @@ class SmartActivityTracker {
 
   // 处理添加自定义分类
   handleAddCustomCategory() {
-    const categoryName = prompt('请输入自定义分类名称：');
+    console.log('🎯 [handleAddCustomCategory] 方法被调用');
+    console.log('🔍 [handleAddCustomCategory] 当前自定义分类:', this.customCategories);
 
-    if (!categoryName || !categoryName.trim()) {
-      return;
-    }
+    // 使用自定义对话框替代 prompt()（iOS WebView 兼容）
+    this.showCustomCategoryDialog();
+  }
 
-    const trimmedName = categoryName.trim();
+  // 显示自定义分类对话框
+  showCustomCategoryDialog() {
+    console.log('🎨 [showCustomCategoryDialog] 显示对话框');
 
-    // 检查是否已存在
-    if (this.customCategories.includes(trimmedName)) {
-      this.showNotification('该分类已存在', 'warning');
-      return;
-    }
+    // 创建对话框 HTML
+    const dialogHTML = `
+      <div class="modal" id="customCategoryModal" style="display: flex !important;">
+        <div class="modal-content">
+          <h3>添加自定义分类</h3>
+          <div class="form-group">
+            <label>分类名称：</label>
+            <input type="text" id="customCategoryInput" class="activity-input"
+                   placeholder="例如：阅读、健身、编程..." autofocus>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-secondary" id="cancelCustomCategory">取消</button>
+            <button class="btn btn-primary" id="confirmCustomCategory">确定</button>
+          </div>
+        </div>
+      </div>
+    `;
 
-    // 添加到自定义分类
-    this.customCategories.push(trimmedName);
-    this.saveCustomCategories();
+    // 插入到页面
+    document.body.insertAdjacentHTML('beforeend', dialogHTML);
 
-    // 更新分类选择器
-    this.updateCategorySelector();
+    // 获取元素
+    const modal = document.getElementById('customCategoryModal');
+    const input = document.getElementById('customCategoryInput');
+    const cancelBtn = document.getElementById('cancelCustomCategory');
+    const confirmBtn = document.getElementById('confirmCustomCategory');
 
-    this.showNotification(`已添加自定义分类: ${trimmedName}`, 'success');
-    console.log('✅ 添加自定义分类:', trimmedName);
+    // 自动聚焦输入框
+    setTimeout(() => input.focus(), 100);
+
+    // 取消按钮
+    cancelBtn.addEventListener('click', () => {
+      console.log('❌ [showCustomCategoryDialog] 用户取消');
+      modal.remove();
+    });
+
+    // 确定按钮
+    confirmBtn.addEventListener('click', () => {
+      const categoryName = input.value.trim();
+      console.log('✅ [showCustomCategoryDialog] 用户输入:', categoryName);
+
+      if (!categoryName) {
+        this.showNotification('请输入分类名称', 'warning');
+        input.focus();
+        return;
+      }
+
+      // 检查是否已存在
+      if (this.customCategories.includes(categoryName)) {
+        console.log('⚠️ [showCustomCategoryDialog] 分类已存在:', categoryName);
+        this.showNotification('该分类已存在', 'warning');
+        input.value = '';
+        input.focus();
+        return;
+      }
+
+      // 添加到自定义分类
+      this.customCategories.push(categoryName);
+      this.saveCustomCategories();
+      console.log('✅ [showCustomCategoryDialog] 分类已保存:', this.customCategories);
+
+      // 更新分类选择器
+      this.updateCategorySelector();
+      console.log('✅ [showCustomCategoryDialog] 分类选择器已更新');
+
+      // 关闭对话框
+      modal.remove();
+
+      // 显示成功提示
+      this.showNotification(`已添加自定义分类: ${categoryName}`, 'success');
+    });
+
+    // 回车键确认
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        confirmBtn.click();
+      }
+    });
+
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        console.log('❌ [showCustomCategoryDialog] 点击背景关闭');
+        modal.remove();
+      }
+    });
   }
 
   // 更新分类选择器

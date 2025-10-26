@@ -475,6 +475,367 @@ body {
 - 所有开发人员必须遵循本规范
 - 新问题解决后必须记录到此处
 
-**最后更新：** 2025年10月25日
-**版本：** v2.2.0
+---
+
+## 🔄 完整验证流程规范 v3.0 - MUST FOLLOW
+
+### 验证闭环流程（强制执行，不可跳过）
+
+**每次提出新的代码解决方案后，必须执行完整的验证流程**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 验证闭环流程（循环直到成功）                                 │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│ 1️⃣ 设计解决方案                                            │
+│    ↓                                                        │
+│ 2️⃣ 编译验证                                                │
+│    ├─ ✅ 通过 → 继续                                       │
+│    └─ ❌ 失败 → 🔄 重新设计 → 回到步骤1                   │
+│    ↓                                                        │
+│ 3️⃣ 仿真测试                                                │
+│    ├─ ✅ 通过 → 继续                                       │
+│    └─ ❌ 失败 → 🔄 重新设计 → 回到步骤1                   │
+│    ↓                                                        │
+│ 4️⃣ 全局影响分析                                            │
+│    ├─ ✅ 无影响 → 继续                                     │
+│    └─ ❌ 有影响 → 🔄 重新设计 → 回到步骤1                 │
+│    ↓                                                        │
+│ 5️⃣ 提交给用户                                              │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 步骤详解
+
+#### 0️⃣ 环境依赖预检查（前置步骤）
+
+**在开始验证前确保所有必要的运行环境已就绪**
+
+```bash
+# 检测清单
+- Homebrew (macOS包管理器)
+- Git (版本控制)
+- Xcode (iOS/macOS开发)
+- Node.js/npm (如需要)
+- Python (如需要)
+- 数据库 (如需要)
+```
+
+**如果缺失依赖**：
+- 🤖 **自动修复**：尝试自动安装（需要network权限）
+- 📋 **提供指令**：给出详细安装步骤
+- ✅ **验证安装**：安装后确认可用
+- 🔄 **重新验证**：继续原验证流程
+
+#### 2️⃣ 编译验证（必须）
+
+```bash
+# 对于 iOS/macOS 项目
+xcodebuild -scheme TIME -destination 'platform=macOS' build
+xcodebuild -scheme TIME -destination 'platform=iOS Simulator,name=iPhone 17' build
+
+# 对于 Web 项目
+npm run build  # 或其他构建命令
+
+# 验证点
+✅ 无编译错误
+✅ 无新增警告
+✅ 所有文件正确加载
+```
+
+**如果编译失败**：
+- 🔍 分析错误信息
+- 🔄 重新设计解决方案
+- ✅ 再次编译验证
+
+#### 3️⃣ 仿真测试（必须）
+
+```bash
+# 自动运行仿真
+sleep 10 && cd /Users/shanwanjun/Desktop/cxs/time/time && echo "3" | ./run-simulation.sh
+
+# 验证点
+✅ Mac 应用启动成功
+✅ iPhone 应用安装成功
+✅ 修改的功能正常工作
+✅ 无控制台错误
+```
+
+#### 4️⃣ 全局影响分析（必须）
+
+**检查清单**：
+
+```markdown
+CSS 检查：
+- [ ] 是否有同名 class/id 冲突？
+- [ ] 是否有 CSS 优先级覆盖问题？
+- [ ] 是否影响其他页面样式？
+- [ ] 动画名称是否冲突？
+
+JavaScript 检查：
+- [ ] 全局变量是否冲突？
+- [ ] 函数名是否重复？
+- [ ] 事件监听器是否重复绑定？
+- [ ] 是否影响其他模块？
+
+数据检查：
+- [ ] localStorage 键名是否冲突？
+- [ ] 数据结构是否兼容？
+- [ ] 是否需要数据迁移？
+
+功能检查：
+- [ ] 是否破坏现有功能？
+- [ ] 是否需要更新文档？
+- [ ] 是否需要更新测试？
+```
+
+**如果发现影响**：
+- 🔄 重新设计，避免冲突
+- 📝 更新相关文档
+- ✅ 再次进行全流程验证
+
+---
+
+## 📚 解决方案知识库系统
+
+### 知识库架构
+
+```
+~/.cursor-knowledge-base/          # 全局知识库
+├── solutions/                     # 解决方案
+│   ├── by-category/              # 按类别
+│   │   ├── event-binding/        # 事件绑定问题
+│   │   ├── initialization/       # 初始化问题
+│   │   ├── data-storage/         # 数据存储问题
+│   │   ├── ui-rendering/         # UI渲染问题
+│   │   ├── performance/          # 性能优化
+│   │   ├── cross-platform/       # 跨平台兼容
+│   │   ├── security/             # 安全问题
+│   │   ├── networking/           # 网络请求
+│   │   ├── state-management/     # 状态管理
+│   │   └── error-handling/       # 错误处理
+│   ├── by-priority/              # 按优先级
+│   │   ├── critical/             # 严重问题
+│   │   ├── high/                 # 高优先级
+│   │   └── medium/               # 中优先级
+│   └── by-date/                  # 按日期
+│       └── 2025-10/
+├── patterns/                      # 设计模式
+├── statistics/                    # 统计数据
+│   └── solution-stats.json       # 解决方案统计
+└── exports/                       # 导出文件
+    ├── markdown/                 # Markdown格式
+    └── pdf/                      # PDF格式
+```
+
+### 解决方案数据结构
+
+```json
+{
+  "id": "solution-001",
+  "title": "自定义分类按钮无响应问题",
+  "category": "event-binding",
+  "priority": "high",
+  "created_at": "2025-10-26T07:00:00Z",
+  "problem": {
+    "description": "记录界面中的「+ 自定义」按钮点击无反应",
+    "symptoms": [
+      "点击按钮无任何响应",
+      "控制台无错误信息",
+      "按钮样式正常"
+    ],
+    "affected_platforms": ["iOS", "macOS", "Web"]
+  },
+  "diagnosis": {
+    "root_cause": "SmartActivityTracker 未在 app-main.js 中统一初始化",
+    "analysis": [
+      "activity-tracker.js 使用局部变量创建实例",
+      "app-main.js 未初始化 window.smartActivityTracker",
+      "导致事件监听器绑定时 DOM 未准备好"
+    ]
+  },
+  "solution": {
+    "approach": "暴露类到 window，在 DOMContentLoaded 中统一初始化",
+    "changes": [
+      {
+        "file": "activity-tracker.js",
+        "line": 610,
+        "change": "移除局部实例，改为暴露类"
+      },
+      {
+        "file": "app-main.js",
+        "lines": "1815-1821",
+        "change": "添加 SmartActivityTracker 初始化"
+      }
+    ],
+    "code_snippets": {
+      "before": "const smartActivityTracker = new SmartActivityTracker();",
+      "after": "window.SmartActivityTracker = SmartActivityTracker;"
+    }
+  },
+  "verification": {
+    "tested": true,
+    "test_date": "2025-10-26",
+    "platforms_tested": ["macOS", "iOS"],
+    "result": "success",
+    "notes": "编译成功，仿真运行正常，待用户确认功能"
+  },
+  "metadata": {
+    "success_count": 1,
+    "last_used": "2025-10-26",
+    "tags": ["event-binding", "initialization", "dom-ready"],
+    "related_issues": ["暂停按钮无响应"],
+    "prevention": [
+      "所有管理器类必须在 app-main.js 统一初始化",
+      "确保 DOM 加载完成后再绑定事件",
+      "使用 window 对象暴露全局实例"
+    ]
+  }
+}
+```
+
+### 自动记录规则
+
+**触发条件**（满足任一即记录）：
+1. 用户明确说"已解决"、"功能正常"、"没问题了"
+2. 修改后30秒内无新问题反馈
+3. 用户开始新的任务/话题
+
+**记录内容**：
+- 问题完整描述
+- 诊断过程
+- 解决方案（含代码）
+- 验证结果
+- 预防措施
+
+**下次遇到类似问题时**：
+1. 🔍 自动检索知识库
+2. 📊 匹配相似度 > 70% 的方案
+3. ✅ 优先使用已验证的方案
+4. 🎯 如成功，增加成功计数
+
+---
+
+## 🌍 跨平台一致性验证
+
+### 支持平台清单
+
+```
+✅ 已支持平台：
+  • iOS (原生 SwiftUI)
+  • macOS (原生 SwiftUI)
+  • Web (HTML5/CSS3/JS)
+
+🔄 规划中平台：
+  • Android (React Native / Flutter)
+  • HarmonyOS 鸿蒙 (ArkTS / JS)
+  • Web Progressive App (PWA)
+  • 微信小程序
+  • 支付宝小程序
+
+🎯 跨平台兼容性目标：
+  • 功能一致性：100%
+  • UI一致性：90%以上
+  • 数据同步：实时
+  • 性能差异：<10%
+```
+
+### 平台验证矩阵
+
+| 功能 | iOS | macOS | Web | Android | HarmonyOS |
+|-----|-----|-------|-----|---------|-----------|
+| 活动记录 | ✅ | ✅ | ✅ | 🔄 | 🔄 |
+| 项目管理 | ✅ | ✅ | ✅ | 🔄 | 🔄 |
+| 数据统计 | ✅ | ✅ | ✅ | 🔄 | 🔄 |
+| 自定义分类 | ✅ | ✅ | ✅ | 🔄 | 🔄 |
+| 安全区域 | ✅ | ✅ | N/A | 🔄 | 🔄 |
+
+### 平台特定适配
+
+```javascript
+// 平台检测
+const platform = {
+  isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent),
+  isMacOS: /Macintosh/.test(navigator.userAgent),
+  isAndroid: /Android/.test(navigator.userAgent),
+  isHarmonyOS: /HarmonyOS/.test(navigator.userAgent),
+  isWeb: !window.webkit && !window.Android
+};
+
+// 平台特定处理
+if (platform.isIOS || platform.isMacOS) {
+  // 处理安全区域
+  document.documentElement.style.setProperty(
+    '--safe-area-top',
+    'env(safe-area-inset-top)'
+  );
+}
+```
+
+---
+
+## 💾 文档同步与备份机制
+
+### 备份策略
+
+**重大修改前自动备份**：
+
+```bash
+# 备份命名规则
+backups/history-v{版本号}-{时间戳}/
+
+# 示例
+backups/
+├── history-v2.2.0-20251025-160000/
+├── history-v2.3.0-20251026-070000/
+└── history-v2.4.0-20251026-120000/
+```
+
+**触发条件**：
+- 修改超过 100 行代码
+- 重构核心模块
+- 数据结构变更
+- 用户明确要求
+
+**备份内容**：
+- 完整源代码
+- .cursorrules 文件
+- 配置文件
+- Git 提交记录
+
+**执行命令**：
+```bash
+# 创建备份
+VERSION="v2.4.0"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+BACKUP_DIR="backups/history-${VERSION}-${TIMESTAMP}"
+mkdir -p "$BACKUP_DIR"
+rsync -av --exclude='node_modules' --exclude='.git' \
+      ./ "$BACKUP_DIR/"
+git log --oneline -n 20 > "$BACKUP_DIR/git-history.txt"
+```
+
+### Git 版本标记
+
+**重要版本必须打 Tag**：
+
+```bash
+# 标记版本
+git tag -a v2.4.0 -m "功能: 完善验证流程和知识库系统"
+git push origin v2.4.0
+
+# 版本号规则
+v{主版本}.{次版本}.{修订版本}
+
+主版本：重大架构变更
+次版本：新功能添加
+修订版本：Bug修复
+```
+
+---
+
+**最后更新：** 2025年10月26日
+**版本：** v3.0.0
 **状态：** ✅ 生效中

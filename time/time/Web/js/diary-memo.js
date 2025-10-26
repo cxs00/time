@@ -14,16 +14,42 @@ class DiaryMemoManager {
   }
 
   setupEventListeners() {
+    console.log('🔧 [setupEventListeners] 绑定日记备忘录事件监听器...');
+
     // 保存日记按钮
     const saveDiaryBtn = document.getElementById('saveDiary');
     if (saveDiaryBtn) {
-      saveDiaryBtn.addEventListener('click', () => this.saveDiary());
+      saveDiaryBtn.addEventListener('click', () => {
+        console.log('💾 [EVENT] 保存日记按钮被点击');
+        this.saveDiary();
+      });
+      console.log('✅ [setupEventListeners] 保存日记按钮已绑定');
+    } else {
+      console.warn('⚠️ [setupEventListeners] 保存日记按钮未找到');
+    }
+
+    // AI 建议按钮
+    const aiSuggestBtn = document.getElementById('aiSuggest');
+    if (aiSuggestBtn) {
+      aiSuggestBtn.addEventListener('click', () => {
+        console.log('🤖 [EVENT] AI建议按钮被点击');
+        this.generateAISuggestion();
+      });
+      console.log('✅ [setupEventListeners] AI建议按钮已绑定');
+    } else {
+      console.warn('⚠️ [setupEventListeners] AI建议按钮未找到');
     }
 
     // 添加备忘录按钮
     const addMemoBtn = document.getElementById('addMemo');
     if (addMemoBtn) {
-      addMemoBtn.addEventListener('click', () => this.addMemo());
+      addMemoBtn.addEventListener('click', () => {
+        console.log('📝 [EVENT] 添加备忘录按钮被点击');
+        this.addMemo();
+      });
+      console.log('✅ [setupEventListeners] 添加备忘录按钮已绑定');
+    } else {
+      console.warn('⚠️ [setupEventListeners] 添加备忘录按钮未找到');
     }
 
     // 备忘录输入框回车事件
@@ -31,19 +57,110 @@ class DiaryMemoManager {
     if (memoInput) {
       memoInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
+          console.log('⏎ [EVENT] 备忘录输入框回车');
           this.addMemo();
         }
       });
+      console.log('✅ [setupEventListeners] 备忘录输入框回车已绑定');
+    } else {
+      console.warn('⚠️ [setupEventListeners] 备忘录输入框未找到');
     }
+
+    console.log('✅ [setupEventListeners] 日记备忘录事件监听器绑定完成');
+  }
+
+  // 生成 AI 建议
+  generateAISuggestion() {
+    console.log('🤖 [generateAISuggestion] 生成AI建议');
+
+    const contentElement = document.getElementById('diaryContent');
+    console.log('🔍 [generateAISuggestion] 日记输入框:', contentElement);
+
+    if (!contentElement) {
+      console.error('❌ 日记内容输入框未找到');
+      alert('⚠️ 日记输入框未找到，请确保在日记页面');
+      return;
+    }
+
+    // 基于今天的活动生成建议
+    console.log('🔍 [generateAISuggestion] 检查 smartActivityTracker:', window.smartActivityTracker);
+    const activities = window.smartActivityTracker?.activities || [];
+    console.log('🔍 [generateAISuggestion] 所有活动数量:', activities.length);
+
+    const todayActivities = activities.filter(a => {
+      const activityDate = new Date(a.startTime).toDateString();
+      const today = new Date().toDateString();
+      return activityDate === today;
+    });
+
+    console.log('📊 今天的活动数量:', todayActivities.length);
+
+    let suggestion = '';
+
+    if (todayActivities.length === 0) {
+      suggestion = '今天还没有记录任何活动。建议：\n\n';
+      suggestion += '• 记录一下今天做了什么\n';
+      suggestion += '• 分享今天的心情和感受\n';
+      suggestion += '• 写下明天的计划和目标';
+    } else {
+      // 统计活动分类
+      const categories = {};
+      todayActivities.forEach(a => {
+        categories[a.category] = (categories[a.category] || 0) + 1;
+      });
+
+      const mainCategory = Object.keys(categories).sort((a, b) => categories[b] - categories[a])[0];
+      const totalDuration = todayActivities.reduce((sum, a) => sum + (a.duration || 0), 0);
+      const hours = Math.floor(totalDuration / 60);
+      const minutes = totalDuration % 60;
+
+      suggestion = `今天记录了 ${todayActivities.length} 项活动，主要是「${mainCategory}」类活动。\n\n`;
+      suggestion += `总计用时：${hours > 0 ? hours + '小时' : ''}${minutes}分钟\n\n`;
+      suggestion += '建议记录：\n';
+      suggestion += `• 今天在${mainCategory}方面的收获和感受\n`;
+      suggestion += '• 遇到的挑战和解决方法\n';
+      suggestion += '• 明天想要改进或继续的事项';
+    }
+
+    console.log('📝 [generateAISuggestion] 生成的建议长度:', suggestion.length);
+
+    // 将建议添加到日记内容
+    const currentContent = contentElement.value.trim();
+    if (currentContent) {
+      contentElement.value = currentContent + '\n\n---\n\n' + suggestion;
+    } else {
+      contentElement.value = suggestion;
+    }
+
+    console.log('✅ [generateAISuggestion] 建议已填充到输入框');
+
+    // 显示通知
+    if (typeof notificationManager !== 'undefined') {
+      notificationManager.showToast('✨ AI建议已生成');
+      console.log('✅ [generateAISuggestion] 通知已显示');
+    } else {
+      console.warn('⚠️ [generateAISuggestion] notificationManager 未定义');
+      // 使用 alert 作为备用
+      alert('✨ AI建议已生成');
+    }
+
+    console.log('✅ AI建议生成完成');
   }
 
   // 保存日记
   saveDiary() {
+    console.log('💾 [saveDiary] 开始保存日记');
+
     const content = document.getElementById('diaryContent')?.value;
     const mood = document.getElementById('moodSelect')?.value || '😊';
     const date = document.getElementById('diaryDate')?.textContent || new Date().toISOString().split('T')[0];
 
+    console.log('📝 日记内容长度:', content?.length || 0);
+    console.log('😊 心情:', mood);
+    console.log('📅 日期:', date);
+
     if (!content || !content.trim()) {
+      console.warn('⚠️ 日记内容为空');
       if (typeof notificationManager !== 'undefined') {
         notificationManager.showToast('请输入日记内容');
       }
@@ -73,7 +190,11 @@ class DiaryMemoManager {
       this.diaries.push(diary);
     }
 
-    this.saveDiariesData();
+    this.saveDiaries();
+
+    // 刷新历史日记列表
+    console.log('🔄 [saveDiary] 刷新历史日记列表...');
+    this.renderDiaryList();
 
     if (typeof notificationManager !== 'undefined') {
       notificationManager.showToast('✅ 日记保存成功');
@@ -98,7 +219,7 @@ class DiaryMemoManager {
     };
 
     this.memos.push(memo);
-    this.saveMemosData();
+    this.saveMemos();
 
     input.value = '';
     this.updateMemosList();
@@ -116,7 +237,7 @@ class DiaryMemoManager {
     if (!memo) return;
 
     memo.isCompleted = !memo.isCompleted;
-    this.saveMemosData();
+    this.saveMemos();
     this.updateMemosList();
 
     console.log('✅ 备忘录状态已更新');
@@ -125,7 +246,7 @@ class DiaryMemoManager {
   // 删除备忘录
   deleteMemo(memoId) {
     this.memos = this.memos.filter(m => m.id !== memoId);
-    this.saveMemosData();
+    this.saveMemos();
     this.updateMemosList();
 
     console.log('✅ 备忘录已删除');

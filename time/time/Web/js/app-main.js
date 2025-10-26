@@ -1815,7 +1815,15 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🧠 初始化SmartActivityTracker...');
     if (typeof SmartActivityTracker !== 'undefined') {
       window.smartActivityTracker = new SmartActivityTracker();
-      console.log('✅ SmartActivityTracker初始化成功');
+      console.log('✅ SmartActivityTracker实例创建成功');
+
+      // ⚠️ 延迟调用 init()，确保 DOM 完全渲染
+      setTimeout(() => {
+        console.log('🔧 开始初始化 SmartActivityTracker...');
+        if (window.smartActivityTracker) {
+          window.smartActivityTracker.init();
+        }
+      }, 300); // 增加延迟到 300ms
     } else {
       console.warn('⚠️ SmartActivityTracker类未定义');
     }
