@@ -4,8 +4,21 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
+    <meta name="description" content="Activity Tracker - 智能活动记录与进度管理系统，帮助您记录活动、管理项目进度、撰写日记，并通过数据可视化了解时间分配">
+    <meta name="keywords" content="活动记录,时间管理,项目管理,数据可视化,日记,待办事项,番茄工作法">
+    <meta name="author" content="Activity Tracker">
     <title>Activity Tracker - 智能活动记录</title>
+
+    <!-- PWA支持 -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Activity Tracker">
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/assets/icons/icon-192x192.png">
 
     <!-- 安全头部 -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -696,6 +709,9 @@
     <script src="js/diary-memo.js"></script>
     <script src="js/statistics.js"></script>
     <script src="js/app-main.js"></script>
+    
+    <!-- PWA支持 -->
+    <script src="/pwa-register.js"></script>
   </body>
 
 </html>
