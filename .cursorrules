@@ -62,12 +62,13 @@ grep -i "JavaScript\|CSS\|HTML\|BEM" .cursorrules
 
 ### 📊 规则统计
 - 总行数：1500+行
-- 规则版本：Activity-Tracker-Rules-v5.2.0
+- 规则版本：Activity-Tracker-Rules-v5.3.0
 - 主要章节：8个
 - 检查点：4个
 - 代码示例：50+个
 - 强制仿真：已启用 🔴
 - Tags自动推送：已启用 🔴
+- 双仓库同步：已启用 🔴
 
 ---
 
@@ -1101,12 +1102,24 @@ push_rules_to_remote() {
         git add .cursorrules
         git commit -m "$commit_msg"
 
-        # 4. 推送到云端
-        echo "📤 推送到云端..."
+        # 4. 推送到规则仓库（cursor-workspace）和项目仓库（time）
+        echo "📤 推送到规则仓库和项目仓库..."
+        
+        # 4.1 推送到项目仓库（time）- 本地备份
         if git push origin main; then
-            echo "✅ 规则已同步到云端"
-
-            # 5. 自动创建并推送Tag（强制执行）
+            echo "✅ 规则已备份到项目仓库（time）"
+        else
+            echo "⚠️  项目仓库推送失败，继续推送到规则仓库"
+        fi
+        
+        # 4.2 推送到规则仓库（cursor-workspace）- 主仓库
+        echo "📤 推送到规则仓库（cursor-workspace）..."
+        RULES_REPO="https://github.com/cxs00/cursor-workspace.git"
+        
+        if git push "$RULES_REPO" HEAD:main; then
+            echo "✅ 规则已同步到cursor-workspace仓库"
+            
+            # 5. 自动创建并推送Tag到两个仓库（强制执行）
             if [ -n "$current_version" ]; then
                 local tag_name="Activity-Tracker-Rules-$current_version"
                 echo "🏷️  自动创建Tag: $tag_name"
@@ -1116,26 +1129,45 @@ push_rules_to_remote() {
                     echo "⚠️  Tag已存在，删除旧Tag"
                     git tag -d "$tag_name"
                     git push origin ":refs/tags/$tag_name" 2>/dev/null || true
+                    git push "$RULES_REPO" ":refs/tags/$tag_name" 2>/dev/null || true
                 fi
                 
                 # 创建新Tag
                 git tag -a "$tag_name" -m "规则系统 $current_version - 自动标记
 
 📋 规则更新：$(date +%Y-%m-%d)
-🔄 自动同步到GitHub
-✅ 包含所有规则变更"
+🔄 自动同步到GitHub（双仓库）
+✅ 包含所有规则变更
+📦 仓库：cursor-workspace（主）+ time（备份）"
                 
-                # 推送Tag到远程
-                if git push origin "$tag_name"; then
-                    echo "✅ Tag已自动推送到GitHub"
+                # 推送Tag到两个远程仓库
+                local tag_push_success=0
+                
+                # 推送到规则仓库（主要）
+                if git push "$RULES_REPO" "$tag_name"; then
+                    echo "✅ Tag已推送到cursor-workspace仓库"
+                    tag_push_success=1
                 else
-                    echo "⚠️  Tag推送失败，但代码已推送"
+                    echo "⚠️  cursor-workspace仓库Tag推送失败"
+                fi
+                
+                # 推送到项目仓库（备份）
+                if git push origin "$tag_name"; then
+                    echo "✅ Tag已推送到time仓库（备份）"
+                else
+                    echo "⚠️  time仓库Tag推送失败"
+                fi
+                
+                if [ $tag_push_success -eq 1 ]; then
+                    echo "🎉 规则和Tag已成功同步到cursor-workspace！"
+                else
+                    echo "⚠️  Tag推送部分失败，但规则文件已推送"
                 fi
             else
                 echo "⚠️  未检测到版本号，跳过Tag创建"
             fi
         else
-            echo "❌ 推送失败，请检查网络或权限"
+            echo "❌ cursor-workspace仓库推送失败，请检查网络或权限"
             return 1
         fi
     else
@@ -2126,5 +2158,5 @@ main
 ---
 
 **最后更新：** 2025年10月27日
-**规则版本：** Activity-Tracker-Rules-v5.2.0
-**状态：** ✅ 生效中（强制仿真 + Tags自动推送已启用 🔴）
+**规则版本：** Activity-Tracker-Rules-v5.3.0
+**状态：** ✅ 生效中（强制仿真 + 双仓库同步 + Tags自动推送已启用 🔴）
