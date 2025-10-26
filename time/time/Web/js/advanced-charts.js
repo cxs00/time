@@ -3,7 +3,7 @@
  * 功能：提供更多类型的数据可视化图表
  * 版本：v1.0.0
  * 日期：2025-10-26
- * 
+ *
  * 包含图表类型：
  * 1. 雷达图 - 能力分析
  * 2. 日历热力图 - 活动频率
@@ -26,7 +26,7 @@ class AdvancedCharts {
   /**
    * 1. 雷达图 - 显示多维度能力分析
    * 用于展示用户在不同活动类型上的时间分配
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Array} activities - 活动数据
    * @returns {Object} 图表实例
@@ -45,11 +45,11 @@ class AdvancedCharts {
 
     // 计算各分类的时间占比
     const categoryStats = this.calculateCategoryStats(activities);
-    
+
     // 准备雷达图数据
     const categories = Object.keys(categoryStats);
     const values = Object.values(categoryStats);
-    
+
     // 标准化数据（转换为0-100的百分比）
     const maxValue = Math.max(...values);
     const normalizedValues = values.map(v => (v / maxValue * 100).toFixed(1));
@@ -145,7 +145,7 @@ class AdvancedCharts {
   /**
    * 2. 日历热力图 - 显示活动频率
    * 用于展示每天的活动数量和时长
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Array} activities - 活动数据
    * @param {number} days - 显示天数（默认90天）
@@ -246,7 +246,7 @@ class AdvancedCharts {
   /**
    * 3. 桑基图 - 显示时间流向
    * 用于展示从活动类型到项目的时间流动
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Array} activities - 活动数据
    * @param {Array} projects - 项目数据
@@ -321,7 +321,7 @@ class AdvancedCharts {
   /**
    * 4. 树图 - 显示项目层级结构
    * 用于展示项目和子任务的层级关系
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Array} projects - 项目数据
    * @param {Array} activities - 活动数据
@@ -411,7 +411,7 @@ class AdvancedCharts {
   /**
    * 5. 漏斗图 - 显示任务转化
    * 用于展示从开始到完成的任务流程
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Object} conversionData - 转化数据
    * @returns {Object} 图表实例
@@ -512,7 +512,7 @@ class AdvancedCharts {
 
   /**
    * 6. 关系图 - 显示项目和活动的关联关系
-   * 
+   *
    * @param {string} containerId - 容器ID
    * @param {Array} projects - 项目数据
    * @param {Array} activities - 活动数据
@@ -626,21 +626,21 @@ class AdvancedCharts {
   prepareHeatmapData(activities, days) {
     const data = [];
     const today = new Date();
-    
+
     for (let i = days; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
-      
+
       // 计算当天的活动数量
       const count = activities.filter(a => {
         const actDate = new Date(a.startTime).toISOString().split('T')[0];
         return actDate === dateStr;
       }).length;
-      
+
       data.push([dateStr, count]);
     }
-    
+
     return data;
   }
 
@@ -651,26 +651,26 @@ class AdvancedCharts {
     const nodes = [];
     const links = [];
     const nodeMap = new Map();
-    
+
     // 添加分类节点
     const categories = [...new Set(activities.map(a => a.category || '未分类'))];
     categories.forEach(cat => {
       nodes.push({ name: cat });
       nodeMap.set(cat, 0);
     });
-    
+
     // 添加项目节点
     projects.forEach(proj => {
       nodes.push({ name: proj.name });
       nodeMap.set(proj.name, 0);
     });
-    
+
     // 创建链接
     activities.forEach(activity => {
       const source = activity.category || '未分类';
       const target = activity.project || '其他';
       const value = activity.duration || 30;
-      
+
       // 查找或创建链接
       let link = links.find(l => l.source === source && l.target === target);
       if (link) {
@@ -679,7 +679,7 @@ class AdvancedCharts {
         links.push({ source, target, value });
       }
     });
-    
+
     return { nodes, links };
   }
 
@@ -690,7 +690,7 @@ class AdvancedCharts {
     const treeData = projects.map(project => {
       // 找到属于这个项目的所有活动
       const projectActivities = activities.filter(a => a.project === project.name);
-      
+
       // 按分类分组
       const categoryGroups = {};
       projectActivities.forEach(activity => {
@@ -700,20 +700,20 @@ class AdvancedCharts {
         }
         categoryGroups[category].push(activity);
       });
-      
+
       // 创建子节点
       const children = Object.keys(categoryGroups).map(category => ({
         name: category,
         value: categoryGroups[category].reduce((sum, a) => sum + (a.duration || 0), 0)
       }));
-      
+
       return {
         name: project.name,
         value: projectActivities.reduce((sum, a) => sum + (a.duration || 0), 0),
         children: children.length > 0 ? children : undefined
       };
     });
-    
+
     return treeData;
   }
 
@@ -723,7 +723,7 @@ class AdvancedCharts {
   prepareRelationData(projects, activities) {
     const nodes = [];
     const links = [];
-    
+
     // 添加项目节点
     projects.forEach((project, index) => {
       nodes.push({
@@ -734,7 +734,7 @@ class AdvancedCharts {
         value: activities.filter(a => a.project === project.name).length
       });
     });
-    
+
     // 添加活动分类节点
     const categories = [...new Set(activities.map(a => a.category || '未分类'))];
     categories.forEach((cat, index) => {
@@ -746,17 +746,17 @@ class AdvancedCharts {
         value: activities.filter(a => a.category === cat).length
       });
     });
-    
+
     // 创建链接
     activities.forEach(activity => {
       const projectNode = nodes.find(n => n.name === activity.project);
       const categoryNode = nodes.find(n => n.name === activity.category);
-      
+
       if (projectNode && categoryNode) {
-        const existingLink = links.find(l => 
+        const existingLink = links.find(l =>
           l.source === projectNode.id && l.target === categoryNode.id
         );
-        
+
         if (existingLink) {
           existingLink.value += 1;
         } else {
@@ -768,7 +768,7 @@ class AdvancedCharts {
         }
       }
     });
-    
+
     return { nodes, links };
   }
 

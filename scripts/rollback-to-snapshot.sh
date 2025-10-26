@@ -41,64 +41,64 @@ print_warning() {
 # 列出快照
 list_snapshots() {
     cd "$PROJECT_ROOT"
-    
+
     echo -e "${BLUE}📋 可用快照：${NC}"
     echo ""
-    
+
     local snapshots=$(git tag -l "snapshot-*" --sort=-creatordate | head -10)
-    
+
     if [ -z "$snapshots" ]; then
         print_warning "没有可用的快照"
         echo ""
         print_info "创建快照: ./scripts/auto-snapshot.sh create"
         return
     fi
-    
+
     local count=1
     while IFS= read -r tag; do
         local tag_date=$(git log -1 --format=%ai "$tag" 2>/dev/null | cut -d' ' -f1,2)
         echo -e "${CYAN}$count.${NC} $tag (${tag_date})"
         count=$((count + 1))
     done <<< "$snapshots"
-    
+
     echo ""
 }
 
 # 验证快照
 validate_snapshot() {
     local snapshot=$1
-    
+
     cd "$PROJECT_ROOT"
-    
+
     if ! git tag -l | grep -q "^${snapshot}$"; then
         print_error "快照不存在: $snapshot"
         echo ""
         list_snapshots
         return 1
     fi
-    
+
     return 0
 }
 
 # 显示回退预览
 show_rollback_preview() {
     local snapshot=$1
-    
+
     cd "$PROJECT_ROOT"
-    
+
     echo -e "${BLUE}📊 回退预览${NC}"
     echo ""
-    
+
     # 显示快照信息
     local tag_date=$(git log -1 --format=%ai "$snapshot" 2>/dev/null)
     local tag_msg=$(git log -1 --format=%s "$snapshot" 2>/dev/null)
-    
+
     echo "快照信息："
     echo "  名称: $snapshot"
     echo "  时间: $tag_date"
     echo "  说明: $tag_msg"
     echo ""
-    
+
     # 显示当前未提交的修改
     if ! git diff --quiet || ! git diff --cached --quiet; then
         print_warning "当前有未提交的修改："
@@ -109,10 +109,10 @@ show_rollback_preview() {
         print_info "当前没有未提交的修改"
         echo ""
     fi
-    
+
     # 显示回退将产生的变化
     local changes=$(git diff --stat HEAD "$snapshot" | wc -l | tr -d ' ')
-    
+
     if [ "$changes" -gt 0 ]; then
         print_warning "回退将改变 $changes 个文件："
         echo ""
@@ -127,27 +127,27 @@ show_rollback_preview() {
 # 执行回退
 rollback_to_snapshot() {
     local snapshot=$1
-    
+
     cd "$PROJECT_ROOT"
-    
+
     if [ -z "$snapshot" ]; then
         print_error "请指定快照标签"
         echo ""
         list_snapshots
         exit 1
     fi
-    
+
     # 验证快照存在
     if ! validate_snapshot "$snapshot"; then
         exit 1
     fi
-    
+
     echo -e "${BLUE}🔄 准备回退到: $snapshot${NC}"
     echo ""
-    
+
     # 显示预览
     show_rollback_preview "$snapshot"
-    
+
     # 非自动模式需要确认
     if [ "$AUTO_MODE" != "--auto" ]; then
         print_warning "═══════════════════════════════════════"
@@ -158,19 +158,19 @@ rollback_to_snapshot() {
         print_warning "═══════════════════════════════════════"
         echo ""
         read -p "确认继续? (yes/NO): " confirm
-        
+
         if [ "$confirm" != "yes" ]; then
             print_info "已取消回退"
             exit 0
         fi
         echo ""
     fi
-    
+
     # 1. 保存当前状态
     print_info "💾 保存当前状态..."
-    
+
     local stash_msg="Before rollback to $snapshot ($(date '+%Y-%m-%d %H:%M:%S'))"
-    
+
     # 保存所有修改（包括未跟踪的文件）
     git add -A
     if git stash push -m "$stash_msg"; then
@@ -178,40 +178,40 @@ rollback_to_snapshot() {
     else
         print_info "没有需要保存的修改"
     fi
-    
+
     echo ""
-    
+
     # 2. 回退到快照
     print_info "⏪ 回退代码到快照..."
-    
+
     if git reset --hard "$snapshot"; then
         print_success "代码已回退"
     else
         print_error "回退失败"
         exit 1
     fi
-    
+
     echo ""
-    
+
     # 3. 显示结果
     print_success "═══════════════════════════════════════"
     print_success "回退完成！"
     print_success "═══════════════════════════════════════"
     echo ""
-    
+
     print_info "📋 当前状态："
     echo "  • 代码已回退到: $snapshot"
     echo "  • 原修改已保存到stash"
     echo "  • Stash消息: $stash_msg"
     echo ""
-    
+
     print_info "🔄 恢复命令（如需要）："
     echo "  git stash list          # 查看所有stash"
     echo "  git stash show          # 查看最近的stash"
     echo "  git stash apply         # 恢复最近的stash（保留stash）"
     echo "  git stash pop           # 恢复并删除stash"
     echo ""
-    
+
     print_info "📸 继续开发建议："
     echo "  1. 验证当前代码是否正常"
     echo "  2. 如需恢复修改: git stash apply"

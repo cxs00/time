@@ -47,29 +47,29 @@ print_warning() {
 # 检查编译错误
 check_compile_errors() {
     cd "$PROJECT_ROOT/time"
-    
+
     print_info "检查编译错误..."
-    
+
     # 尝试编译Mac版本
     local compile_output=$(xcodebuild build \
         -scheme time \
         -destination 'platform=macOS' \
         -quiet 2>&1)
-    
+
     if echo "$compile_output" | grep -i "error:" > /dev/null; then
         print_error "检测到编译错误"
-        
+
         # 提取错误信息
         local error_details=$(echo "$compile_output" | grep -i "error:" | head -5)
         echo "$error_details"
-        
+
         # 记录到日志
         echo "$(date): 编译错误" >> "$ERROR_LOG"
         echo "$error_details" >> "$ERROR_LOG"
-        
+
         return 1
     fi
-    
+
     print_success "编译检查通过"
     return 0
 }
@@ -77,13 +77,13 @@ check_compile_errors() {
 # 检查运行时错误
 check_runtime_errors() {
     print_info "检查运行时错误..."
-    
+
     # 检查TIME应用进程是否存在
     if ! ps aux | grep "TIME.app/Contents/MacOS/TIME" | grep -v grep > /dev/null; then
         print_warning "应用未运行"
         return 0  # 应用未运行不算错误
     fi
-    
+
     # 检查最近的系统日志
     local errors=$(log show \
         --predicate 'processImagePath contains "TIME"' \
@@ -91,19 +91,19 @@ check_runtime_errors() {
         grep -iE "error|crash|exception|fatal" | \
         grep -v "stderr" | \
         wc -l | tr -d ' ')
-    
+
     if [ "$errors" -gt 0 ]; then
         print_error "检测到 $errors 个运行时错误"
-        
+
         # 记录详细错误
         log show --predicate 'processImagePath contains "TIME"' \
             --last 30s 2>/dev/null | \
             grep -iE "error|crash|exception|fatal" | \
             head -5 >> "$ERROR_LOG"
-        
+
         return 1
     fi
-    
+
     print_success "运行时检查通过"
     return 0
 }
@@ -111,19 +111,19 @@ check_runtime_errors() {
 # 触发自动回退
 trigger_auto_rollback() {
     local error_type=$1
-    
+
     echo ""
     print_warning "═══════════════════════════════════════"
     print_error "检测到错误：$error_type"
     print_warning "═══════════════════════════════════════"
     echo ""
-    
+
     # 记录错误
     echo "$(date): $error_type - 触发自动回退" >> "$ERROR_LOG"
-    
+
     # 获取最近的稳定快照
     local latest_snapshot=$(cd "$PROJECT_ROOT" && git tag -l "snapshot-*" --sort=-creatordate | head -1)
-    
+
     if [ -z "$latest_snapshot" ]; then
         print_error "没有可用的快照，无法自动回退"
         print_info "建议："
@@ -131,19 +131,19 @@ trigger_auto_rollback() {
         echo "  2. 手动修复错误"
         return 1
     fi
-    
+
     print_info "找到最近快照: $latest_snapshot"
-    
+
     if [ "$AUTO_ROLLBACK" = true ]; then
         print_warning "准备自动回退..."
         sleep 2
-        
+
         # 执行回退
         "$PROJECT_ROOT/scripts/rollback-to-snapshot.sh" "$latest_snapshot" --auto
-        
+
         # 生成错误报告
         generate_error_report "$error_type" "$latest_snapshot"
-        
+
         print_success "已自动回退到稳定状态"
     else
         print_warning "自动回退已禁用"
@@ -156,7 +156,7 @@ generate_error_report() {
     local error_type=$1
     local snapshot=$2
     local report_file="$PROJECT_ROOT/.error-report-$(date +%Y%m%d-%H%M%S).md"
-    
+
     cat > "$report_file" << EOF
 # 🚨 自动回退报告
 
@@ -230,7 +230,7 @@ $(cd "$PROJECT_ROOT" && git status --short)
 ---
 报告生成时间: $(date)
 EOF
-    
+
     print_success "错误报告已生成: $report_file"
     print_info "查看报告: cat $report_file"
 }
@@ -246,21 +246,21 @@ monitor_continuous() {
     echo ""
     print_warning "按Ctrl+C停止监控"
     echo ""
-    
+
     # 保存PID
     echo $$ > "$PID_FILE"
-    
+
     local check_count=0
-    
+
     while true; do
         check_count=$((check_count + 1))
         echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         print_info "检查 #$check_count ($(date +%H:%M:%S))"
         echo ""
-        
+
         local has_error=false
         local error_type=""
-        
+
         # 检查编译错误
         if [ "$MONITOR_COMPILE" = true ]; then
             if ! check_compile_errors; then
@@ -268,7 +268,7 @@ monitor_continuous() {
                 error_type="编译错误"
             fi
         fi
-        
+
         # 检查运行时错误
         if [ "$has_error" = false ] && [ "$MONITOR_RUNTIME" = true ]; then
             if ! check_runtime_errors; then
@@ -276,20 +276,20 @@ monitor_continuous() {
                 error_type="运行时错误"
             fi
         fi
-        
+
         # 如果有错误，触发回退
         if [ "$has_error" = true ]; then
             trigger_auto_rollback "$error_type"
-            
+
             print_warning "监控已停止，请修复错误后重新启动"
             rm -f "$PID_FILE"
             exit 1
         fi
-        
+
         print_success "所有检查通过"
         echo ""
         print_info "下次检查: $(date -v+${MONITOR_INTERVAL}S +%H:%M:%S)"
-        
+
         sleep $MONITOR_INTERVAL
     done
 }
@@ -298,21 +298,21 @@ monitor_continuous() {
 check_once() {
     print_info "执行一次性检查..."
     echo ""
-    
+
     local has_error=false
-    
+
     if [ "$MONITOR_COMPILE" = true ]; then
         check_compile_errors || has_error=true
     fi
-    
+
     echo ""
-    
+
     if [ "$has_error" = false ] && [ "$MONITOR_RUNTIME" = true ]; then
         check_runtime_errors || has_error=true
     fi
-    
+
     echo ""
-    
+
     if [ "$has_error" = true ]; then
         print_error "检查失败"
         return 1

@@ -76,7 +76,11 @@
       "label": "移动端界面"
     }
   ],
-  "categories": ["productivity", "lifestyle", "utilities"],
+  "categories": [
+    "productivity",
+    "lifestyle",
+    "utilities"
+  ],
   "shortcuts": [
     {
       "name": "快速记录",
@@ -142,4 +146,3 @@
     }
   ]
 }
-

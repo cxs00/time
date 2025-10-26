@@ -39,7 +39,7 @@ const NETWORK_FIRST_URLS = [
  */
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] 安装中...', CACHE_NAME);
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -62,7 +62,7 @@ self.addEventListener('install', (event) => {
  */
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] 激活中...', CACHE_NAME);
-  
+
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -90,41 +90,41 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-  
+
   // 只处理HTTP(S)请求
   if (!request.url.startsWith('http')) {
     return;
   }
-  
+
   // 跳过Chrome扩展请求
   if (url.protocol === 'chrome-extension:') {
     return;
   }
-  
+
   // 对于核心资源，使用缓存优先策略
   if (CORE_ASSETS.includes(url.pathname)) {
     event.respondWith(cacheFirst(request));
     return;
   }
-  
+
   // 对于外部CDN资源，使用网络优先策略
   if (NETWORK_FIRST_URLS.some(netUrl => request.url.includes(netUrl))) {
     event.respondWith(networkFirst(request));
     return;
   }
-  
+
   // 对于API请求，使用网络优先策略
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirst(request));
     return;
   }
-  
+
   // 对于图片资源，使用缓存优先策略
   if (request.destination === 'image') {
     event.respondWith(cacheFirst(request));
     return;
   }
-  
+
   // 默认策略：Stale-While-Revalidate
   event.respondWith(staleWhileRevalidate(request));
 });
@@ -136,12 +136,12 @@ self.addEventListener('fetch', (event) => {
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
-  
+
   if (cached) {
     console.log('[SW] 从缓存返回:', request.url);
     return cached;
   }
-  
+
   try {
     const response = await fetch(request);
     // 只缓存成功的响应
@@ -162,7 +162,7 @@ async function cacheFirst(request) {
  */
 async function networkFirst(request) {
   const cache = await caches.open(RUNTIME_CACHE);
-  
+
   try {
     const response = await fetch(request);
     // 缓存成功的响应
@@ -187,7 +187,7 @@ async function networkFirst(request) {
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(RUNTIME_CACHE);
   const cached = await cache.match(request);
-  
+
   // 后台更新缓存
   const fetchPromise = fetch(request).then((response) => {
     if (response.ok) {
@@ -195,7 +195,7 @@ async function staleWhileRevalidate(request) {
     }
     return response;
   });
-  
+
   // 如果有缓存，立即返回，否则等待网络响应
   return cached || fetchPromise;
 }
@@ -205,11 +205,11 @@ async function staleWhileRevalidate(request) {
  */
 self.addEventListener('message', (event) => {
   console.log('[Service Worker] 收到消息:', event.data);
-  
+
   if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
@@ -221,7 +221,7 @@ self.addEventListener('message', (event) => {
       })
     );
   }
-  
+
   if (event.data.type === 'GET_VERSION') {
     event.ports[0].postMessage({ version: CACHE_NAME });
   }
@@ -232,11 +232,11 @@ self.addEventListener('message', (event) => {
  */
 self.addEventListener('sync', (event) => {
   console.log('[Service Worker] 后台同步:', event.tag);
-  
+
   if (event.tag === 'sync-activities') {
     event.waitUntil(syncActivities());
   }
-  
+
   if (event.tag === 'sync-projects') {
     event.waitUntil(syncProjects());
   }
@@ -247,7 +247,7 @@ self.addEventListener('sync', (event) => {
  */
 self.addEventListener('push', (event) => {
   console.log('[Service Worker] 收到推送:', event);
-  
+
   const options = {
     body: event.data ? event.data.text() : '您有新的活动提醒',
     icon: '/assets/icons/icon-192x192.png',
@@ -260,7 +260,7 @@ self.addEventListener('push', (event) => {
       { action: 'dismiss', title: '关闭' }
     ]
   };
-  
+
   event.waitUntil(
     self.registration.showNotification('Activity Tracker', options)
   );
@@ -271,9 +271,9 @@ self.addEventListener('push', (event) => {
  */
 self.addEventListener('notificationclick', (event) => {
   console.log('[Service Worker] 通知点击:', event.action);
-  
+
   event.notification.close();
-  
+
   if (event.action === 'view') {
     event.waitUntil(
       clients.openWindow('/')
