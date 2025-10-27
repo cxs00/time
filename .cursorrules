@@ -1004,8 +1004,43 @@ git reset --hard HEAD~1  # 回到Step 1完成的状态
 2. 📋 询问用户："是否回退到上一个稳定版本(vX.X.X)？"
 3. ✅ 获得确认后再执行回退
 
+## 🧩 Web资源打包与路径一致性（macOS/iOS）- MUST FOLLOW
+
+### 选择并固定一种资源策略（不可混用）
+
+- 策略A：扁平化拷贝
+  - HTML 引用不带前缀：`<script src="storage.js">`、`<link href="style.css">`
+  - 在 Xcode 中以文件引用方式将 `Web/` 下的 `js/`、`css/` 文件加入 Target，使其被拷贝到 `Contents/Resources` 根目录
+
+- 策略B：保留目录结构（推荐）
+  - HTML 统一使用前缀：`<script src="js/...">`、`<link href="css/...">`
+  - 在 Xcode 使用 Folder Reference（蓝色文件夹）添加 `Web/`，确保包内保留 `Web/js`、`Web/css` 目录
+  - 使用 `loadFileURL(fileURL, allowingReadAccessTo: webDirectory)` 给予整个 Web 目录读取权限
+
+### WebView 加载要求
+- 允许本地文件访问：`allowUniversalAccessFromFileURLs = true`
+- 优先使用 `loadFileURL` 并将 `allowingReadAccessTo` 指向 HTML 所在目录
+- 可选：启动时清理缓存，避免旧版本资源
+
+```swift
+let dataStore = WKWebsiteDataStore.default()
+let types: Set<String> = [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache]
+dataStore.removeData(ofTypes: types, modifiedSince: Date(timeIntervalSince1970: 0)) { }
+```
+
+### 仿真前后一致性检查
+- [ ] 包内（Contents/Resources）资源目录与 HTML 引用一致（策略A根拷贝 / 策略B保留 js、css 目录）
+- [ ] 首次启动显示为最新主题与按钮尺寸
+- [ ] Mac 与 iPhone 仿真均能正常打开，无黑屏
+
+### 故障快速修复
+- [ ] 确认当前采用策略（A 或 B）并保持一致
+- [ ] 修正 HTML 路径（加/去 `js/`、`css/` 前缀）
+- [ ] 清理 WKWebView 缓存并重编译
+- [ ] 检查 Target Membership 与 Folder Reference 设置
+
 ---
 
 **最后更新：** 2025年10月27日
-**版本：** v3.1.0
-**状态：** ✅ 生效中（新增：分步骤Git快照规则）
+**版本：** v3.1.1
+**状态：** ✅ 生效中（新增：分步骤Git快照规则 + Web资源路径一致性）
