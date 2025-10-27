@@ -94,10 +94,13 @@ build_mac_app() {
         
         # 🔧 关键修复：编译后立即复制Web资源到app bundle
         print_step "复制Web资源到应用包..."
-        local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug -name "TIME.app" -type d 2>/dev/null | head -n 1)
+        # 查找Mac应用（可能在Build/Products/Debug或Index.noindex/Build/Products/Debug）
+        local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug ~/Library/Developer/Xcode/DerivedData/time-*/Index.noindex/Build/Products/Debug -name "TIME.app" -type d 2>/dev/null | head -n 1)
         if [ -n "$app_path" ]; then
             local resources_dir="$app_path/Contents/Resources"
             mkdir -p "$resources_dir/Web"
+            
+            print_info "App路径: $app_path"
             
             # 复制整个Web目录到Resources (注意：Web在time子目录中)
             if cp -R "$PROJECT_DIR/time/Web/"* "$resources_dir/Web/" 2>/dev/null; then
@@ -124,8 +127,8 @@ build_mac_app() {
 launch_mac_app() {
     print_step "查找Mac应用..."
 
-    # 查找正确的Build目录（不是Index.noindex）
-    local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug -name "TIME.app" -type d 2>/dev/null | head -n 1)
+    # 查找Mac应用（可能在Build/Products/Debug或Index.noindex/Build/Products/Debug）
+    local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug ~/Library/Developer/Xcode/DerivedData/time-*/Index.noindex/Build/Products/Debug -name "TIME.app" -type d 2>/dev/null | head -n 1)
 
     if [ -z "$app_path" ]; then
         print_error "找不到Mac应用"
