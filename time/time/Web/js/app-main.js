@@ -534,6 +534,10 @@ class ChartManager {
       console.log('📏 设置饼图容器高度为400px');
     }
 
+    // 根据屏幕宽度/容器宽度自适应，避免移动端标签越界
+    const cw = container.clientWidth || window.innerWidth;
+    const isNarrow = cw < 380; // iPhone窄屏
+
     const option = {
       tooltip: {
         trigger: 'item',
@@ -553,9 +557,10 @@ class ChartManager {
         {
           name: '活动时间',
           type: 'pie',
-          radius: ['45%', '70%'],
-          center: ['50%', '55%'],
+          radius: isNarrow ? ['42%', '60%'] : ['45%', '70%'],
+          center: ['50%', isNarrow ? '57%' : '55%'],
           avoidLabelOverlap: true,
+          minAngle: 5,
           itemStyle: {
             borderRadius: 10,
             borderColor: '#fff',
@@ -563,13 +568,18 @@ class ChartManager {
           },
           label: {
             show: true,
+            position: isNarrow ? 'inside' : 'outside',
             formatter: '{d}%',
             fontSize: 11
           },
           labelLine: {
-            show: true,
+            show: !isNarrow,
             length: 10,
             length2: 8
+          },
+          labelLayout: {
+            hideOverlap: true,
+            moveOverlap: 'shiftX'
           },
           emphasis: {
             label: {
