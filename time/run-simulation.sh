@@ -99,8 +99,8 @@ build_mac_app() {
             local resources_dir="$app_path/Contents/Resources"
             mkdir -p "$resources_dir/Web"
             
-            # 复制整个Web目录到Resources
-            if cp -R "$PROJECT_DIR/Web/"* "$resources_dir/Web/" 2>/dev/null; then
+            # 复制整个Web目录到Resources (注意：Web在time子目录中)
+            if cp -R "$PROJECT_DIR/time/Web/"* "$resources_dir/Web/" 2>/dev/null; then
                 print_success "Web资源复制成功"
                 print_info "目标目录: $resources_dir/Web/"
                 # 显示复制的文件数量
@@ -195,8 +195,8 @@ build_iphone_app() {
             # iOS应用资源直接在app根目录
             mkdir -p "$app_path/Web"
             
-            # 复制整个Web目录
-            if cp -R "$PROJECT_DIR/Web/"* "$app_path/Web/" 2>/dev/null; then
+            # 复制整个Web目录 (注意：Web在time子目录中)
+            if cp -R "$PROJECT_DIR/time/Web/"* "$app_path/Web/" 2>/dev/null; then
                 print_success "Web资源复制成功"
                 print_info "目标目录: $app_path/Web/"
                 local file_count=$(find "$app_path/Web" -type f | wc -l | tr -d ' ')
