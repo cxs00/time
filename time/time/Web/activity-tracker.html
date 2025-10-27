@@ -745,6 +745,17 @@
             showToast('UI尺寸已更改');
           });
         }
+
+        // 监听DOM变化，确保后续动态渲染的元素也应用尺寸设置
+        const mo = new MutationObserver(() => {
+          try {
+            const currentSize = localStorage.getItem('app-size') || 'standard';
+            applySize(currentSize);
+          } catch (e) {
+            console.warn('MutationObserver applySize error:', e);
+          }
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
       });
       
       function applyTheme(theme) {
@@ -789,6 +800,10 @@
           }
         });
       }
+
+      // 暴露到window，便于其他模块在渲染后主动调用
+      window.applySize = applySize;
+      window.applyTheme = applyTheme;
     </script>
   </body>
 
