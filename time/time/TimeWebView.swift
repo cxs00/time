@@ -20,6 +20,13 @@ struct TimeWebView: UIViewRepresentable {
         // 允许本地文件访问
         configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
 
+        // 清理缓存，避免旧版本资源造成黑屏/旧界面
+        let dataStore = WKWebsiteDataStore.default()
+        let types: Set<String> = [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache]
+        dataStore.removeData(ofTypes: types, modifiedSince: Date(timeIntervalSince1970: 0)) {
+            print("🧹 macOS: 已清理WKWebView缓存")
+        }
+
         // 创建WebView
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.scrollView.isScrollEnabled = true
