@@ -113,24 +113,22 @@ struct TimeWebView: NSViewRepresentable {
 
         // macOS Resources目录在Contents/Resources下（加载Activity Tracker）
         if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
-            let fileURL = URL(fileURLWithPath: htmlPath)
-
-            // macOS使用整个Web目录作为读取权限（重要！）
-            let webDirectory = fileURL.deletingLastPathComponent()
-
-            print("🖥️ macOS版本 - 正在加载HTML文件")
-            print("   HTML路径: \(htmlPath)")
-            print("   Web目录: \(webDirectory.path)")
-            print("   Bundle资源路径: \(Bundle.main.resourcePath ?? "未知")")
-
-            // 使用loadFileURL方法，允许访问Web目录下的所有资源
-            webView.loadFileURL(fileURL, allowingReadAccessTo: webDirectory)
-
-            // 额外配置确保资源加载
-            webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
-
-            // 设置背景色避免黑屏
-            webView.setValue(false, forKey: "drawsBackground")
+            // 读取并按目标目录结构修正资源引用
+            let dirURL = URL(fileURLWithPath: htmlPath).deletingLastPathComponent()
+            if var html = try? String(contentsOfFile: htmlPath, encoding: .utf8) {
+                let jsDirExists = FileManager.default.fileExists(atPath: dirURL.appendingPathComponent("js").path)
+                // 如存在 js 目录且HTML使用无前缀脚本，则补上 js/
+                if jsDirExists {
+                    html = html.replacingOccurrences(of: "src=\"(?!https?://)(?!js/)", with: "src=\"js/", options: .regularExpression)
+                }
+                print("🖥️ macOS - 从根目录加载并动态修正脚本前缀: jsDir=\(jsDirExists)")
+                webView.loadHTMLString(html, baseURL: dirURL)
+                webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
+                webView.setValue(false, forKey: "drawsBackground")
+            } else {
+                // 兜底：直接按原路径加载
+                webView.loadFileURL(URL(fileURLWithPath: htmlPath), allowingReadAccessTo: dirURL)
+            }
 
         } else if let urlInWeb = Bundle.main.url(forResource: "activity-tracker", withExtension: "html", subdirectory: "Web") {
             // 兼容 Folder Reference: Web/activity-tracker.html

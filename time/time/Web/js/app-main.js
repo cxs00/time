@@ -949,22 +949,19 @@ function initTodayDistributionChart() {
       confine: true
     },
     legend: {
-      type: 'scroll',
       orient: 'horizontal',
-      top: 'bottom',
+      bottom: 5,
       left: 'center',
       itemWidth: 12,
       itemHeight: 12,
-      textStyle: {
-        fontSize: 10
-      }
+      textStyle: { fontSize: 10 }
     },
     series: [{
       name: '活动分布',
       type: 'pie',
-      radius: ['40%', '65%'],
-      center: ['50%', '55%'],
-      avoidLabelOverlap: true,
+      radius: ['30%', '60%'],
+      center: ['50%', '50%'],
+      avoidLabelOverlap: false,
       data: distribution,
       emphasis: {
         itemStyle: {
@@ -975,13 +972,13 @@ function initTodayDistributionChart() {
       },
       label: {
         show: true,
-        formatter: '{d}%',
-        fontSize: 11
+        formatter: '{b}: {c}',
+        fontSize: 10
       },
       labelLine: {
         show: true,
-        length: 10,
-        length2: 8
+        length: 5,
+        length2: 3
       }
     }]
   };
@@ -1037,12 +1034,42 @@ function updateTodayDistributionChart() {
     const chart = window.chartManager.charts.todayDistribution;
     const todayActivities = getTodayActivities();
     const distribution = calculateActivityDistribution(todayActivities);
-
-    chart.setOption({
+    const option = {
+      tooltip: {
+        trigger: 'item',
+        formatter: '{a} <br/>{b}: {c}次 ({d}%)',
+        confine: true
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: 5,
+        left: 'center',
+        itemWidth: 12,
+        itemHeight: 12,
+        textStyle: { fontSize: 10 }
+      },
       series: [{
-        data: distribution
+        name: '活动分布',
+        type: 'pie',
+        radius: ['30%', '60%'],
+        center: ['50%', '50%'],
+        avoidLabelOverlap: false,
+        data: distribution,
+        label: {
+          show: true,
+          formatter: '{b}: {c}',
+          fontSize: 10
+        },
+        labelLine: {
+          show: true,
+          length: 5,
+          length2: 3
+        }
       }]
-    });
+    };
+
+    chart.setOption(option, true); // notMerge，防止样式被合并覆盖
+    chart.resize();
   }
 }
 
