@@ -132,8 +132,17 @@ struct TimeWebView: NSViewRepresentable {
             // 设置背景色避免黑屏
             webView.setValue(false, forKey: "drawsBackground")
 
+        } else if let urlInWeb = Bundle.main.url(forResource: "activity-tracker", withExtension: "html", subdirectory: "Web") {
+            // 兼容 Folder Reference: Web/activity-tracker.html
+            let webDirectory = urlInWeb.deletingLastPathComponent()
+            print("🖥️ macOS版本 - 使用Web子目录加载HTML")
+            print("   HTML路径: \(urlInWeb.path)")
+            print("   Web目录: \(webDirectory.path)")
+            webView.loadFileURL(urlInWeb, allowingReadAccessTo: webDirectory)
+            webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
+            webView.setValue(false, forKey: "drawsBackground")
         } else {
-            print("❌ macOS: 未找到index.html文件")
+            print("❌ macOS: 未找到activity-tracker.html文件（根/或Web子目录均不存在）")
 
             // 显示友好的错误页面
             let errorHTML = """
