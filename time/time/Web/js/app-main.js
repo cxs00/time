@@ -537,18 +537,25 @@ class ChartManager {
     const option = {
       tooltip: {
         trigger: 'item',
-        formatter: '{a} <br/>{b}: {c}分钟 ({d}%)'
+        formatter: '{a} <br/>{b}: {c}分钟 ({d}%)',
+        confine: true
       },
       legend: {
-        orient: 'vertical',
-        left: 'left'
+        type: 'scroll',
+        orient: 'horizontal',
+        bottom: 0,
+        left: 'center',
+        itemWidth: 12,
+        itemHeight: 12,
+        textStyle: { fontSize: 10 }
       },
       series: [
         {
           name: '活动时间',
           type: 'pie',
-          radius: ['40%', '70%'],
-          avoidLabelOverlap: false,
+          radius: ['45%', '70%'],
+          center: ['50%', '55%'],
+          avoidLabelOverlap: true,
           itemStyle: {
             borderRadius: 10,
             borderColor: '#fff',
@@ -556,12 +563,18 @@ class ChartManager {
           },
           label: {
             show: true,
-            formatter: '{b}: {d}%'
+            formatter: '{d}%',
+            fontSize: 11
+          },
+          labelLine: {
+            show: true,
+            length: 10,
+            length2: 8
           },
           emphasis: {
             label: {
               show: true,
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: 'bold'
             }
           },
@@ -922,11 +935,13 @@ function initTodayDistributionChart() {
     },
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}次 ({d}%)'
+      formatter: '{a} <br/>{b}: {c}次 ({d}%)',
+      confine: true
     },
     legend: {
+      type: 'scroll',
       orient: 'horizontal',
-      bottom: 5,
+      top: 'bottom',
       left: 'center',
       itemWidth: 12,
       itemHeight: 12,
@@ -937,8 +952,9 @@ function initTodayDistributionChart() {
     series: [{
       name: '活动分布',
       type: 'pie',
-      radius: ['30%', '60%'],
-      center: ['50%', '50%'],
+      radius: ['40%', '65%'],
+      center: ['50%', '55%'],
+      avoidLabelOverlap: true,
       data: distribution,
       emphasis: {
         itemStyle: {
@@ -949,13 +965,13 @@ function initTodayDistributionChart() {
       },
       label: {
         show: true,
-        formatter: '{b}: {c}',
-        fontSize: 10
+        formatter: '{d}%',
+        fontSize: 11
       },
       labelLine: {
         show: true,
-        length: 5,
-        length2: 3
+        length: 10,
+        length2: 8
       }
     }]
   };
