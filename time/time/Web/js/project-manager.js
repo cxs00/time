@@ -290,8 +290,8 @@ class ProjectManager {
                     </div>
                 ` : ''}
                 <div class="project-actions">
-                    <button class="btn-edit" data-action="edit" data-project-id="${project.id}">编辑</button>
-                    <button class="btn-pause" data-action="toggle" data-project-id="${project.id}">
+                    <button class="btn btn-edit" data-action="edit" data-project-id="${project.id}">编辑</button>
+                    <button class="btn btn-pause" data-action="toggle" data-project-id="${project.id}">
                         ${project.status === 'paused' ? '继续' : '暂停'}
                     </button>
                 </div>

@@ -388,7 +388,7 @@ class DiaryMemoManager {
                         <span class="memo-time">${this.formatTime(memo.createdAt)}</span>
                     </div>
                     <div class="memo-actions">
-                        <button class="btn-delete" onclick="diaryMemoManager.deleteMemo('${memo.id}')">🗑️</button>
+                        <button class="btn btn-delete" onclick="diaryMemoManager.deleteMemo('${memo.id}')">🗑️</button>
                     </div>
                 </div>
             `)
