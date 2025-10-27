@@ -169,6 +169,8 @@ check_completeness() {
     local required_sections=(
         "元规则"
         "检查点"
+        "PWA功能集成"
+        "新功能开发"
         "代码设计规范"
         "自动化.*验证"
     )
@@ -185,6 +187,46 @@ check_completeness() {
         record_pass "规则完整性检查通过"
     else
         record_issue "缺少 $missing 个必要章节"
+    fi
+}
+
+# 检查PWA集成规则
+check_pwa_integration_rules() {
+    print_info "检查PWA集成规则..."
+
+    local pwa_checks=0
+    local pwa_issues=0
+
+    # 检查是否包含PWA检查点
+    if grep -q "PWA功能集成.*CRITICAL" "$RULES_FILE"; then
+        ((pwa_checks++))
+        print_success "  PWA检查点存在"
+    else
+        ((pwa_issues++))
+        print_warning "  缺少PWA检查点"
+    fi
+
+    # 检查PWA文件清单
+    local pwa_files=(
+        "service-worker\.js"
+        "pwa-register\.js"
+        "manifest\.json"
+        "offline\.html"
+    )
+
+    for file in "${pwa_files[@]}"; do
+        if grep -q "$file" "$RULES_FILE"; then
+            ((pwa_checks++))
+        else
+            ((pwa_issues++))
+            print_warning "  缺少PWA文件：$file"
+        fi
+    done
+
+    if [ $pwa_issues -eq 0 ]; then
+        record_pass "PWA集成规则完整"
+    else
+        record_issue "PWA集成规则缺少 $pwa_issues 项"
     fi
 }
 
@@ -212,6 +254,7 @@ run_validation() {
     check_doc_links
     check_rule_conflicts
     check_completeness
+    check_pwa_integration_rules
     check_markdown_syntax
 
     # 显示结果
