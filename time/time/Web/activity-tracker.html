@@ -7,6 +7,13 @@
     <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
     <title>Activity Tracker - 智能活动记录</title>
 
+    <!-- PWA配置 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Activity Tracker">
+
     <!-- 安全头部 -->
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
@@ -805,6 +812,9 @@
       window.applySize = applySize;
       window.applyTheme = applyTheme;
     </script>
+
+    <!-- PWA注册脚本 -->
+    <script src="js/pwa-register.js"></script>
   </body>
 
 </html>
