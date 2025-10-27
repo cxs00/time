@@ -27,7 +27,6 @@
 		ABC70D4A2EA3E6CE00466629 /* TIME.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TIME.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABC70D592EA3E6D100466629 /* timeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = timeTests.xctest; path = TIME.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABC70D632EA3E6D100466629 /* timeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = timeUITests.xctest; path = TIME.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		75CC909FA8194D33AC067BA6 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -80,8 +79,7 @@
 				ABC70D5C2EA3E6D100466629 /* timeTests */,
 				ABC70D662EA3E6D100466629 /* timeUITests */,
 				ABC70D4B2EA3E6CE00466629 /* Products */,
-							75CC909FA8194D33AC067BA6 /* Web */,
-);
+			);
 			sourceTree = "<group>";
 		};
 		ABC70D4B2EA3E6CE00466629 /* Products */ = {
@@ -214,8 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-							095C61EB35DD4EC1B5E57920 /* Web in Resources */,
-);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		ABC70D572EA3E6D100466629 /* Resources */ = {
