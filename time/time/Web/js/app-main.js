@@ -298,6 +298,13 @@ class App {
         if (window.smartActivityTracker) {
           window.smartActivityTracker.updateUI();
         }
+        // 🔧 修复：切换回记录页面时，刷新饼状图（确保样式不回退）
+        setTimeout(() => {
+          if (typeof updateTodayDistributionChart === 'function') {
+            updateTodayDistributionChart();
+            console.log('✅ 记录页饼状图已刷新');
+          }
+        }, 100);
         break;
       case 'projects':
         console.log('🎯 更新项目页面UI');
