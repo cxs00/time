@@ -23,15 +23,11 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXBuildFile section */
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		ABC70D4A2EA3E6CE00466629 /* TIME.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TIME.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABC70D592EA3E6D100466629 /* timeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = timeTests.xctest; path = TIME.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABC70D632EA3E6D100466629 /* timeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = timeUITests.xctest; path = TIME.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75CC909FA8194D33AC067BA6 /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Web; sourceTree = "<group>"; };
-		22C0E048B74248E0963939BE /* Web */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Web; path = time/Web; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -53,20 +49,6 @@
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		974287B5011D4C878F74B0B4 /* Copy Web Resources */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-				CAD235B3278C48E8B9D26B00 /* Web in Copy Web Resources */,
-			);
-			name = "Copy Web Resources";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		ABC70D472EA3E6CE00466629 /* Frameworks */ = {
@@ -120,8 +102,7 @@
 		ABC70D492EA3E6CE00466629 /* time */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = ABC70D6D2EA3E6D100466629 /* Build configuration list for PBXNativeTarget "time" */;
-			buildPhases = (				974287B5011D4C878F74B0B4 /* Copy Web Resources */,
-
+			buildPhases = (
 				ABC70D462EA3E6CE00466629 /* Sources */,
 				ABC70D472EA3E6CE00466629 /* Frameworks */,
 				ABC70D482EA3E6CE00466629 /* Resources */,

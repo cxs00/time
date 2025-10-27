@@ -91,6 +91,28 @@ build_mac_app() {
         -destination 'platform=macOS' \
         -quiet; then
         print_success "Mac应用编译成功"
+        
+        # 🔧 关键修复：编译后立即复制Web资源到app bundle
+        print_step "复制Web资源到应用包..."
+        local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug -name "TIME.app" -type d 2>/dev/null | head -n 1)
+        if [ -n "$app_path" ]; then
+            local resources_dir="$app_path/Contents/Resources"
+            mkdir -p "$resources_dir/Web"
+            
+            # 复制整个Web目录到Resources
+            if cp -R "$PROJECT_DIR/Web/"* "$resources_dir/Web/" 2>/dev/null; then
+                print_success "Web资源复制成功"
+                print_info "目标目录: $resources_dir/Web/"
+                # 显示复制的文件数量
+                local file_count=$(find "$resources_dir/Web" -type f | wc -l | tr -d ' ')
+                print_info "已复制 $file_count 个文件"
+            else
+                print_warning "Web资源复制失败，应用可能黑屏"
+            fi
+        else
+            print_warning "找不到应用包，跳过资源复制"
+        fi
+        
         return 0
     else
         print_error "Mac应用编译失败"
@@ -165,6 +187,27 @@ build_iphone_app() {
         -destination "platform=iOS Simulator,name=$SIMULATOR_NAME" \
         -quiet; then
         print_success "iPhone应用编译成功"
+        
+        # 🔧 关键修复：编译后立即复制Web资源到app bundle
+        print_step "复制Web资源到应用包..."
+        local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug-iphonesimulator -name "TIME.app" -type d 2>/dev/null | head -n 1)
+        if [ -n "$app_path" ]; then
+            # iOS应用资源直接在app根目录
+            mkdir -p "$app_path/Web"
+            
+            # 复制整个Web目录
+            if cp -R "$PROJECT_DIR/Web/"* "$app_path/Web/" 2>/dev/null; then
+                print_success "Web资源复制成功"
+                print_info "目标目录: $app_path/Web/"
+                local file_count=$(find "$app_path/Web" -type f | wc -l | tr -d ' ')
+                print_info "已复制 $file_count 个文件"
+            else
+                print_warning "Web资源复制失败"
+            fi
+        else
+            print_warning "找不到应用包，跳过资源复制"
+        fi
+        
         return 0
     else
         print_error "iPhone应用编译失败"
