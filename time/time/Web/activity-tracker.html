@@ -496,6 +496,28 @@
         <section class="settings-card card">
           <h3 class="card-title">⚙️ 设置</h3>
           <div class="settings-content">
+            <!-- 主题设置 -->
+            <div class="setting-item">
+              <label>🎨 界面主题</label>
+              <select id="themeSelect" class="select-input" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0;">
+                <option value="default">默认主题</option>
+                <option value="starry-night">✨ 星夜</option>
+                <option value="water-lilies">💧 睡莲</option>
+              </select>
+            </div>
+
+            <!-- UI尺寸设置 -->
+            <div class="setting-item">
+              <label>📐 UI尺寸</label>
+              <select id="sizeSelect" class="select-input" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0;">
+                <option value="standard">标准</option>
+                <option value="large">大</option>
+                <option value="extra-large">超大</option>
+              </select>
+            </div>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+
             <div class="setting-item">
               <label>数据导出</label>
               <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
@@ -689,6 +711,83 @@
     <script src="diary-memo.js"></script>
     <script src="statistics.js"></script>
     <script src="app-main.js"></script>
+    
+    <!-- 主题和UI尺寸切换 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeSelect = document.getElementById('themeSelect');
+        const sizeSelect = document.getElementById('sizeSelect');
+        
+        // 加载保存的设置
+        const savedTheme = localStorage.getItem('app-theme') || 'default';
+        const savedSize = localStorage.getItem('app-size') || 'standard';
+        
+        if (themeSelect) {
+          themeSelect.value = savedTheme;
+          applyTheme(savedTheme);
+          
+          themeSelect.addEventListener('change', function() {
+            const theme = this.value;
+            applyTheme(theme);
+            localStorage.setItem('app-theme', theme);
+            showToast('主题已切换');
+          });
+        }
+        
+        if (sizeSelect) {
+          sizeSelect.value = savedSize;
+          applySize(savedSize);
+          
+          sizeSelect.addEventListener('change', function() {
+            const size = this.value;
+            applySize(size);
+            localStorage.setItem('app-size', size);
+            showToast('UI尺寸已更改');
+          });
+        }
+      });
+      
+      function applyTheme(theme) {
+        document.body.className = document.body.className.replace(/theme-\S+/g, '');
+        if (theme !== 'default') {
+          document.body.classList.add('theme-' + theme);
+        }
+        
+        if (theme === 'starry-night') {
+          document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%)';
+        } else if (theme === 'water-lilies') {
+          document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else {
+          document.body.style.background = '';
+        }
+      }
+      
+      function applySize(size) {
+        const sizes = {
+          'standard': { input: '48px', button: '48px', font: '16px', padding: '14px 18px' },
+          'large': { input: '54px', button: '54px', font: '17px', padding: '16px 20px' },
+          'extra-large': { input: '60px', button: '60px', font: '18px', padding: '18px 22px' }
+        };
+        
+        const config = sizes[size] || sizes.standard;
+        
+        // 直接应用到所有输入框和按钮
+        const inputs = document.querySelectorAll('.activity-input, input[type="text"], textarea, select');
+        inputs.forEach(el => {
+          el.style.minHeight = config.input;
+          el.style.fontSize = config.font;
+          el.style.padding = config.padding;
+        });
+        
+        const buttons = document.querySelectorAll('.btn, button');
+        buttons.forEach(el => {
+          if (!el.closest('#debugPanel')) {
+            el.style.minHeight = config.button;
+            el.style.fontSize = config.font;
+          }
+        });
+      }
+    </script>
   </body>
 
 </html>

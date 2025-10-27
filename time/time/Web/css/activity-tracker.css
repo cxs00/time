@@ -1250,3 +1250,33 @@ body {
         width: 100%;
     }
 }
+
+/* ==================== 主题样式 ==================== */
+
+/* 星夜主题 */
+body.theme-starry-night .card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(31, 58, 138, 0.37);
+}
+
+body.theme-starry-night .navbar {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+body.theme-starry-night .nav-link.active {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+}
+
+/* 睡莲主题 */
+body.theme-water-lilies .card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+body.theme-water-lilies .navbar {
+    background: rgba(102, 126, 234, 0.9);
+    backdrop-filter: blur(10px);
+}
