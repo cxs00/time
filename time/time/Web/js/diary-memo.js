@@ -278,14 +278,13 @@ class DiaryMemoManager {
 
   // 渲染历史日记列表
   renderDiaryList() {
-    console.log('📖 渲染历史日记列表');
+    console.log('📖 渲染历史日记列表（独立青色边框卡片）');
 
     const container = document.getElementById('diaryList');
     console.log('🔍 查找日记列表容器:', container ? '找到' : '未找到');
 
     if (!container) {
       console.warn('⚠️ 日记列表容器不存在，尝试创建...');
-      // 如果容器不存在，尝试找到父容器并添加
       const diarySection = document.querySelector('.diary-history-card');
       if (diarySection) {
         const newContainer = document.createElement('div');
@@ -293,7 +292,7 @@ class DiaryMemoManager {
         newContainer.id = 'diaryList';
         diarySection.appendChild(newContainer);
         console.log('✅ 已创建日记列表容器');
-        return this.renderDiaryList(); // 递归调用
+        return this.renderDiaryList();
       } else {
         console.error('❌ 无法找到日记历史卡片容器');
         return;
@@ -311,14 +310,18 @@ class DiaryMemoManager {
       new Date(b.date) - new Date(a.date)
     );
 
-    container.innerHTML = sortedDiaries.map(diary => `
-      <div class="diary-item">
+    container.innerHTML = sortedDiaries.map((diary, index) => `
+      <div class="diary-item" data-diary-id="${diary.id || index}">
         <div class="diary-item-header">
-          <h4>${diary.title || '日记'}</h4>
-          <span class="diary-date">${this.formatDate(new Date(diary.date))}</span>
+          <h4>${diary.title || '无标题日记'}</h4>
+          <div class="diary-item-actions">
+            <button class="btn-edit-diary" onclick="window.diaryMemoManager.editDiary(${index})">✏️ 编辑</button>
+            <button class="btn-delete-diary" onclick="window.diaryMemoManager.deleteDiary(${index})">🗑️ 删除</button>
+          </div>
         </div>
-        <div class="diary-mood">${diary.mood || '😊'}</div>
-        <div class="diary-preview">${(diary.content || '').substring(0, 100)}${diary.content && diary.content.length > 100 ? '...' : ''}</div>
+        <span class="diary-date">${diary.date}</span>
+        <span class="diary-mood">${diary.mood || '😊'}</span>
+        <div class="diary-content">${diary.content || '暂无内容'}</div>
         ${diary.tags && diary.tags.length > 0 ? `
           <div class="diary-tags">
             ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
@@ -327,7 +330,74 @@ class DiaryMemoManager {
       </div>
     `).join('');
 
-    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记`);
+    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记（完整内容+青色边框）`);
+  }
+
+  // 编辑日记
+  editDiary(index) {
+    console.log(`✏️ 编辑日记: ${index}`);
+    const sortedDiaries = [...this.diaries].sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+    const diary = sortedDiaries[index];
+    
+    if (!diary) {
+      console.error('❌ 日记不存在');
+      return;
+    }
+
+    // 切换到日记页面
+    const diaryTab = document.querySelector('[data-page="diary"]');
+    if (diaryTab) {
+      diaryTab.click();
+    }
+
+    // 填充到今日日记编辑器
+    setTimeout(() => {
+      const contentElement = document.getElementById('diaryContent');
+      const moodElement = document.getElementById('moodSelect');
+      
+      if (contentElement) {
+        contentElement.value = diary.content || '';
+      }
+      if (moodElement) {
+        moodElement.value = diary.mood || '😊';
+      }
+
+      // 滚动到今日日记区域
+      const diaryCard = document.querySelector('.diary-card');
+      if (diaryCard) {
+        diaryCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      alert(`正在编辑：${diary.title || '日记'}\n\n编辑完成后点击"💾 保存"按钮保存修改`);
+    }, 100);
+  }
+
+  // 删除日记
+  deleteDiary(index) {
+    console.log(`🗑️ 删除日记: ${index}`);
+    const sortedDiaries = [...this.diaries].sort((a, b) =>
+      new Date(b.date) - new Date(a.date)
+    );
+    const diary = sortedDiaries[index];
+    
+    if (!diary) {
+      console.error('❌ 日记不存在');
+      return;
+    }
+
+    if (confirm(`确定要删除「${diary.title || '日记'}」吗？\n\n删除后无法恢复！`)) {
+      // 从原始数组中找到并删除
+      const originalIndex = this.diaries.findIndex(d => d.date === diary.date);
+      if (originalIndex !== -1) {
+        this.diaries.splice(originalIndex, 1);
+        this.saveDiaries();
+        this.renderDiaryList();
+        console.log('✅ 日记已删除');
+        alert('✅ 日记已成功删除！');
+      }
+    }
   }
 
   // 加载今天的日记
