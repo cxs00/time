@@ -949,21 +949,27 @@ body {
     font-size: 0.9rem;
 }
 
-/* ==================== 历史日记独立卡片样式（青色边框）==================== */
+/* ==================== 方案5：双层卡片效果（精致层次感）==================== */
+/* 外层卡片 - 青色渐变背景 */
 .diary-item {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(93, 173, 226, 0.15), rgba(109, 213, 237, 0.15));
+    border-radius: 12px;
+    padding: 3px;
     margin-bottom: 1.5rem;
-    /* 青色左边框 - 关键！ */
-    border-left: 4px solid #5dade2;
-    box-shadow: 0 2px 10px rgba(93, 173, 226, 0.25);
     transition: all 0.3s ease;
 }
 
 .diary-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 4px 15px rgba(93, 173, 226, 0.35);
+    background: linear-gradient(135deg, rgba(93, 173, 226, 0.25), rgba(109, 213, 237, 0.25));
+    transform: scale(1.01);
+}
+
+/* 内层卡片 - 白色内容区 */
+.diary-item-inner {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 1px solid rgba(93, 173, 226, 0.3);
 }
 
 /* 标题和按钮头部 */
@@ -1006,6 +1012,7 @@ body {
 .btn-edit-diary:hover {
     background: #2980b9;
     transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
 }
 
 .btn-delete-diary {
@@ -1016,22 +1023,23 @@ body {
 .btn-delete-diary:hover {
     background: #c0392b;
     transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
 /* 日期样式 */
 .diary-item .diary-date {
     display: block;
-    font-size: 0.95rem;
-    color: #7f8c8d;
-    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
 }
 
 /* 心情样式 */
 .diary-item .diary-mood {
     display: block;
     font-size: 1rem;
-    color: #555;
-    margin-bottom: 0.75rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
 }
 
 /* 完整内容显示 */
@@ -1040,7 +1048,7 @@ body {
     line-height: 1.8;
     margin: 1rem 0;
     white-space: pre-wrap;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 /* 标签容器 */
@@ -1049,14 +1057,25 @@ body {
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(93, 173, 226, 0.2);
 }
 
 .diary-item .tag {
     padding: 0.3rem 0.8rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #2c3e50;
     color: white;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 0.85rem;
+}
+
+/* 底部按钮区域 */
+.diary-item-footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(93, 173, 226, 0.2);
 }
 
 /* 兼容旧的 diary-preview 样式（如果存在） */

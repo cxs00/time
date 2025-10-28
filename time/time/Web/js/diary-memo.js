@@ -278,7 +278,7 @@ class DiaryMemoManager {
 
   // 渲染历史日记列表
   renderDiaryList() {
-    console.log('📖 渲染历史日记列表（独立青色边框卡片）');
+    console.log('📖 渲染历史日记列表（方案5：双层卡片效果）');
 
     const container = document.getElementById('diaryList');
     console.log('🔍 查找日记列表容器:', container ? '找到' : '未找到');
@@ -310,27 +310,30 @@ class DiaryMemoManager {
       new Date(b.date) - new Date(a.date)
     );
 
+    // 双层卡片结构
     container.innerHTML = sortedDiaries.map((diary, index) => `
       <div class="diary-item" data-diary-id="${diary.id || index}">
-        <div class="diary-item-header">
-          <h4>${diary.title || '无标题日记'}</h4>
-          <div class="diary-item-actions">
-            <button class="btn-edit-diary" onclick="window.diaryMemoManager.editDiary(${index})">✏️ 编辑</button>
-            <button class="btn-delete-diary" onclick="window.diaryMemoManager.deleteDiary(${index})">🗑️ 删除</button>
+        <div class="diary-item-inner">
+          <div class="diary-item-header">
+            <h4>${diary.title || '无标题日记'}</h4>
+            <div class="diary-item-actions">
+              <button class="btn-edit-diary" onclick="window.diaryMemoManager.editDiary(${index})">✏️ 编辑</button>
+              <button class="btn-delete-diary" onclick="window.diaryMemoManager.deleteDiary(${index})">🗑️ 删除</button>
+            </div>
           </div>
+          <span class="diary-date">${diary.date}</span>
+          <span class="diary-mood">${diary.mood || '😊'}</span>
+          <div class="diary-content">${diary.content || '暂无内容'}</div>
+          ${diary.tags && diary.tags.length > 0 ? `
+            <div class="diary-tags">
+              ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+          ` : ''}
         </div>
-        <span class="diary-date">${diary.date}</span>
-        <span class="diary-mood">${diary.mood || '😊'}</span>
-        <div class="diary-content">${diary.content || '暂无内容'}</div>
-        ${diary.tags && diary.tags.length > 0 ? `
-          <div class="diary-tags">
-            ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-          </div>
-        ` : ''}
       </div>
     `).join('');
 
-    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记（完整内容+青色边框）`);
+    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记（双层卡片+编辑删除按钮）`);
   }
 
   // 编辑日记
@@ -370,7 +373,7 @@ class DiaryMemoManager {
         diaryCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
-      alert(`正在编辑：${diary.title || '日记'}\n\n编辑完成后点击"💾 保存"按钮保存修改`);
+      alert(`✏️ 正在编辑：${diary.title || '日记'}\n\n编辑完成后点击"💾 保存"按钮保存修改`);
     }, 100);
   }
 
@@ -387,7 +390,7 @@ class DiaryMemoManager {
       return;
     }
 
-    if (confirm(`确定要删除「${diary.title || '日记'}」吗？\n\n删除后无法恢复！`)) {
+    if (confirm(`🗑️ 确定要删除「${diary.title || '日记'}」吗？\n\n⚠️ 删除后无法恢复！`)) {
       // 从原始数组中找到并删除
       const originalIndex = this.diaries.findIndex(d => d.date === diary.date);
       if (originalIndex !== -1) {

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史日记效果选择 - 5种设计方案</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: white;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .subtitle {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+      }
+
+      .effect-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .effect-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s;
+      }
+
+      .effect-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .effect-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .effect-number {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .select-btn {
+        padding: 0.6rem 1.5rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
+
+      .select-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .effect-description {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      /* ========== 效果1: 四周青色边框（您图片中的效果）========== */
+      .diary-item-1 {
+        background: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border: 3px solid #5dade2;
+        box-shadow: 0 2px 8px rgba(93, 173, 226, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .diary-item-1:hover {
+        box-shadow: 0 4px 12px rgba(93, 173, 226, 0.35);
+        transform: translateY(-2px);
+      }
+
+      /* ========== 效果2: 左边框+深阴影 ========== */
+      .diary-item-2 {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-left: 5px solid #5dade2;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .diary-item-2:hover {
+        transform: translateX(5px);
+        box-shadow: 0 6px 20px rgba(93, 173, 226, 0.3);
+      }
+
+      /* ========== 效果3: 渐变边框 ========== */
+      .diary-item-3 {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .diary-item-3::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 12px;
+        padding: 3px;
+        background: linear-gradient(135deg, #5dade2, #6dd5ed);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
+
+      .diary-item-3:hover {
+        transform: scale(1.02);
+      }
+
+      /* ========== 效果4: 顶部彩条+卡片阴影 ========== */
+      .diary-item-4 {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-top: 4px solid #5dade2;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .diary-item-4:hover {
+        box-shadow: 0 8px 30px rgba(93, 173, 226, 0.2);
+        transform: translateY(-3px);
+      }
+
+      /* ========== 效果5: 双层卡片（卡中卡）========== */
+      .diary-item-5 {
+        background: linear-gradient(135deg, rgba(93, 173, 226, 0.1), rgba(109, 213, 237, 0.1));
+        border-radius: 12px;
+        padding: 3px;
+        margin-bottom: 1rem;
+      }
+
+      .diary-item-5-inner {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        border: 1px solid rgba(93, 173, 226, 0.3);
+      }
+
+      .diary-item-5:hover {
+        background: linear-gradient(135deg, rgba(93, 173, 226, 0.2), rgba(109, 213, 237, 0.2));
+      }
+
+      /* ========== 通用样式 ========== */
+      .diary-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+
+      .diary-date {
+        font-size: 1rem;
+        color: #2c3e50;
+        margin-bottom: 0.3rem;
+        display: block;
+      }
+
+      .diary-mood {
+        font-size: 1rem;
+        color: #2c3e50;
+        margin-bottom: 0.8rem;
+        display: block;
+      }
+
+      .diary-content {
+        font-size: 0.95rem;
+        color: #34495e;
+        line-height: 1.8;
+        margin-bottom: 0.8rem;
+      }
+
+      .diary-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .tag {
+        padding: 0.3rem 0.8rem;
+        background: #2c3e50;
+        color: white;
+        border-radius: 4px;
+        font-size: 0.85rem;
+      }
+
+      .diary-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .btn {
+        padding: 0.4rem 0.9rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+      }
+
+      .btn-edit {
+        background: #3498db;
+        color: white;
+      }
+
+      .btn-edit:hover {
+        background: #2980b9;
+      }
+
+      .btn-delete {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .btn-delete:hover {
+        background: #c0392b;
+      }
+
+      @media (max-width: 1100px) {
+        .effect-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>📚 历史日记效果选择</h1>
+      <p class="subtitle">请选择您最喜欢的卡片设计风格</p>
+
+      <div class="effect-grid">
+        <!-- 效果1 -->
+        <div class="effect-card">
+          <div class="effect-header">
+            <span class="effect-number">方案 1️⃣</span>
+            <button class="select-btn" onclick="selectEffect(1)">✅ 选择此方案</button>
+          </div>
+          <div class="effect-description">
+            <strong>四周青色边框</strong> - 经典卡片风格<br>
+            特点：四周统一边框，清晰的视觉边界，悬停时轻微上浮
+          </div>
+
+          <div class="diary-item-1">
+            <div class="diary-title">高效的一天</div>
+            <span class="diary-date">2025-10-27</span>
+            <span class="diary-mood">开心</span>
+            <div class="diary-content">今天完成了React组件的开发，感觉非常高效和满足。AI分类器表现出色，准确识别了我的工作内容。</div>
+            <div class="diary-tags">
+              <span class="tag">工作</span>
+              <span class="tag">高效</span>
+              <span class="tag">React</span>
+            </div>
+          </div>
+
+          <div class="diary-item-1">
+            <div class="diary-title">轻松的周末</div>
+            <span class="diary-date">2025-10-25</span>
+            <span class="diary-mood">放松</span>
+            <div class="diary-content">周末和朋友一起看了电影，放松了一下。</div>
+            <div class="diary-tags">
+              <span class="tag">娱乐</span>
+              <span class="tag">朋友</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 效果2 -->
+        <div class="effect-card">
+          <div class="effect-header">
+            <span class="effect-number">方案 2️⃣</span>
+            <button class="select-btn" onclick="selectEffect(2)">✅ 选择此方案</button>
+          </div>
+          <div class="effect-description">
+            <strong>左侧强调边框</strong> - 现代简约风格<br>
+            特点：左侧粗边框突出，悬停时向右滑动，更深的阴影效果
+          </div>
+
+          <div class="diary-item-2">
+            <div class="diary-title">高效的一天</div>
+            <span class="diary-date">2025-10-27</span>
+            <span class="diary-mood">开心</span>
+            <div class="diary-content">今天完成了React组件的开发，感觉非常高效和满足。AI分类器表现出色，准确识别了我的工作内容。</div>
+            <div class="diary-tags">
+              <span class="tag">工作</span>
+              <span class="tag">高效</span>
+              <span class="tag">React</span>
+            </div>
+          </div>
+
+          <div class="diary-item-2">
+            <div class="diary-title">轻松的周末</div>
+            <span class="diary-date">2025-10-25</span>
+            <span class="diary-mood">放松</span>
+            <div class="diary-content">周末和朋友一起看了电影，放松了一下。</div>
+            <div class="diary-tags">
+              <span class="tag">娱乐</span>
+              <span class="tag">朋友</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 效果3 -->
+        <div class="effect-card">
+          <div class="effect-header">
+            <span class="effect-number">方案 3️⃣</span>
+            <button class="select-btn" onclick="selectEffect(3)">✅ 选择此方案</button>
+          </div>
+          <div class="effect-description">
+            <strong>渐变光晕边框</strong> - 高级设计感<br>
+            特点：青蓝色渐变边框，科技感十足，悬停时轻微缩放
+          </div>
+
+          <div class="diary-item-3">
+            <div class="diary-title">高效的一天</div>
+            <span class="diary-date">2025-10-27</span>
+            <span class="diary-mood">开心</span>
+            <div class="diary-content">今天完成了React组件的开发，感觉非常高效和满足。AI分类器表现出色，准确识别了我的工作内容。</div>
+            <div class="diary-tags">
+              <span class="tag">工作</span>
+              <span class="tag">高效</span>
+              <span class="tag">React</span>
+            </div>
+          </div>
+
+          <div class="diary-item-3">
+            <div class="diary-title">轻松的周末</div>
+            <span class="diary-date">2025-10-25</span>
+            <span class="diary-mood">放松</span>
+            <div class="diary-content">周末和朋友一起看了电影，放松了一下。</div>
+            <div class="diary-tags">
+              <span class="tag">娱乐</span>
+              <span class="tag">朋友</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 效果4 -->
+        <div class="effect-card">
+          <div class="effect-header">
+            <span class="effect-number">方案 4️⃣</span>
+            <button class="select-btn" onclick="selectEffect(4)">✅ 选择此方案</button>
+          </div>
+          <div class="effect-description">
+            <strong>顶部彩条标记</strong> - 清爽简洁风格<br>
+            特点：顶部青色标记条，轻阴影，悬停时上浮效果
+          </div>
+
+          <div class="diary-item-4">
+            <div class="diary-title">高效的一天</div>
+            <span class="diary-date">2025-10-27</span>
+            <span class="diary-mood">开心</span>
+            <div class="diary-content">今天完成了React组件的开发，感觉非常高效和满足。AI分类器表现出色，准确识别了我的工作内容。</div>
+            <div class="diary-tags">
+              <span class="tag">工作</span>
+              <span class="tag">高效</span>
+              <span class="tag">React</span>
+            </div>
+          </div>
+
+          <div class="diary-item-4">
+            <div class="diary-title">轻松的周末</div>
+            <span class="diary-date">2025-10-25</span>
+            <span class="diary-mood">放松</span>
+            <div class="diary-content">周末和朋友一起看了电影，放松了一下。</div>
+            <div class="diary-tags">
+              <span class="tag">娱乐</span>
+              <span class="tag">朋友</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 效果5 -->
+        <div class="effect-card">
+          <div class="effect-header">
+            <span class="effect-number">方案 5️⃣</span>
+            <button class="select-btn" onclick="selectEffect(5)">✅ 选择此方案</button>
+          </div>
+          <div class="effect-description">
+            <strong>双层卡片效果</strong> - 精致层次感<br>
+            特点：外层青色渐变背景，内层白色卡片，悬停时外层颜色加深
+          </div>
+
+          <div class="diary-item-5">
+            <div class="diary-item-5-inner">
+              <div class="diary-title">高效的一天</div>
+              <span class="diary-date">2025-10-27</span>
+              <span class="diary-mood">开心</span>
+              <div class="diary-content">今天完成了React组件的开发，感觉非常高效和满足。AI分类器表现出色，准确识别了我的工作内容。</div>
+              <div class="diary-tags">
+                <span class="tag">工作</span>
+                <span class="tag">高效</span>
+                <span class="tag">React</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="diary-item-5">
+            <div class="diary-item-5-inner">
+              <div class="diary-title">轻松的周末</div>
+              <span class="diary-date">2025-10-25</span>
+              <span class="diary-mood">放松</span>
+              <div class="diary-content">周末和朋友一起看了电影，放松了一下。</div>
+              <div class="diary-tags">
+                <span class="tag">娱乐</span>
+                <span class="tag">朋友</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: white; border-radius: 20px; padding: 2rem; margin-top: 2rem; text-align: center;">
+        <h2 style="color: #667eea; margin-bottom: 1rem;">💡 如何选择？</h2>
+        <p style="color: #666; line-height: 1.8; max-width: 800px; margin: 0 auto;">
+          每种方案都有独特的视觉风格。<strong>方案1</strong>最接近您提供的参考图，
+          <strong>方案2</strong>是我之前实现的左边框版本，
+          <strong>方案3-5</strong>是更有设计感的创新方案。
+          <br><br>
+          请点击您喜欢的方案的"✅ 选择此方案"按钮，我将立即应用到实际项目中！
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function selectEffect(num) {
+        const effects = {
+          1: '四周青色边框（经典卡片）',
+          2: '左侧强调边框（现代简约）',
+          3: '渐变光晕边框（高级设计）',
+          4: '顶部彩条标记（清爽简洁）',
+          5: '双层卡片效果（精致层次）'
+        };
+
+        if (confirm(`确定选择 方案${num}：${effects[num]} 吗？\n\n点击确定后，我将应用此设计到您的项目中。`)) {
+          alert(`✅ 已选择方案${num}！\n\n请在聊天窗口告诉AI："我选择方案${num}"，AI会立即实施。`);
+        }
+      }
+    </script>
+  </body>
+
+</html>
