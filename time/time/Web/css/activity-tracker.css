@@ -482,11 +482,155 @@ body {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
     padding: 1rem 0;
 }
 
+/* 项目表单卡片样式 */
+.project-card-form {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s;
+}
+
+.project-card-form:hover {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.project-card-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.project-card-form .form-group:last-of-type {
+    margin-bottom: 1rem;
+}
+
+.project-card-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.project-card-form .form-value {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.project-card-form .project-name-display {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.project-card-form .status-display {
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    justify-content: center;
+}
+
+.project-card-form .status-display.active {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    color: #1976d2;
+}
+
+.project-card-form .status-display.completed {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    color: #388e3c;
+}
+
+.project-card-form .status-display.paused {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    color: #f57c00;
+}
+
+.project-progress-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.progress-bar-form {
+    flex: 1;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill-form {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.progress-text-form {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #667eea;
+    min-width: 50px;
+    text-align: right;
+}
+
+.milestones-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.milestone-item {
+    padding: 0.4rem 0.8rem;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+
+.milestone-item.completed {
+    border-color: #4caf50;
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.milestone-item.active {
+    border-color: #2196f3;
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #f0f0f0;
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+/* 兼容旧的project-card样式（如果有其他地方还在使用） */
 .project-card {
     background: var(--bg-primary);
     border-radius: 16px;
@@ -970,39 +1114,58 @@ body {
     font-size: 0.9rem;
 }
 
-/* ==================== 日记卡片样式 ==================== */
-.diary-item {
+/* ==================== 日记表单样式 ==================== */
+.diary-item-form {
     background: var(--bg-primary);
-    border-radius: 16px;
-    padding: 2rem;
+    border-radius: 12px;
+    padding: 1.5rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(118, 75, 162, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s;
 }
 
-.diary-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, #667eea, #764ba2);
-    opacity: 0;
-    transition: opacity 0.3s;
+.diary-item-form:hover {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.diary-item:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 24px rgba(118, 75, 162, 0.2);
-    border-color: rgba(118, 75, 162, 0.3);
+.diary-item-form .form-group {
+    margin-bottom: 1rem;
 }
 
-.diary-item:hover::before {
-    opacity: 1;
+.diary-item-form .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.diary-item-form .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.diary-item-form .form-value {
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+}
+
+.diary-item-form .diary-content-display {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    min-height: 80px;
+    align-items: flex-start;
+}
+
+.diary-item-form .mood-display {
+    font-size: 2rem;
+    justify-content: center;
 }
 
 .diary-list {

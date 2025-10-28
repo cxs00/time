@@ -312,16 +312,25 @@ class DiaryMemoManager {
     );
 
     container.innerHTML = sortedDiaries.map(diary => `
-      <div class="diary-item">
-        <div class="diary-item-header">
-          <h4>${diary.title || '日记'}</h4>
-          <span class="diary-date">${this.formatDate(new Date(diary.date))}</span>
+      <div class="diary-item-form">
+        <div class="form-group">
+          <label>📅 日期</label>
+          <div class="form-value">${this.formatDate(new Date(diary.date))}</div>
         </div>
-        <div class="diary-mood">${diary.mood || '😊'}</div>
-        <div class="diary-preview">${(diary.content || '').substring(0, 100)}${diary.content && diary.content.length > 100 ? '...' : ''}</div>
+        <div class="form-group">
+          <label>😊 心情</label>
+          <div class="form-value mood-display">${diary.mood || '😊'}</div>
+        </div>
+        <div class="form-group">
+          <label>📝 内容</label>
+          <div class="form-value diary-content-display">${diary.content || '无内容'}</div>
+        </div>
         ${diary.tags && diary.tags.length > 0 ? `
-          <div class="diary-tags">
-            ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+          <div class="form-group">
+            <label>🏷️ 标签</label>
+            <div class="diary-tags">
+              ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
           </div>
         ` : ''}
       </div>
