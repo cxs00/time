@@ -618,8 +618,65 @@ body {
 /* ==================== 日记和备忘录 ==================== */
 .diary-memo-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 1.5rem;
+}
+
+/* 今日日记和历史日记卡片样式（统一样式 + 自适应宽度）*/
+.diary-card,
+.diary-history-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    width: 95%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* 平板设备 (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    .diary-card,
+    .diary-history-card {
+        width: 90%;
+        max-width: 800px;
+    }
+}
+
+/* 桌面设备 (1025px - 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+
+    .diary-card,
+    .diary-history-card {
+        width: 85%;
+        max-width: 900px;
+    }
+}
+
+/* 大屏幕 (>1440px) */
+@media (min-width: 1441px) {
+
+    .diary-card,
+    .diary-history-card {
+        width: 70%;
+        max-width: 1000px;
+    }
+}
+
+.diary-card:hover,
+.diary-history-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.diary-card .card-title,
+.diary-history-card .card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
 }
 
 .diary-editor {
@@ -647,7 +704,7 @@ body {
 }
 
 .diary-textarea {
-    min-height: 300px;
+    min-height: 200px;
     padding: 1rem;
     border: 2px solid var(--border-color);
     border-radius: 8px;
@@ -818,6 +875,17 @@ body {
 
     .summary-stats {
         grid-template-columns: 1fr;
+    }
+
+    /* 移动端日记卡片优化 */
+    .diary-card,
+    .diary-history-card {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .diary-textarea {
+        min-height: 150px;
     }
 
     .projects-grid {
