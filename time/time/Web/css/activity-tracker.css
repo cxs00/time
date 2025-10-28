@@ -109,13 +109,13 @@ body {
 /* 主页面布局优化 */
 #home .container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 2rem;
     align-items: start;
 }
 
 #home .current-activity-card {
-    grid-column: 1 / -1;
+    grid-column: 1;
 }
 
 #home .quick-record-card {
@@ -123,7 +123,7 @@ body {
 }
 
 #home .today-overview-card {
-    grid-column: 2;
+    grid-column: 1;
 }
 
 #home .projects-preview-card {
@@ -949,27 +949,19 @@ body {
     font-size: 0.9rem;
 }
 
-/* ==================== 方案5：双层卡片效果（精致层次感）==================== */
-/* 外层卡片 - 青色渐变背景 */
+/* ==================== 历史日记卡片样式（与项目卡片一致）==================== */
 .diary-item {
-    background: linear-gradient(135deg, rgba(93, 173, 226, 0.15), rgba(109, 213, 237, 0.15));
+    background: white;
     border-radius: 12px;
-    padding: 3px;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
 }
 
 .diary-item:hover {
-    background: linear-gradient(135deg, rgba(93, 173, 226, 0.25), rgba(109, 213, 237, 0.25));
-    transform: scale(1.01);
-}
-
-/* 内层卡片 - 白色内容区 */
-.diary-item-inner {
-    background: white;
-    border-radius: 10px;
-    padding: 1.5rem;
-    border: 1px solid rgba(93, 173, 226, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* 标题和按钮头部 */
@@ -982,8 +974,8 @@ body {
 
 .diary-item-header h4 {
     margin: 0;
-    color: #2c3e50;
-    font-size: 1.3rem;
+    color: #333;
+    font-size: 1.2rem;
     font-weight: 600;
 }
 
@@ -995,24 +987,22 @@ body {
 
 .btn-edit-diary,
 .btn-delete-diary {
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
 
 .btn-edit-diary {
-    background: #3498db;
+    background: #667eea;
     color: white;
 }
 
 .btn-edit-diary:hover {
-    background: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    background: #5568d3;
 }
 
 .btn-delete-diary {
@@ -1022,51 +1012,45 @@ body {
 
 .btn-delete-diary:hover {
     background: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
 }
 
-/* 日期样式 */
-.diary-item .diary-date {
-    display: block;
-    font-size: 1rem;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
+/* 日期和心情 */
+.diary-date {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: #666;
+    margin-right: 0.5rem;
 }
 
-/* 心情样式 */
-.diary-item .diary-mood {
-    display: block;
-    font-size: 1rem;
-    color: #2c3e50;
-    margin-bottom: 1rem;
+.diary-mood {
+    display: inline-block;
+    font-size: 1.2rem;
 }
 
-/* 完整内容显示 */
-.diary-item .diary-content {
-    color: #34495e;
-    line-height: 1.8;
-    margin: 1rem 0;
-    white-space: pre-wrap;
-    font-size: 0.95rem;
-}
-
-/* 标签容器 */
-.diary-item .diary-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+/* 日记内容 */
+.diary-content {
     margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(93, 173, 226, 0.2);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
-.diary-item .tag {
-    padding: 0.3rem 0.8rem;
-    background: #2c3e50;
-    color: white;
-    border-radius: 4px;
+/* 标签样式 */
+.diary-tags {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.diary-tags .tag {
+    padding: 0.25rem 0.75rem;
+    background: #f0f2f5;
+    border-radius: 12px;
     font-size: 0.85rem;
+    color: #667eea;
 }
 
 /* 底部按钮区域 */
@@ -1080,7 +1064,8 @@ body {
 
 /* 兼容旧的 diary-preview 样式（如果存在） */
 .diary-preview {
-    display: none; /* 隐藏预览，显示完整内容 */
+    display: none;
+    /* 隐藏预览，显示完整内容 */
 }
 
 /* ==================== iOS 安全区域支持 ==================== */
@@ -1166,6 +1151,7 @@ body {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -1188,6 +1174,7 @@ body {
         transform: translateY(50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -1360,34 +1347,39 @@ body.theme-water-lilies .navbar {
 /* ==================== 移动端优化（Step 2） ==================== */
 /* iOS 安全区域支持 */
 @supports (padding: env(safe-area-inset-top)) {
-  body {
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
 
-  .navbar {
-    padding-top: max(1rem, env(safe-area-inset-top));
-    z-index: 1000;
-  }
+    .navbar {
+        padding-top: max(1rem, env(safe-area-inset-top));
+        z-index: 1000;
+    }
 
-  .page {
-    padding-bottom: max(2rem, env(safe-area-inset-bottom));
-  }
+    .page {
+        padding-bottom: max(2rem, env(safe-area-inset-bottom));
+    }
 }
 
 /* 防止 iOS 自动缩放与优化触控 */
-input, textarea, select, button {
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%;
+input,
+textarea,
+select,
+button {
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
 }
 
 /* 触控优化（更好的命中面积） */
 @media (max-width: 768px) {
-  .btn, button {
-    touch-action: manipulation;
-    user-select: none;
-  }
+
+    .btn,
+    button {
+        touch-action: manipulation;
+        user-select: none;
+    }
 }

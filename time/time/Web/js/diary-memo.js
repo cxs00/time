@@ -310,30 +310,30 @@ class DiaryMemoManager {
       new Date(b.date) - new Date(a.date)
     );
 
-    // 双层卡片结构
+    // 简洁卡片结构（与项目卡片一致）
     container.innerHTML = sortedDiaries.map((diary, index) => `
       <div class="diary-item" data-diary-id="${diary.id || index}">
-        <div class="diary-item-inner">
-          <div class="diary-item-header">
-            <h4>${diary.title || '无标题日记'}</h4>
-            <div class="diary-item-actions">
-              <button class="btn-edit-diary" onclick="window.diaryMemoManager.editDiary(${index})">✏️ 编辑</button>
-              <button class="btn-delete-diary" onclick="window.diaryMemoManager.deleteDiary(${index})">🗑️ 删除</button>
-            </div>
+        <div class="diary-item-header">
+          <h4>${diary.title || '无标题日记'}</h4>
+          <div class="diary-item-actions">
+            <button class="btn-edit-diary" onclick="window.diaryMemoManager.editDiary(${index})">✏️ 编辑</button>
+            <button class="btn-delete-diary" onclick="window.diaryMemoManager.deleteDiary(${index})">🗑️ 删除</button>
           </div>
+        </div>
+        <div>
           <span class="diary-date">${diary.date}</span>
           <span class="diary-mood">${diary.mood || '😊'}</span>
-          <div class="diary-content">${diary.content || '暂无内容'}</div>
-          ${diary.tags && diary.tags.length > 0 ? `
-            <div class="diary-tags">
-              ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-            </div>
-          ` : ''}
         </div>
+        <div class="diary-content">${diary.content || '暂无内容'}</div>
+        ${diary.tags && diary.tags.length > 0 ? `
+          <div class="diary-tags">
+            ${diary.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+          </div>
+        ` : ''}
       </div>
     `).join('');
 
-    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记（双层卡片+编辑删除按钮）`);
+    console.log(`✅ 已渲染 ${sortedDiaries.length} 篇日记（简洁卡片样式）`);
   }
 
   // 编辑日记
@@ -343,7 +343,7 @@ class DiaryMemoManager {
       new Date(b.date) - new Date(a.date)
     );
     const diary = sortedDiaries[index];
-    
+
     if (!diary) {
       console.error('❌ 日记不存在');
       return;
@@ -359,7 +359,7 @@ class DiaryMemoManager {
     setTimeout(() => {
       const contentElement = document.getElementById('diaryContent');
       const moodElement = document.getElementById('moodSelect');
-      
+
       if (contentElement) {
         contentElement.value = diary.content || '';
       }
@@ -384,7 +384,7 @@ class DiaryMemoManager {
       new Date(b.date) - new Date(a.date)
     );
     const diary = sortedDiaries[index];
-    
+
     if (!diary) {
       console.error('❌ 日记不存在');
       return;
