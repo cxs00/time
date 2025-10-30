@@ -335,7 +335,10 @@
 
         <!-- 快速记录 -->
         <section class="quick-record-card card">
-          <h3 class="card-title">⚡ 快速记录</h3>
+          <div class="card-header-with-action">
+            <h3 class="card-title">⚡ 快速记录</h3>
+            <button class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕ 手动添加活动</button>
+          </div>
           <div class="record-form">
             <div class="input-group">
               <input type="text" id="activityInput" placeholder="现在在做什么？" class="activity-input">
