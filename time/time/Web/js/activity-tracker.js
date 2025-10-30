@@ -53,13 +53,26 @@ class SmartActivityTracker {
       console.log('✅ [setupEventListeners] 暂停按钮已绑定');
     }
 
-    // 活动输入框实时建议
+    // 活动输入框实时建议和智能项目推荐
     const activityInput = document.getElementById('activityInput');
+    const projectSelect = document.getElementById('projectSelect');
     if (activityInput) {
       activityInput.addEventListener('input', (e) => {
-        this.showSmartSuggestions(e.target.value);
+        const text = e.target.value;
+        this.showSmartSuggestions(text);
+        
+        // 智能推荐项目
+        if (projectSelect && text.trim().length >= 2) {
+          const recommendedProjectId = this.findRelatedProject(text);
+          if (recommendedProjectId) {
+            projectSelect.value = recommendedProjectId;
+            // 添加推荐提示样式
+            projectSelect.style.borderColor = '#667eea';
+            projectSelect.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+          }
+        }
       });
-      console.log('✅ [setupEventListeners] 输入框建议已绑定');
+      console.log('✅ [setupEventListeners] 输入框建议和智能项目推荐已绑定');
     }
 
     // 添加自定义分类按钮 - 使用事件委托
@@ -272,20 +285,102 @@ class SmartActivityTracker {
     return '其他';
   }
 
-  // 智能项目关联
+  // 智能项目关联（增强版）
   findRelatedProject(activityText) {
-    const text = activityText.toLowerCase();
-
-    for (const project of this.projects) {
-      const projectName = project.name.toLowerCase();
-      const projectTags = project.tags?.map(tag => tag.toLowerCase()) || [];
-
-      if (text.includes(projectName) || projectTags.some(tag => text.includes(tag))) {
-        return project.id;
-      }
+    if (!activityText || activityText.trim().length === 0) {
+      return null;
     }
 
-    return null;
+    const text = activityText.toLowerCase();
+    const activeProjects = this.projects.filter(p => p.status === 'active');
+    
+    if (activeProjects.length === 0) {
+      return null;
+    }
+
+    // 评分系统：为每个项目计算匹配分数
+    const projectScores = activeProjects.map(project => {
+      let score = 0;
+      const projectName = project.name.toLowerCase();
+      const projectDesc = (project.description || '').toLowerCase();
+      const projectTags = project.tags?.map(tag => tag.toLowerCase()) || [];
+
+      // 1. 项目名称完全匹配（高分）
+      if (text.includes(projectName)) {
+        score += 100;
+      }
+
+      // 2. 项目名称部分匹配
+      const projectWords = projectName.split(/[\s\-_]+/);
+      projectWords.forEach(word => {
+        if (word.length > 1 && text.includes(word)) {
+          score += 30;
+        }
+      });
+
+      // 3. 标签匹配
+      projectTags.forEach(tag => {
+        if (text.includes(tag)) {
+          score += 50;
+        }
+      });
+
+      // 4. 描述关键词匹配
+      if (projectDesc && projectDesc.length > 0) {
+        const descWords = projectDesc.split(/[\s,，、]+/).filter(w => w.length > 2);
+        descWords.forEach(word => {
+          if (text.includes(word)) {
+            score += 10;
+          }
+        });
+      }
+
+      // 5. 历史活动学习：该项目的历史活动关键词
+      const projectActivities = this.activities.filter(a => a.project === project.id);
+      if (projectActivities.length > 0) {
+        // 提取该项目历史活动的关键词
+        const keywords = this.extractProjectKeywords(projectActivities);
+        keywords.forEach(keyword => {
+          if (text.includes(keyword)) {
+            score += 20;
+          }
+        });
+      }
+
+      return { project, score };
+    });
+
+    // 找出分数最高的项目
+    const bestMatch = projectScores.reduce((best, current) => 
+      current.score > best.score ? current : best
+    , { project: null, score: 0 });
+
+    // 只有分数超过阈值才返回推荐
+    return bestMatch.score >= 30 ? bestMatch.project.id : null;
+  }
+
+  // 从项目的历史活动中提取关键词
+  extractProjectKeywords(activities) {
+    const keywords = new Set();
+    const wordFrequency = {};
+
+    activities.forEach(activity => {
+      const words = activity.activity.toLowerCase().split(/[\s,，、]+/);
+      words.forEach(word => {
+        if (word.length >= 2 && word.length <= 10) {
+          wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+        }
+      });
+    });
+
+    // 返回出现频率最高的关键词（至少出现2次）
+    Object.entries(wordFrequency)
+      .filter(([word, freq]) => freq >= 2)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .forEach(([word]) => keywords.add(word));
+
+    return Array.from(keywords);
   }
 
   // 提取标签
@@ -959,6 +1054,29 @@ class SmartActivityTracker {
     `;
 
     document.body.appendChild(modal);
+    
+    // 添加实时智能推荐功能
+    const activityInput = document.getElementById('manualActivityText');
+    const projectSelect = document.getElementById('manualProject');
+    
+    if (activityInput && projectSelect) {
+      activityInput.addEventListener('input', () => {
+        const activityText = activityInput.value.trim();
+        if (activityText.length >= 2) {
+          const recommendedProjectId = this.findRelatedProject(activityText);
+          if (recommendedProjectId) {
+            projectSelect.value = recommendedProjectId;
+            // 添加推荐提示样式
+            projectSelect.style.borderColor = '#667eea';
+            projectSelect.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+          } else {
+            projectSelect.value = '';
+            projectSelect.style.borderColor = '';
+            projectSelect.style.boxShadow = '';
+          }
+        }
+      });
+    }
   }
 
   // 保存手动添加的活动
