@@ -1817,6 +1817,23 @@ document.addEventListener('DOMContentLoaded', function () {
   console.log(`  🎯 项目: ${projects.length} 个`);
   console.log(`  📖 日记: ${diary.length} 篇`);
 
+  // 初始化AdSense广告（方案1：底部固定横幅）
+  if (typeof window.adSenseManager !== 'undefined') {
+    console.log('🎯 初始化AdSense广告管理器...');
+    try {
+      window.adSenseManager.init();
+      // 延迟显示广告，确保页面完全加载
+      setTimeout(() => {
+        window.adSenseManager.showBannerAd();
+        console.log('✅ AdSense广告已启动');
+      }, 1000);
+    } catch (error) {
+      console.error('❌ AdSense初始化失败:', error);
+    }
+  } else {
+    console.warn('⚠️ AdSense管理器未加载');
+  }
+
   // 直接更新DOM（不依赖App类）
   setTimeout(function () {
     try {

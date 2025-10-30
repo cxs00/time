@@ -151,10 +151,12 @@ class DiaryMemoManager {
   saveDiary() {
     console.log('💾 [saveDiary] 开始保存日记');
 
+    const title = document.getElementById('diaryTitle')?.value;
     const content = document.getElementById('diaryContent')?.value;
     const mood = document.getElementById('moodSelect')?.value || '😊';
     const date = document.getElementById('diaryDate')?.textContent || new Date().toISOString().split('T')[0];
 
+    console.log('📌 日记标题:', title || '(无标题)');
     console.log('📝 日记内容长度:', content?.length || 0);
     console.log('😊 心情:', mood);
     console.log('📅 日期:', date);
@@ -172,6 +174,7 @@ class DiaryMemoManager {
 
     if (existingDiary) {
       // 更新现有日记
+      existingDiary.title = title?.trim() || '无标题日记';
       existingDiary.content = content.trim();
       existingDiary.mood = mood;
       existingDiary.updatedAt = new Date();
@@ -179,6 +182,7 @@ class DiaryMemoManager {
       // 创建新日记
       const diary = {
         id: Date.now().toString(),
+        title: title?.trim() || '无标题日记',
         date: date,
         content: content.trim(),
         mood: mood,
@@ -357,9 +361,13 @@ class DiaryMemoManager {
 
     // 填充到今日日记编辑器
     setTimeout(() => {
+      const titleElement = document.getElementById('diaryTitle');
       const contentElement = document.getElementById('diaryContent');
       const moodElement = document.getElementById('moodSelect');
 
+      if (titleElement) {
+        titleElement.value = diary.title || '';
+      }
       if (contentElement) {
         contentElement.value = diary.content || '';
       }

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
-    <title>Activity Tracker - 智能活动记录</title>
+    <title>Activity Tracker v3.9.0 - 智能活动记录</title>
 
     <!-- PWA配置 -->
     <link rel="manifest" href="manifest.json">
@@ -370,7 +370,10 @@
 
         <!-- 今日概览 -->
         <section class="today-overview-card card">
-          <h3 class="card-title">📈 今日概览</h3>
+          <div class="card-header-with-action">
+            <h3 class="card-title">📈 今日概览</h3>
+            <button id="addManualActivity" class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕ 手动添加</button>
+          </div>
           <div class="activity-summary">
             <div class="summary-stats">
               <div class="stat-item">
@@ -472,6 +475,7 @@
                   </select>
                 </div>
               </div>
+              <input type="text" id="diaryTitle" class="diary-title-input" placeholder="给今天的日记起个标题...">
               <textarea id="diaryContent" class="diary-textarea" placeholder="记录今天的心情和想法..."></textarea>
               <div class="diary-actions">
                 <button id="saveDiary" class="btn btn-primary">💾 保存</button>
@@ -532,6 +536,24 @@
               </select>
             </div>
 
+            <!-- 广告设置 -->
+            <div class="setting-item">
+              <label>📢 显示广告（支持开发）</label>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <label class="switch" style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                  <input type="checkbox" id="adsEnabledToggle" checked style="opacity: 0; width: 0; height: 0;">
+                  <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+                               background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                  <span style="position: absolute; content: ''; height: 26px; width: 26px; left: 4px; bottom: 4px;
+                               background-color: white; transition: .4s; border-radius: 50%;"></span>
+                </label>
+                <span id="adsStatusText" style="color: #28a745; font-weight: 600;">已启用</span>
+              </div>
+              <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
+                广告收入用于支持项目维护和功能开发
+              </small>
+            </div>
+
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
 
             <div class="setting-item">
@@ -557,167 +579,7 @@
       <span class="toast-message" id="toastMessage"></span>
     </div>
 
-    <!-- 调试面板 -->
-    <div id="debugPanel"
-      style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.95); color: #00ff00; padding: 10px; font-family: 'Courier New', monospace; font-size: 10px; max-height: 250px; overflow-y: auto; z-index: 10000; border-top: 2px solid #00ff00;">
-      <div
-        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #00ff00;">
-        <div style="font-weight: bold; color: #ffff00;">🐛 调试控制台 (Console Debug Panel)</div>
-        <div style="display: flex; gap: 10px;">
-          <button onclick="clearDebugLog()"
-            style="background: #333; color: #00ff00; border: 1px solid #00ff00; padding: 2px 8px; cursor: pointer; border-radius: 3px; font-size: 10px;">清空</button>
-          <button onclick="toggleDebugPanel()"
-            style="background: #333; color: #ff0000; border: 1px solid #ff0000; padding: 2px 8px; cursor: pointer; border-radius: 3px; font-size: 10px;">最小化</button>
-        </div>
-      </div>
-      <div id="debugLog" style="line-height: 1.4;">
-        <div style="color: #ffff00;">📊 调试面板已启动 - 所有Console日志将显示在这里...</div>
-      </div>
-    </div>
-
     <!-- JavaScript -->
-    <!-- 调试面板脚本（必须在其他脚本之前加载） -->
-    <script>
-      // 调试面板功能
-      let debugPanelVisible = true;
-      let debugLogCount = 0;
-      const MAX_LOG_LINES = 100; // 最多保留100行日志
-
-      // 清空调试日志
-      function clearDebugLog() {
-        const debugLog = document.getElementById('debugLog');
-        if (debugLog) {
-          debugLog.innerHTML = '<div style="color: #ffff00;">📊 调试日志已清空</div>';
-          debugLogCount = 0;
-        }
-      }
-
-      // 切换调试面板显示/隐藏
-      function toggleDebugPanel() {
-        const debugPanel = document.getElementById('debugPanel');
-        if (debugPanel) {
-          debugPanelVisible = !debugPanelVisible;
-          if (debugPanelVisible) {
-            debugPanel.style.display = 'block';
-            debugPanel.style.maxHeight = '250px';
-          } else {
-            debugPanel.style.display = 'block';
-            debugPanel.style.maxHeight = '30px';
-            debugPanel.style.overflow = 'hidden';
-          }
-        }
-      }
-
-      // 添加日志到调试面板
-      function addDebugLog(message, type = 'log') {
-        const debugLog = document.getElementById('debugLog');
-        if (!debugLog) return;
-
-        // 限制日志行数
-        if (debugLogCount >= MAX_LOG_LINES) {
-          const firstLog = debugLog.querySelector('div:first-child');
-          if (firstLog) firstLog.remove();
-        } else {
-          debugLogCount++;
-        }
-
-        // 根据日志类型选择颜色
-        let color = '#00ff00'; // 默认绿色
-        let icon = '•';
-
-        switch (type) {
-          case 'log':
-            color = '#00ff00';
-            icon = '•';
-            break;
-          case 'info':
-            color = '#00ccff';
-            icon = 'ℹ';
-            break;
-          case 'warn':
-            color = '#ffaa00';
-            icon = '⚠';
-            break;
-          case 'error':
-            color = '#ff0000';
-            icon = '✖';
-            break;
-          case 'success':
-            color = '#00ff00';
-            icon = '✓';
-            break;
-        }
-
-        // 格式化消息
-        const timestamp = new Date().toLocaleTimeString('zh-CN', { hour12: false });
-        const logEntry = document.createElement('div');
-        logEntry.style.color = color;
-        logEntry.style.marginBottom = '2px';
-        logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> ${icon} ${message}`;
-
-        debugLog.appendChild(logEntry);
-
-        // 自动滚动到底部
-        debugLog.scrollTop = debugLog.scrollHeight;
-      }
-
-      // 拦截console方法
-      const originalConsole = {
-        log: console.log,
-        info: console.info,
-        warn: console.warn,
-        error: console.error
-      };
-
-      // 重写console.log
-      console.log = function (...args) {
-        originalConsole.log.apply(console, args);
-        const message = args.map(arg => {
-          if (typeof arg === 'object') {
-            try {
-              return JSON.stringify(arg, null, 2);
-            } catch (e) {
-              return String(arg);
-            }
-          }
-          return String(arg);
-        }).join(' ');
-        addDebugLog(message, 'log');
-      };
-
-      // 重写console.info
-      console.info = function (...args) {
-        originalConsole.info.apply(console, args);
-        const message = args.map(arg => String(arg)).join(' ');
-        addDebugLog(message, 'info');
-      };
-
-      // 重写console.warn
-      console.warn = function (...args) {
-        originalConsole.warn.apply(console, args);
-        const message = args.map(arg => String(arg)).join(' ');
-        addDebugLog(message, 'warn');
-      };
-
-      // 重写console.error
-      console.error = function (...args) {
-        originalConsole.error.apply(console, args);
-        const message = args.map(arg => String(arg)).join(' ');
-        addDebugLog(message, 'error');
-      };
-
-      // 捕获全局错误
-      window.addEventListener('error', function (event) {
-        addDebugLog(`全局错误: ${event.message} (${event.filename}:${event.lineno})`, 'error');
-      });
-
-      // 捕获Promise错误
-      window.addEventListener('unhandledrejection', function (event) {
-        addDebugLog(`Promise错误: ${event.reason}`, 'error');
-      });
-
-      console.log('🐛 调试面板已初始化');
-    </script>
 
     <script src="storage.js"></script>
     <script src="notification.js"></script>
@@ -760,6 +622,31 @@
             applySize(size);
             localStorage.setItem('app-size', size);
             showToast('UI尺寸已更改');
+          });
+        }
+
+        // 广告开关设置
+        const adsEnabledToggle = document.getElementById('adsEnabledToggle');
+        const adsStatusText = document.getElementById('adsStatusText');
+
+        if (adsEnabledToggle && window.adSenseManager) {
+          // 加载保存的设置
+          const settings = window.adSenseManager.getSettings();
+          const adsEnabled = settings.adsEnabled !== false;
+
+          adsEnabledToggle.checked = adsEnabled;
+          adsStatusText.textContent = adsEnabled ? '已启用' : '已禁用';
+          adsStatusText.style.color = adsEnabled ? '#28a745' : '#6c757d';
+
+          // 监听开关变化
+          adsEnabledToggle.addEventListener('change', function () {
+            const enabled = this.checked;
+            if (window.adSenseManager) {
+              window.adSenseManager.setAdsEnabled(enabled);
+              adsStatusText.textContent = enabled ? '已启用' : '已禁用';
+              adsStatusText.style.color = enabled ? '#28a745' : '#6c757d';
+              showToast(enabled ? '广告已启用' : '广告已禁用');
+            }
           });
         }
 
@@ -809,12 +696,10 @@
 
         const buttons = document.querySelectorAll('.btn, button');
         buttons.forEach(el => {
-          if (!el.closest('#debugPanel')) {
-            el.style.minHeight = config.button;
-            el.style.fontSize = config.font;
-            el.style.padding = config.buttonPadding;
-            el.style.borderRadius = '10px';
-          }
+          el.style.minHeight = config.button;
+          el.style.fontSize = config.font;
+          el.style.padding = config.buttonPadding;
+          el.style.borderRadius = '10px';
         });
       }
 
@@ -825,6 +710,16 @@
 
     <!-- PWA注册脚本 -->
     <script src="pwa-register.js"></script>
+
+    <!-- AdSense广告脚本 -->
+    <script src="js/adsense.js"></script>
   </body>
+
+  <!-- 底部固定横幅广告容器（方案1）-->
+  <div id="fixed-banner-ad-container" class="fixed-banner-ad" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+              min-height: 50px; background: #f0f0f0;
+              display: flex; align-items: center; justify-content: center;">
+    <span style="color: #666; font-size: 12px;">广告加载中...</span>
+  </div>
 
 </html>

@@ -9,6 +9,14 @@
  * 注册Service Worker
  */
 async function registerServiceWorker() {
+  // 检查协议：Service Worker只在HTTP/HTTPS下工作
+  const protocol = window.location.protocol;
+  if (protocol !== 'http:' && protocol !== 'https:') {
+    console.log('ℹ️  Service Worker跳过注册：当前协议不支持 (' + protocol + ')');
+    console.log('ℹ️  Service Worker仅支持HTTP/HTTPS协议');
+    return null;
+  }
+
   if ('serviceWorker' in navigator) {
     try {
       const registration = await navigator.serviceWorker.register('/service-worker.js', {

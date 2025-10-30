@@ -88,6 +88,14 @@ enter_project_dir() {
 build_mac_app() {
     print_header "🖥️  编译Mac应用"
 
+    # 清理旧的编译产物
+    print_step "清理旧的编译产物..."
+    local derived_data_dir=$(find ~/Library/Developer/Xcode/DerivedData -name "time-*" -type d 2>/dev/null | head -n 1)
+    if [ -n "$derived_data_dir" ]; then
+        rm -rf "$derived_data_dir/Build/Products/Debug/TIME.app" 2>/dev/null || true
+        print_success "旧应用已清理"
+    fi
+
     print_step "开始编译..."
 
     if xcodebuild clean build \
@@ -96,7 +104,7 @@ build_mac_app() {
         -destination 'platform=macOS' \
         -quiet; then
         print_success "Mac应用编译成功"
-        
+
         # 🔧 关键修复：编译后立即复制Web资源到app bundle
         print_step "复制Web资源到应用包..."
         # 查找Mac应用（可能在Build/Products/Debug或Index.noindex/Build/Products/Debug）
@@ -104,9 +112,9 @@ build_mac_app() {
         if [ -n "$app_path" ]; then
             local resources_dir="$app_path/Contents/Resources"
             mkdir -p "$resources_dir/Web"
-            
+
             print_info "App路径: $app_path"
-            
+
             # 复制整个Web目录到Resources (注意：Web在time子目录中)
             if cp -R "$PROJECT_DIR/time/Web/"* "$resources_dir/Web/" 2>/dev/null; then
                 print_success "Web资源复制成功"
@@ -120,7 +128,7 @@ build_mac_app() {
         else
             print_warning "找不到应用包，跳过资源复制"
         fi
-        
+
         return 0
     else
         print_error "Mac应用编译失败"
@@ -143,7 +151,23 @@ launch_mac_app() {
     print_info "应用路径: $app_path"
 
     # 先关闭已运行的应用
+    print_step "关闭旧的应用进程..."
     pkill -f "TIME.app" 2>/dev/null || true
+    killall TIME 2>/dev/null || true
+    sleep 2
+
+    # 清理WebView缓存
+    print_step "清理WebView缓存..."
+    local cache_dir="$HOME/Library/Caches/com.cxs.time"
+    local webkit_cache="$HOME/Library/WebKit/com.cxs.time"
+    local container_dir="$HOME/Library/Containers/com.cxs.time"
+
+    rm -rf "$cache_dir" 2>/dev/null || true
+    rm -rf "$webkit_cache" 2>/dev/null || true
+    rm -rf "$container_dir/Data/Library/Caches" 2>/dev/null || true
+    rm -rf "$container_dir/Data/Library/WebKit" 2>/dev/null || true
+
+    print_success "缓存已清理"
     sleep 1
 
     print_step "启动Mac应用..."
@@ -245,6 +269,14 @@ start_simulator() {
 build_iphone_app() {
     print_header "📱 编译iPhone应用"
 
+    # 清理旧的编译产物
+    print_step "清理旧的编译产物..."
+    local derived_data_dir=$(find ~/Library/Developer/Xcode/DerivedData -name "time-*" -type d 2>/dev/null | head -n 1)
+    if [ -n "$derived_data_dir" ]; then
+        rm -rf "$derived_data_dir/Build/Products/Debug-iphonesimulator/TIME.app" 2>/dev/null || true
+        print_success "旧应用已清理"
+    fi
+
     print_step "开始编译..."
 
     if xcodebuild clean build \
@@ -253,14 +285,14 @@ build_iphone_app() {
         -destination "platform=iOS Simulator,name=$SIMULATOR_NAME" \
         -quiet; then
         print_success "iPhone应用编译成功"
-        
+
         # 🔧 关键修复：编译后立即复制Web资源到app bundle
         print_step "复制Web资源到应用包..."
         local app_path=$(find ~/Library/Developer/Xcode/DerivedData/time-*/Build/Products/Debug-iphonesimulator -name "TIME.app" -type d 2>/dev/null | head -n 1)
         if [ -n "$app_path" ]; then
             # iOS应用资源直接在app根目录
             mkdir -p "$app_path/Web"
-            
+
             # 复制整个Web目录 (注意：Web在time子目录中)
             if cp -R "$PROJECT_DIR/time/Web/"* "$app_path/Web/" 2>/dev/null; then
                 print_success "Web资源复制成功"
@@ -273,7 +305,7 @@ build_iphone_app() {
         else
             print_warning "找不到应用包，跳过资源复制"
         fi
-        
+
         return 0
     else
         print_error "iPhone应用编译失败"
@@ -302,10 +334,21 @@ install_and_launch_iphone_app() {
         print_warning "应用安装失败，可能已安装"
     fi
 
-    print_step "启动iPhone应用..."
+    print_step "清理模拟器缓存..."
 
     # 先终止可能正在运行的应用
     xcrun simctl terminate booted "$BUNDLE_ID" 2>/dev/null || true
+
+    # 卸载旧应用（清理所有数据）
+    xcrun simctl uninstall booted "$BUNDLE_ID" 2>/dev/null || true
+    sleep 1
+
+    # 重新安装应用
+    if xcrun simctl install booted "$app_path"; then
+        print_success "应用重新安装成功"
+    fi
+
+    print_step "启动iPhone应用..."
     sleep 1
 
     # 启动应用

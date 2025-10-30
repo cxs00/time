@@ -646,7 +646,7 @@ class SmartActivityTracker {
     timeline.innerHTML = activities
       .reverse()
       .map(activity => `
-                <div class="timeline-item" data-category="${activity.category}">
+                <div class="timeline-item" data-category="${activity.category}" data-id="${activity.id}">
                     <div class="timeline-time">
                         ${new Date(activity.startTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
                         -
@@ -656,6 +656,10 @@ class SmartActivityTracker {
                         <span class="timeline-category">${activity.category}</span>
                         <span class="timeline-activity">${activity.activity}</span>
                         <span class="timeline-duration">${activity.duration}分钟</span>
+                    </div>
+                    <div class="timeline-actions">
+                        <button class="btn-icon btn-edit" onclick="window.smartActivityTracker.editActivity('${activity.id}')" title="编辑">✏️</button>
+                        <button class="btn-icon btn-delete" onclick="window.smartActivityTracker.deleteActivity('${activity.id}')" title="删除">🗑️</button>
                     </div>
                 </div>
             `)
@@ -725,6 +729,245 @@ class SmartActivityTracker {
     } catch (error) {
       console.error('保存自定义分类失败:', error);
     }
+  }
+
+  // ==================== 新功能：编辑、删除、手动添加活动 ====================
+
+  // 编辑活动
+  editActivity(activityId) {
+    const activity = this.activities.find(a => a.id === activityId);
+    if (!activity) {
+      this.showNotification('活动不存在', 'error');
+      return;
+    }
+
+    // 创建编辑对话框
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>✏️ 编辑活动</h3>
+          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>活动内容：</label>
+            <input type="text" id="editActivityText" class="input-field" value="${activity.activity}" required>
+          </div>
+          <div class="form-group">
+            <label>分类：</label>
+            <select id="editCategory" class="select-input">
+              <option value="工作" ${activity.category === '工作' ? 'selected' : ''}>💼 工作</option>
+              <option value="学习" ${activity.category === '学习' ? 'selected' : ''}>📚 学习</option>
+              <option value="运动" ${activity.category === '运动' ? 'selected' : ''}>🏃 运动</option>
+              <option value="娱乐" ${activity.category === '娱乐' ? 'selected' : ''}>🎮 娱乐</option>
+              <option value="生活" ${activity.category === '生活' ? 'selected' : ''}>🏠 生活</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>开始时间：</label>
+              <input type="time" id="editStartTime" class="input-field" value="${new Date(activity.startTime).toTimeString().slice(0, 5)}" required>
+            </div>
+            <div class="form-group">
+              <label>结束时间：</label>
+              <input type="time" id="editEndTime" class="input-field" value="${new Date(activity.endTime).toTimeString().slice(0, 5)}" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button>
+          <button class="btn btn-primary" onclick="window.smartActivityTracker.saveActivityEdit('${activityId}')">保存</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  }
+
+  // 保存活动编辑
+  saveActivityEdit(activityId) {
+    const activity = this.activities.find(a => a.id === activityId);
+    if (!activity) return;
+
+    const activityText = document.getElementById('editActivityText').value.trim();
+    const category = document.getElementById('editCategory').value;
+    const startTime = document.getElementById('editStartTime').value;
+    const endTime = document.getElementById('editEndTime').value;
+
+    if (!activityText || !startTime || !endTime) {
+      this.showNotification('请填写完整信息', 'warning');
+      return;
+    }
+
+    // 更新活动数据
+    const startDate = new Date(activity.startTime);
+    const endDate = new Date(activity.endTime);
+
+    const [startHour, startMinute] = startTime.split(':');
+    const [endHour, endMinute] = endTime.split(':');
+
+    startDate.setHours(parseInt(startHour), parseInt(startMinute));
+    endDate.setHours(parseInt(endHour), parseInt(endMinute));
+
+    // 验证时间逻辑
+    if (endDate <= startDate) {
+      this.showNotification('结束时间必须晚于开始时间', 'warning');
+      return;
+    }
+
+    activity.activity = activityText;
+    activity.category = category;
+    activity.startTime = startDate.toISOString();
+    activity.endTime = endDate.toISOString();
+    activity.duration = Math.round((endDate - startDate) / 60000); // 分钟
+
+    this.saveActivities();
+    this.updateUI();
+
+    // 关闭对话框
+    document.querySelector('.modal-overlay').remove();
+    this.showNotification('活动已更新', 'success');
+  }
+
+  // 删除活动
+  deleteActivity(activityId) {
+    const activity = this.activities.find(a => a.id === activityId);
+    if (!activity) {
+      this.showNotification('活动不存在', 'error');
+      return;
+    }
+
+    // 创建确认对话框
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <h3>🗑️ 删除活动</h3>
+          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+        </div>
+        <div class="modal-body">
+          <p>确定要删除这个活动吗？</p>
+          <p class="text-secondary">${activity.activity} (${activity.duration}分钟)</p>
+          <p class="text-danger">此操作不可撤销！</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button>
+          <button class="btn btn-danger" onclick="window.smartActivityTracker.confirmDeleteActivity('${activityId}')">删除</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  }
+
+  // 确认删除活动
+  confirmDeleteActivity(activityId) {
+    this.activities = this.activities.filter(a => a.id !== activityId);
+    this.saveActivities();
+    this.updateUI();
+
+    // 关闭对话框
+    document.querySelector('.modal-overlay').remove();
+    this.showNotification('活动已删除', 'success');
+  }
+
+  // 手动添加历史活动
+  addManualActivity() {
+    // 创建添加对话框
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    const today = new Date().toISOString().split('T')[0];
+
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>➕ 手动添加活动</h3>
+          <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>活动内容：</label>
+            <input type="text" id="manualActivityText" class="input-field" placeholder="做了什么..." required>
+          </div>
+          <div class="form-group">
+            <label>分类：</label>
+            <select id="manualCategory" class="select-input">
+              <option value="工作">💼 工作</option>
+              <option value="学习">📚 学习</option>
+              <option value="运动">🏃 运动</option>
+              <option value="娱乐">🎮 娱乐</option>
+              <option value="生活">🏠 生活</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>日期：</label>
+            <input type="date" id="manualDate" class="input-field" value="${today}" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>开始时间：</label>
+              <input type="time" id="manualStartTime" class="input-field" required>
+            </div>
+            <div class="form-group">
+              <label>结束时间：</label>
+              <input type="time" id="manualEndTime" class="input-field" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">取消</button>
+          <button class="btn btn-primary" onclick="window.smartActivityTracker.saveManualActivity()">添加</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  }
+
+  // 保存手动添加的活动
+  saveManualActivity() {
+    const activityText = document.getElementById('manualActivityText').value.trim();
+    const category = document.getElementById('manualCategory').value;
+    const date = document.getElementById('manualDate').value;
+    const startTime = document.getElementById('manualStartTime').value;
+    const endTime = document.getElementById('manualEndTime').value;
+
+    if (!activityText || !date || !startTime || !endTime) {
+      this.showNotification('请填写完整信息', 'warning');
+      return;
+    }
+
+    // 构建日期时间
+    const startDateTime = new Date(`${date}T${startTime}`);
+    const endDateTime = new Date(`${date}T${endTime}`);
+
+    // 验证时间逻辑
+    if (endDateTime <= startDateTime) {
+      this.showNotification('结束时间必须晚于开始时间', 'warning');
+      return;
+    }
+
+    // 创建新活动
+    const newActivity = {
+      id: Date.now().toString(),
+      activity: activityText,
+      category: category,
+      startTime: startDateTime.toISOString(),
+      endTime: endDateTime.toISOString(),
+      duration: Math.round((endDateTime - startDateTime) / 60000),
+      project: null
+    };
+
+    this.activities.push(newActivity);
+    this.saveActivities();
+    this.updateUI();
+
+    // 关闭对话框
+    document.querySelector('.modal-overlay').remove();
+    this.showNotification('活动已添加', 'success');
   }
 }
 

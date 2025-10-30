@@ -29,6 +29,8 @@ body {
     line-height: 1.6;
     width: 100%;
     min-height: 100vh;
+    /* 为底部固定广告留出空间 */
+    padding-bottom: 60px;
 }
 
 /* ==================== 导航栏 ==================== */
@@ -423,6 +425,17 @@ body {
     margin-left: 1rem;
     margin-bottom: 1rem;
     position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: white;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.timeline-item:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
 }
 
 .timeline-item::before {
@@ -447,6 +460,43 @@ body {
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.timeline-actions {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.timeline-item:hover .timeline-actions {
+    opacity: 1;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: scale(1.1);
+}
+
+.btn-edit:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.btn-delete:hover {
+    background: rgba(244, 67, 54, 0.1);
 }
 
 .timeline-category {
@@ -701,6 +751,22 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.diary-title-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.diary-title-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
 }
 
 .diary-textarea {
@@ -1449,5 +1515,293 @@ button {
     button {
         touch-action: manipulation;
         user-select: none;
+    }
+}
+
+/* ==================== AdSense广告样式 - 方案1: 底部固定横幅 ==================== */
+
+.fixed-banner-ad {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    min-height: 50px;
+    max-height: 90px;
+    background: #ffffff;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* iOS 安全区域支持（底部广告）*/
+@supports (padding: env(safe-area-inset-bottom)) {
+    .fixed-banner-ad {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    body {
+        /* 为广告和安全区域留出空间 */
+        padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+}
+
+/* 广告容器内部样式 */
+.fixed-banner-ad ins {
+    display: block !important;
+    width: 100%;
+    min-height: 50px;
+}
+
+/* 移动端广告优化 */
+@media (max-width: 768px) {
+    .fixed-banner-ad {
+        min-height: 50px;
+    }
+
+    body {
+        padding-bottom: 60px;
+    }
+}
+
+/* 桌面端广告优化 */
+@media (min-width: 769px) {
+    .fixed-banner-ad {
+        min-height: 60px;
+    }
+
+    body {
+        padding-bottom: 70px;
+    }
+}
+
+/* 广告隐藏动画 */
+.fixed-banner-ad.hidden {
+    transform: translateY(100%);
+}
+
+/* 广告加载状态样式 */
+.fixed-banner-ad .ad-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    color: #6c757d;
+    font-size: 12px;
+}
+
+/* ==================== 设置页面 - 广告开关样式 ==================== */
+
+/* 开关容器 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+/* 隐藏默认checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* 开关滑槽 */
+.switch input+span {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+/* 开关滑块 */
+.switch input+span:after {
+    content: "";
+    position: absolute;
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* 开关打开状态 */
+.switch input:checked+span {
+    background-color: #667eea;
+}
+
+.switch input:checked+span:after {
+    transform: translateX(26px);
+}
+
+/* 开关聚焦状态 */
+.switch input:focus+span {
+    box-shadow: 0 0 1px #667eea;
+}
+
+/* ==================== 模态框样式 ==================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content.modal-sm {
+    max-width: 400px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.text-danger {
+    color: var(--danger-color);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #d32f2f;
+}
+
+.card-header-with-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-header, .modal-body, .modal-footer {
+        padding: 1rem;
     }
 }

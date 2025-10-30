@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdSense广告效果展示 - 5种方案选择</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+
+      .solutions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .solution-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+      }
+
+      .solution-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+      }
+
+      .solution-card.selected {
+        border: 3px solid #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+      }
+
+      .solution-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+      }
+
+      .solution-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .solution-header .badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+      }
+
+      .solution-body {
+        padding: 1.5rem;
+      }
+
+      .preview-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .features {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0;
+      }
+
+      .features li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #495057;
+      }
+
+      .features li::before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      .select-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.3s;
+      }
+
+      .select-btn:hover {
+        opacity: 0.9;
+      }
+
+      .select-btn.selected {
+        background: #28a745;
+      }
+
+      /* 方案1：底部固定横幅 */
+      .ad-fixed-bottom {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        font-size: 14px;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+      }
+
+      /* 方案2：页面底部横幅 */
+      .ad-page-bottom {
+        background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 14px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* 方案3：卡片间插入 */
+      .ad-inline-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 2px dashed #dee2e6;
+      }
+
+      .ad-inline-card .ad-label {
+        font-size: 10px;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+      }
+
+      .ad-inline-card .ad-content {
+        background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      /* 方案4：侧边栏浮动 */
+      .ad-sidebar-float {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        max-width: 160px;
+        z-index: 50;
+      }
+
+      .ad-sidebar-float .ad-label {
+        font-size: 9px;
+        color: #6c757d;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .ad-sidebar-float .ad-content {
+        background: linear-gradient(135deg, #F093FB 0%, #F5576C 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      .ad-sidebar-float .close-btn {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      /* 方案5：顶部通知条 */
+      .ad-top-banner {
+        background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 90%, #2BFF88 100%);
+        color: white;
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .ad-top-banner .close-btn {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      /* 示例内容 */
+      .sample-content {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        color: #495057;
+      }
+
+      .confirm-section {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 1000;
+      }
+
+      .confirm-section.show {
+        display: block;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateX(-50%) translateY(100px);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateX(-50%) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .confirm-section h3 {
+        margin-bottom: 1rem;
+        color: #333;
+      }
+
+      .confirm-section .buttons {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .confirm-section button {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.3s;
+      }
+
+      .confirm-section .btn-confirm {
+        background: #28a745;
+        color: white;
+      }
+
+      .confirm-section .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .confirm-section button:hover {
+        opacity: 0.9;
+      }
+
+      @media (max-width: 768px) {
+        .solutions-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+        }
+
+        body {
+          padding: 1rem;
+        }
+
+        .ad-sidebar-float {
+          display: none;
+        }
+      }
+
+      .stats-badge {
+        display: inline-block;
+        background: rgba(40, 167, 69, 0.1);
+        color: #28a745;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        margin-left: 0.5rem;
+      }
+
+      .note-box {
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+
+      .note-info {
+        background: #e7f3ff;
+        color: #0066cc;
+      }
+
+      .note-warning {
+        background: #fff3cd;
+        color: #856404;
+      }
+
+      .note-success {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .note-danger {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .note-vip {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
+        border: 2px solid gold;
+        color: #856404;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 AdSense广告效果展示</h1>
+        <p>为Activity Tracker选择最合适的广告展示方案</p>
+      </div>
+
+      <div class="solutions-grid">
+        <!-- 方案1：底部固定横幅 -->
+        <div class="solution-card" data-solution="1">
+          <div class="solution-header">
+            <h2>方案1：底部固定横幅</h2>
+            <span class="badge">推荐 ⭐⭐⭐⭐⭐</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container">
+              <div class="sample-content">主要内容区域</div>
+              <div class="sample-content">滚动内容...</div>
+              <div class="ad-fixed-bottom" style="position: static;">
+                🎯 广告位 · AdSense横幅广告 · ID: 1459432262
+              </div>
+            </div>
+            <ul class="features">
+              <li>始终可见，不随页面滚动</li>
+              <li>不占用内容空间</li>
+              <li>用户注意力高</li>
+              <li>标准AdSense布局</li>
+              <li>移动端友好</li>
+            </ul>
+            <div class="note-box note-info">
+              💡 最佳实践：展示率高，点击率稳定，收益表现优秀
+            </div>
+            <button class="select-btn" onclick="selectSolution(1)">选择此方案</button>
+          </div>
+        </div>
+
+        <!-- 方案2：页面底部横幅 -->
+        <div class="solution-card" data-solution="2">
+          <div class="solution-header">
+            <h2>方案2：页面底部横幅</h2>
+            <span class="badge">推荐 ⭐⭐⭐⭐</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container">
+              <div class="sample-content">主要内容区域</div>
+              <div class="sample-content">更多内容...</div>
+              <div class="ad-page-bottom">
+                🎯 广告位 · AdSense横幅广告 · ID: 1459432262
+              </div>
+            </div>
+            <ul class="features">
+              <li>随页面滚动</li>
+              <li>不干扰浏览体验</li>
+              <li>自然融入页面</li>
+              <li>用户主动查看</li>
+            </ul>
+            <div class="note-box note-warning">
+              💡 适合内容较多的页面，用户体验最佳
+            </div>
+            <button class="select-btn" onclick="selectSolution(2)">选择此方案</button>
+          </div>
+        </div>
+
+        <!-- 方案3：卡片间插入 -->
+        <div class="solution-card" data-solution="3">
+          <div class="solution-header">
+            <h2>方案3：内容流插入</h2>
+            <span class="badge">推荐 ⭐⭐⭐⭐</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container">
+              <div class="sample-content">活动卡片1</div>
+              <div class="ad-inline-card">
+                <div class="ad-label">赞助内容</div>
+                <div class="ad-content">
+                  🎯 AdSense广告 · ID: 1459432262
+                </div>
+              </div>
+              <div class="sample-content">活动卡片2</div>
+            </div>
+            <ul class="features">
+              <li>自然融入内容流</li>
+              <li>原生广告体验</li>
+              <li>点击率较高</li>
+              <li>适合信息流场景</li>
+            </ul>
+            <div class="note-box note-success">
+              💡 适合项目列表、日记列表等内容流场景
+            </div>
+            <button class="select-btn" onclick="selectSolution(3)">选择此方案</button>
+          </div>
+        </div>
+
+        <!-- 方案4：侧边栏浮动 -->
+        <div class="solution-card" data-solution="4">
+          <div class="solution-header">
+            <h2>方案4：侧边栏浮动</h2>
+            <span class="badge">推荐 ⭐⭐⭐</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container" style="position: relative; min-height: 200px;">
+              <div class="sample-content">主要内容区域</div>
+              <div class="ad-sidebar-float" style="position: absolute; right: 10px; top: 10px; transform: none;">
+                <button class="close-btn">×</button>
+                <div class="ad-label">广告</div>
+                <div class="ad-content">
+                  AdSense<br>1459432262
+                </div>
+              </div>
+            </div>
+            <ul class="features">
+              <li>不占用内容区域</li>
+              <li>可关闭按钮</li>
+              <li>适合桌面端</li>
+              <li>持续展示</li>
+            </ul>
+            <div class="note-box note-danger">
+              ⚠️ 注意：移动端不显示，可能影响阅读
+            </div>
+            <button class="select-btn" onclick="selectSolution(4)">选择此方案</button>
+          </div>
+        </div>
+
+        <!-- 方案5：顶部通知条 -->
+        <div class="solution-card" data-solution="5">
+          <div class="solution-header">
+            <h2>方案5：顶部通知条</h2>
+            <span class="badge">推荐 ⭐⭐⭐</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container">
+              <div class="ad-top-banner">
+                <span>🎯 AdSense广告 · ID: 1459432262</span>
+                <button class="close-btn">关闭</button>
+              </div>
+              <div class="sample-content">主要内容区域</div>
+            </div>
+            <ul class="features">
+              <li>首次进入必看</li>
+              <li>可关闭隐藏</li>
+              <li>展示率100%</li>
+              <li>适合重要通知</li>
+            </ul>
+            <div class="note-box note-info">
+              💡 适合首页或欢迎页面，一次性展示
+            </div>
+            <button class="select-btn" onclick="selectSolution(5)">选择此方案</button>
+          </div>
+        </div>
+
+        <!-- 方案6：组合方案（隐藏的彩蛋）-->
+        <div class="solution-card" data-solution="6">
+          <div class="solution-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h2>方案6：组合方案</h2>
+            <span class="badge">收益最高 ⭐⭐⭐⭐⭐</span>
+            <span class="stats-badge">+40% 收益</span>
+          </div>
+          <div class="solution-body">
+            <div class="preview-container">
+              <div class="ad-top-banner" style="margin-bottom: 0.5rem;">
+                <span style="font-size: 12px;">顶部广告位</span>
+                <button class="close-btn">×</button>
+              </div>
+              <div class="sample-content">内容区域</div>
+              <div class="ad-inline-card" style="margin: 0.5rem 0;">
+                <div class="ad-label">赞助内容</div>
+                <div class="ad-content" style="padding: 10px; font-size: 12px;">
+                  信息流广告
+                </div>
+              </div>
+              <div class="ad-fixed-bottom" style="position: static; padding: 8px; font-size: 12px;">
+                底部固定广告
+              </div>
+            </div>
+            <ul class="features">
+              <li>多位置组合展示</li>
+              <li>收益最大化 💰</li>
+              <li>覆盖所有场景</li>
+              <li>用户可关闭顶部广告</li>
+              <li>适合专业运营</li>
+            </ul>
+            <div class="note-box note-vip">
+              💎 VIP推荐：顶部通知条 + 信息流广告 + 底部固定横幅
+            </div>
+            <button class="select-btn" onclick="selectSolution(6)">选择此方案</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 确认面板 -->
+    <div class="confirm-section" id="confirmSection">
+      <h3>✅ 已选择：<span id="selectedSolution"></span></h3>
+      <div class="buttons">
+        <button class="btn-confirm" onclick="confirmSelection()">确认使用此方案</button>
+        <button class="btn-cancel" onclick="cancelSelection()">取消</button>
+      </div>
+    </div>
+
+    <script>
+      let selectedSolutionId = null;
+
+      const solutions = {
+        1: {
+          name: "方案1：底部固定横幅",
+          description: "广告固定在页面底部，始终可见",
+          pros: "展示率高、收益稳定、用户体验好",
+          position: "fixed-bottom"
+        },
+        2: {
+          name: "方案2：页面底部横幅",
+          description: "广告放在页面内容底部，随滚动显示",
+          pros: "不干扰浏览、自然融入、用户体验最佳",
+          position: "page-bottom"
+        },
+        3: {
+          name: "方案3：内容流插入",
+          description: "广告插入在内容卡片之间",
+          pros: "原生体验、点击率高、适合信息流",
+          position: "inline-feed"
+        },
+        4: {
+          name: "方案4：侧边栏浮动",
+          description: "广告浮动在页面右侧",
+          pros: "不占内容空间、可关闭、适合桌面",
+          position: "sidebar-float"
+        },
+        5: {
+          name: "方案5：顶部通知条",
+          description: "广告显示为顶部通知条",
+          pros: "展示率100%、可关闭、适合首页",
+          position: "top-banner"
+        },
+        6: {
+          name: "方案6：组合方案",
+          description: "多位置组合展示，收益最大化",
+          pros: "收益最高、覆盖全场景、专业运营",
+          position: "combination"
+        }
+      };
+
+      function selectSolution(id) {
+        // 移除之前的选中状态
+        document.querySelectorAll('.solution-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+        document.querySelectorAll('.select-btn').forEach(btn => {
+          btn.classList.remove('selected');
+          btn.textContent = '选择此方案';
+        });
+
+        // 添加新的选中状态
+        const card = document.querySelector(`.solution-card[data-solution="${id}"]`);
+        const btn = card.querySelector('.select-btn');
+        card.classList.add('selected');
+        btn.classList.add('selected');
+        btn.textContent = '✓ 已选择';
+
+        // 显示确认面板
+        selectedSolutionId = id;
+        document.getElementById('selectedSolution').textContent = solutions[id].name;
+        document.getElementById('confirmSection').classList.add('show');
+
+        // 滚动到选中的卡片
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function confirmSelection() {
+        if (!selectedSolutionId) return;
+
+        const solution = solutions[selectedSolutionId];
+
+        // 显示确认信息
+        alert(`✅ 已确认选择：${solution.name}\n\n` +
+          `📋 描述：${solution.description}\n` +
+          `✨ 优势：${solution.pros}\n` +
+          `🔧 位置：${solution.position}\n\n` +
+          `下一步：\n` +
+          `1. 将选择结果告知AI助手\n` +
+          `2. AI将生成对应的AdSense集成代码\n` +
+          `3. 更新activity-tracker.html和相关文件`);
+
+        // 将选择结果记录到控制台
+        console.log('=== 用户选择结果 ===');
+        console.log('方案ID:', selectedSolutionId);
+        console.log('方案名称:', solution.name);
+        console.log('方案位置:', solution.position);
+        console.log('===================');
+
+        // 保存到localStorage（可选）
+        localStorage.setItem('selectedAdSenseLayout', JSON.stringify({
+          id: selectedSolutionId,
+          ...solution,
+          timestamp: new Date().toISOString()
+        }));
+      }
+
+      function cancelSelection() {
+        document.getElementById('confirmSection').classList.remove('show');
+        document.querySelectorAll('.solution-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+        document.querySelectorAll('.select-btn').forEach(btn => {
+          btn.classList.remove('selected');
+          btn.textContent = '选择此方案';
+        });
+        selectedSolutionId = null;
+      }
+
+      // 页面加载时检查是否有之前的选择
+      window.addEventListener('DOMContentLoaded', () => {
+        const saved = localStorage.getItem('selectedAdSenseLayout');
+        if (saved) {
+          const data = JSON.parse(saved);
+          console.log('检测到之前的选择:', data);
+        }
+      });
+    </script>
+  </body>
+
+</html>
