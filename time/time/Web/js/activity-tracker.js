@@ -744,6 +744,13 @@ class SmartActivityTracker {
     // 创建编辑对话框
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
+    
+    // 生成项目选项
+    const projectOptions = this.projects
+      .filter(p => p.status === 'active')
+      .map(p => `<option value="${p.id}" ${activity.project === p.id ? 'selected' : ''}>${p.name}</option>`)
+      .join('');
+    
     modal.innerHTML = `
       <div class="modal-content">
         <div class="modal-header">
@@ -755,15 +762,24 @@ class SmartActivityTracker {
             <label>活动内容：</label>
             <input type="text" id="editActivityText" class="input-field" value="${activity.activity}" required>
           </div>
-          <div class="form-group">
-            <label>分类：</label>
-            <select id="editCategory" class="select-input">
-              <option value="工作" ${activity.category === '工作' ? 'selected' : ''}>💼 工作</option>
-              <option value="学习" ${activity.category === '学习' ? 'selected' : ''}>📚 学习</option>
-              <option value="运动" ${activity.category === '运动' ? 'selected' : ''}>🏃 运动</option>
-              <option value="娱乐" ${activity.category === '娱乐' ? 'selected' : ''}>🎮 娱乐</option>
-              <option value="生活" ${activity.category === '生活' ? 'selected' : ''}>🏠 生活</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label>分类：</label>
+              <select id="editCategory" class="select-input">
+                <option value="工作" ${activity.category === '工作' ? 'selected' : ''}>💼 工作</option>
+                <option value="学习" ${activity.category === '学习' ? 'selected' : ''}>📚 学习</option>
+                <option value="运动" ${activity.category === '运动' ? 'selected' : ''}>🏃 运动</option>
+                <option value="娱乐" ${activity.category === '娱乐' ? 'selected' : ''}>🎮 娱乐</option>
+                <option value="生活" ${activity.category === '生活' ? 'selected' : ''}>🏠 生活</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>关联项目：</label>
+              <select id="editProject" class="select-input">
+                <option value="">无关联项目</option>
+                ${projectOptions}
+              </select>
+            </div>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -793,6 +809,7 @@ class SmartActivityTracker {
 
     const activityText = document.getElementById('editActivityText').value.trim();
     const category = document.getElementById('editCategory').value;
+    const project = document.getElementById('editProject').value || null;
     const startTime = document.getElementById('editStartTime').value;
     const endTime = document.getElementById('editEndTime').value;
 
@@ -819,6 +836,7 @@ class SmartActivityTracker {
 
     activity.activity = activityText;
     activity.category = category;
+    activity.project = project;
     activity.startTime = startDate.toISOString();
     activity.endTime = endDate.toISOString();
     activity.duration = Math.round((endDate - startDate) / 60000); // 分钟
@@ -881,6 +899,12 @@ class SmartActivityTracker {
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     const today = new Date().toISOString().split('T')[0];
+    
+    // 生成项目选项
+    const projectOptions = this.projects
+      .filter(p => p.status === 'active')
+      .map(p => `<option value="${p.id}">${p.name}</option>`)
+      .join('');
 
     modal.innerHTML = `
       <div class="modal-content">
@@ -893,15 +917,24 @@ class SmartActivityTracker {
             <label>活动内容：</label>
             <input type="text" id="manualActivityText" class="input-field" placeholder="做了什么..." required>
           </div>
-          <div class="form-group">
-            <label>分类：</label>
-            <select id="manualCategory" class="select-input">
-              <option value="工作">💼 工作</option>
-              <option value="学习">📚 学习</option>
-              <option value="运动">🏃 运动</option>
-              <option value="娱乐">🎮 娱乐</option>
-              <option value="生活">🏠 生活</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group">
+              <label>分类：</label>
+              <select id="manualCategory" class="select-input">
+                <option value="工作">💼 工作</option>
+                <option value="学习">📚 学习</option>
+                <option value="运动">🏃 运动</option>
+                <option value="娱乐">🎮 娱乐</option>
+                <option value="生活">🏠 生活</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>关联项目：</label>
+              <select id="manualProject" class="select-input">
+                <option value="">无关联项目</option>
+                ${projectOptions}
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label>日期：</label>
@@ -932,6 +965,7 @@ class SmartActivityTracker {
   saveManualActivity() {
     const activityText = document.getElementById('manualActivityText').value.trim();
     const category = document.getElementById('manualCategory').value;
+    const project = document.getElementById('manualProject').value || null;
     const date = document.getElementById('manualDate').value;
     const startTime = document.getElementById('manualStartTime').value;
     const endTime = document.getElementById('manualEndTime').value;
@@ -960,7 +994,7 @@ class SmartActivityTracker {
       endTime: endDateTime.toISOString(),
       duration: Math.round((endDateTime - startDateTime) / 60000),
       date: date, // 添加日期字段用于筛选
-      project: null
+      project: project
     };
 
     this.activities.push(newActivity);
