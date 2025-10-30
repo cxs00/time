@@ -879,11 +879,27 @@ class SmartActivityTracker {
           <div class="form-row">
             <div class="form-group">
               <label>开始时间：</label>
-              <input type="time" id="editStartTime" class="input-field" value="${new Date(activity.startTime).toTimeString().slice(0, 5)}" required>
+              <div class="time-picker-group">
+                <select id="editStartHour" class="time-select">
+                  ${this.generateHourOptions()}
+                </select>
+                <span class="time-separator">:</span>
+                <select id="editStartMinute" class="time-select">
+                  ${this.generateMinuteOptions()}
+                </select>
+              </div>
             </div>
             <div class="form-group">
               <label>结束时间：</label>
-              <input type="time" id="editEndTime" class="input-field" value="${new Date(activity.endTime).toTimeString().slice(0, 5)}" required>
+              <div class="time-picker-group">
+                <select id="editEndHour" class="time-select">
+                  ${this.generateHourOptions()}
+                </select>
+                <span class="time-separator">:</span>
+                <select id="editEndMinute" class="time-select">
+                  ${this.generateMinuteOptions()}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -895,6 +911,14 @@ class SmartActivityTracker {
     `;
 
     document.body.appendChild(modal);
+    
+    // 设置当前时间到下拉选择器
+    const startDate = new Date(activity.startTime);
+    const endDate = new Date(activity.endTime);
+    document.getElementById('editStartHour').value = startDate.getHours().toString().padStart(2, '0');
+    document.getElementById('editStartMinute').value = (Math.floor(startDate.getMinutes() / 5) * 5).toString().padStart(2, '0');
+    document.getElementById('editEndHour').value = endDate.getHours().toString().padStart(2, '0');
+    document.getElementById('editEndMinute').value = (Math.floor(endDate.getMinutes() / 5) * 5).toString().padStart(2, '0');
   }
 
   // 保存活动编辑
@@ -905,10 +929,14 @@ class SmartActivityTracker {
     const activityText = document.getElementById('editActivityText').value.trim();
     const category = document.getElementById('editCategory').value;
     const project = document.getElementById('editProject').value || null;
-    const startTime = document.getElementById('editStartTime').value;
-    const endTime = document.getElementById('editEndTime').value;
+    
+    // 从下拉选择器获取时间
+    const startHour = parseInt(document.getElementById('editStartHour').value);
+    const startMinute = parseInt(document.getElementById('editStartMinute').value);
+    const endHour = parseInt(document.getElementById('editEndHour').value);
+    const endMinute = parseInt(document.getElementById('editEndMinute').value);
 
-    if (!activityText || !startTime || !endTime) {
+    if (!activityText) {
       this.showNotification('请填写完整信息', 'warning');
       return;
     }
@@ -917,11 +945,8 @@ class SmartActivityTracker {
     const startDate = new Date(activity.startTime);
     const endDate = new Date(activity.endTime);
 
-    const [startHour, startMinute] = startTime.split(':');
-    const [endHour, endMinute] = endTime.split(':');
-
-    startDate.setHours(parseInt(startHour), parseInt(startMinute));
-    endDate.setHours(parseInt(endHour), parseInt(endMinute));
+    startDate.setHours(startHour, startMinute);
+    endDate.setHours(endHour, endMinute);
 
     // 验证时间逻辑
     if (endDate <= startDate) {
@@ -988,6 +1013,26 @@ class SmartActivityTracker {
     this.showNotification('活动已删除', 'success');
   }
 
+  // 生成小时选项（00-23）
+  generateHourOptions() {
+    let options = '';
+    for (let i = 0; i < 24; i++) {
+      const hour = i.toString().padStart(2, '0');
+      options += `<option value="${hour}">${hour}</option>`;
+    }
+    return options;
+  }
+
+  // 生成分钟选项（00-59，每5分钟）
+  generateMinuteOptions() {
+    let options = '';
+    for (let i = 0; i < 60; i += 5) {
+      const minute = i.toString().padStart(2, '0');
+      options += `<option value="${minute}">${minute}</option>`;
+    }
+    return options;
+  }
+
   // 手动添加历史活动
   addManualActivity() {
     // 创建添加对话框
@@ -1038,11 +1083,27 @@ class SmartActivityTracker {
           <div class="form-row">
             <div class="form-group">
               <label>开始时间：</label>
-              <input type="time" id="manualStartTime" class="input-field" required>
+              <div class="time-picker-group">
+                <select id="manualStartHour" class="time-select">
+                  ${this.generateHourOptions()}
+                </select>
+                <span class="time-separator">:</span>
+                <select id="manualStartMinute" class="time-select">
+                  ${this.generateMinuteOptions()}
+                </select>
+              </div>
             </div>
             <div class="form-group">
               <label>结束时间：</label>
-              <input type="time" id="manualEndTime" class="input-field" required>
+              <div class="time-picker-group">
+                <select id="manualEndHour" class="time-select">
+                  ${this.generateHourOptions()}
+                </select>
+                <span class="time-separator">:</span>
+                <select id="manualEndMinute" class="time-select">
+                  ${this.generateMinuteOptions()}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -1085,13 +1146,21 @@ class SmartActivityTracker {
     const category = document.getElementById('manualCategory').value;
     const project = document.getElementById('manualProject').value || null;
     const date = document.getElementById('manualDate').value;
-    const startTime = document.getElementById('manualStartTime').value;
-    const endTime = document.getElementById('manualEndTime').value;
+    
+    // 从下拉选择器获取时间
+    const startHour = document.getElementById('manualStartHour').value;
+    const startMinute = document.getElementById('manualStartMinute').value;
+    const endHour = document.getElementById('manualEndHour').value;
+    const endMinute = document.getElementById('manualEndMinute').value;
 
-    if (!activityText || !date || !startTime || !endTime) {
+    if (!activityText || !date || !startHour || !startMinute || !endHour || !endMinute) {
       this.showNotification('请填写完整信息', 'warning');
       return;
     }
+
+    // 构建时间字符串
+    const startTime = `${startHour}:${startMinute}`;
+    const endTime = `${endHour}:${endMinute}`;
 
     // 构建日期时间
     const startDateTime = new Date(`${date}T${startTime}`);
