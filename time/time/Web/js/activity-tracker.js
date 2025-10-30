@@ -822,6 +822,7 @@ class SmartActivityTracker {
     activity.startTime = startDate.toISOString();
     activity.endTime = endDate.toISOString();
     activity.duration = Math.round((endDate - startDate) / 60000); // 分钟
+    activity.date = startDate.toISOString().split('T')[0]; // 更新日期字段
 
     this.saveActivities();
     this.updateUI();
@@ -958,6 +959,7 @@ class SmartActivityTracker {
       startTime: startDateTime.toISOString(),
       endTime: endDateTime.toISOString(),
       duration: Math.round((endDateTime - startDateTime) / 60000),
+      date: date, // 添加日期字段用于筛选
       project: null
     };
 
