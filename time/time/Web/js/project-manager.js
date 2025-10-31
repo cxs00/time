@@ -262,37 +262,72 @@ class ProjectManager {
     }[project.status];
 
     const statusText = {
-      'active': '进行中',
-      'completed': '已完成',
-      'paused': '已暂停'
+      'active': '✅ 进行中',
+      'completed': '🎉 已完成',
+      'paused': '⏸️ 已暂停'
     }[project.status];
 
+    const startDate = project.startDate ? new Date(project.startDate).toLocaleDateString('zh-CN') : '未设置';
+    const targetDate = project.targetDate ? new Date(project.targetDate).toLocaleDateString('zh-CN') : '未设置';
+
     return `
-            <div class="project-card ${statusClass}" data-project-id="${project.id}">
-                <div class="project-header">
-                    <h3 class="project-name">${project.name}</h3>
-                    <span class="project-status ${statusClass}">${statusText}</span>
+            <div class="project-card-form ${statusClass}" data-project-id="${project.id}">
+                <div class="form-group">
+                    <label>📌 项目名称</label>
+                    <div class="form-value project-name-display">${project.name}</div>
                 </div>
-                <div class="project-progress" style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0; width: 100%;">
-                    <div class="progress-bar" style="flex: 1; height: 12px; background: #e0e0e0; border-radius: 6px; overflow: hidden; position: relative; min-width: 100px;">
-                        <div class="progress-fill" style="width: ${project.progress}%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 6px; transition: width 0.3s ease; position: relative; z-index: 1; min-width: 2px;"></div>
+                
+                ${project.description ? `
+                <div class="form-group">
+                    <label>📝 项目描述</label>
+                    <div class="form-value">${project.description}</div>
+                </div>
+                ` : ''}
+                
+                <div class="form-group">
+                    <label>📊 项目状态</label>
+                    <div class="form-value status-display ${statusClass}">${statusText}</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>📈 完成进度</label>
+                    <div class="project-progress-display">
+                        <div class="progress-bar-form">
+                            <div class="progress-fill-form" style="width: ${project.progress}%"></div>
+                        </div>
+                        <span class="progress-text-form">${Math.round(project.progress)}%</span>
                     </div>
-                    <span class="progress-text" style="font-size: 1rem; font-weight: 600; color: #667eea; min-width: 50px; text-align: right; margin-left: 0.5rem;">${Math.round(project.progress)}%</span>
                 </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>📅 开始日期</label>
+                        <div class="form-value">${startDate}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>🎯 目标日期</label>
+                        <div class="form-value">${targetDate}</div>
+                    </div>
+                </div>
+                
                 ${project.milestones && project.milestones.length > 0 ? `
-                    <div class="project-milestones">
+                <div class="form-group">
+                    <label>🎯 里程碑</label>
+                    <div class="milestones-display">
                         ${project.milestones.map(milestone => `
-                            <div class="milestone ${milestone.status}">
+                            <div class="milestone-item ${milestone.status}">
                                 ${milestone.status === 'completed' ? '✅' : milestone.status === 'active' ? '🔄' : '⏳'}
                                 ${milestone.name}
                             </div>
                         `).join('')}
                     </div>
+                </div>
                 ` : ''}
-                <div class="project-actions">
-                    <button class="btn btn-edit" data-action="edit" data-project-id="${project.id}">编辑</button>
+                
+                <div class="form-actions">
+                    <button class="btn btn-edit" data-action="edit" data-project-id="${project.id}">✏️ 编辑</button>
                     <button class="btn btn-pause" data-action="toggle" data-project-id="${project.id}">
-                        ${project.status === 'paused' ? '继续' : '暂停'}
+                        ${project.status === 'paused' ? '▶️ 继续' : '⏸️ 暂停'}
                     </button>
                 </div>
             </div>
