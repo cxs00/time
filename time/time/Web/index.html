@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
@@ -295,9 +295,9 @@
 
     <link rel="stylesheet" href="css/activity-tracker.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <!-- 导航栏 -->
     <nav class="navbar">
       <div class="nav-brand">
@@ -330,7 +330,7 @@
 
     <!-- 主页面 - 活动记录 -->
     <main id="home" class="page active">
-    <div class="container">
+      <div class="container">
         <!-- 当前活动状态 -->
         <section class="current-activity-card card">
           <h3 class="card-title">📊 当前活动</h3>
@@ -352,7 +352,7 @@
             <h3 class="card-title">⚡ 快速记录</h3>
             <button class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕
               手动添加活动</button>
-                </div>
+          </div>
           <div class="record-form">
             <div class="input-group">
               <input type="text" id="activityInput" placeholder="现在在做什么？" class="activity-input">
@@ -371,18 +371,18 @@
                   <option value="生活">🏠 生活</option>
                 </select>
                 <button id="addCustomCategory" class="btn btn-secondary">+ 自定义</button>
-            </div>
+              </div>
 
               <div class="form-group">
                 <label>关联项目：</label>
                 <select id="projectSelect" class="select-input">
                   <option value="">自动关联</option>
                 </select>
-                </div>
+              </div>
             </div>
 
             <button id="startActivity" class="btn btn-primary btn-start">🚀 开始记录</button>
-            </div>
+          </div>
         </section>
 
         <!-- 今日概览 -->
@@ -390,30 +390,30 @@
           <h3 class="card-title">📈 今日概览</h3>
           <div class="activity-summary">
             <div class="summary-stats">
-                        <div class="stat-item">
+              <div class="stat-item">
                 <span class="stat-label">总时间</span>
                 <span class="stat-value" id="totalTime">0小时</span>
-                        </div>
-                        <div class="stat-item">
+              </div>
+              <div class="stat-item">
                 <span class="stat-label">活动数</span>
                 <span class="stat-value" id="activityCount">0</span>
-                        </div>
-                        <div class="stat-item">
+              </div>
+              <div class="stat-item">
                 <span class="stat-label">效率</span>
                 <span class="stat-value" id="efficiency">0%</span>
-                        </div>
+              </div>
             </div>
             <!-- 今日活动分布饼图 -->
             <div class="activity-distribution">
               <h4 class="distribution-title">📊 今日活动分布</h4>
               <div class="chart-container-small">
                 <div id="todayDistributionChart" style="width: 100%; height: 200px;"></div>
-                    </div>
-                </div>
+              </div>
+            </div>
             <div class="activity-timeline" id="activityTimeline"></div>
-                    </div>
+          </div>
         </section>
-                        </div>
+      </div>
     </main>
 
     <!-- 项目页面 -->
@@ -422,11 +422,11 @@
         <div class="page-header">
           <h2>🎯 项目进度</h2>
           <button id="createProject" class="btn btn-primary">+ 新建项目</button>
-                        </div>
+        </div>
         <div class="projects-grid" id="projectsGrid">
           <p class="no-projects">还没有创建任何项目</p>
-                    </div>
-                </div>
+        </div>
+      </div>
     </main>
 
     <!-- 统计页面 -->
@@ -446,7 +446,7 @@
             <input type="date" id="startDate" class="date-input" style="display:none;">
             <input type="date" id="endDate" class="date-input" style="display:none;">
             <button id="applyTimeRange" class="btn btn-primary" style="display:none;">应用</button>
-                        </div>
+          </div>
         </section>
 
         <div class="charts-container">
@@ -464,8 +464,8 @@
             <h3 class="card-title">🔥 活动热力图</h3>
             <div id="activityHeatmap" class="chart"></div>
           </section>
-                        </div>
-                    </div>
+        </div>
+      </div>
     </main>
 
     <!-- 日记页面 -->
@@ -488,15 +488,15 @@
                     <option value="😴">😴 疲惫</option>
                   </select>
                 </div>
-                    </div>
+              </div>
               <input type="text" id="diaryTitle" class="diary-title-input" placeholder="给今天的日记起个标题...">
               <textarea id="diaryContent" class="diary-textarea" placeholder="记录今天的心情和想法..."></textarea>
               <div class="diary-actions">
                 <button id="saveDiary" class="btn btn-primary">💾 保存</button>
                 <button id="aiSuggest" class="btn btn-secondary">🤖 AI建议</button>
-                </div>
+              </div>
             </div>
-        </section>
+          </section>
 
           <!-- 历史日记列表 -->
           <section class="diary-history-card card">
@@ -512,13 +512,13 @@
             <div class="memo-input-group">
               <input type="text" id="memoInput" class="memo-input" placeholder="记录想法或提醒...">
               <button id="addMemo" class="btn btn-primary">+</button>
-                    </div>
+            </div>
             <div class="memo-list" id="memoList">
               <p class="no-memos">还没有添加任何备忘录</p>
-                    </div>
+            </div>
           </section>
-                    </div>
-                </div>
+        </div>
+      </div>
     </main>
 
 
@@ -537,18 +537,18 @@
                 <option value="starry-night">✨ 星夜</option>
                 <option value="water-lilies">💧 睡莲</option>
               </select>
-                </div>
+            </div>
 
             <!-- UI尺寸设置 -->
-                    <div class="setting-item">
+            <div class="setting-item">
               <label>📐 UI尺寸</label>
               <select id="sizeSelect" class="select-input"
                 style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0;">
                 <option value="standard">标准</option>
                 <option value="large">大</option>
                 <option value="extra-large">超大</option>
-                        </select>
-                    </div>
+              </select>
+            </div>
 
             <!-- 广告设置 -->
             <div class="setting-item">
@@ -566,22 +566,22 @@
               <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
                 广告收入用于支持项目维护和功能开发
               </small>
-                </div>
+            </div>
 
             <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
 
-                    <div class="setting-item">
+            <div class="setting-item">
               <label>数据导出</label>
               <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
-                    </div>
+            </div>
             <div class="setting-item">
               <label>数据导入</label>
               <button class="btn btn-secondary" onclick="importData()">导入数据</button>
-                </div>
+            </div>
             <div class="setting-item">
               <label>删除所有项目</label>
-              <button class="btn btn-warning" onclick="deleteAllProjects()" 
-                      style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+              <button class="btn btn-warning" onclick="deleteAllProjects()"
+                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                 🗑️ 删除所有项目
               </button>
               <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
@@ -590,8 +590,8 @@
             </div>
             <div class="setting-item">
               <label>删除所有日记</label>
-              <button class="btn btn-warning" onclick="deleteAllDiaries()" 
-                      style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+              <button class="btn btn-warning" onclick="deleteAllDiaries()"
+                style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
                 📖 删除所有日记
               </button>
               <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
@@ -602,15 +602,15 @@
               <label>清除所有数据</label>
               <button class="btn btn-danger" onclick="clearAllData()">清除数据</button>
             </div>
-            </div>
+          </div>
         </section>
-    </div>
+      </div>
     </main>
 
     <!-- Toast通知 -->
     <div class="toast" id="toast">
-        <span class="toast-icon">✓</span>
-        <span class="toast-message" id="toastMessage"></span>
+      <span class="toast-icon">✓</span>
+      <span class="toast-message" id="toastMessage"></span>
     </div>
 
     <!-- JavaScript -->
@@ -747,7 +747,7 @@
 
     <!-- AdSense广告脚本 -->
     <script src="js/adsense.js"></script>
-</body>
+  </body>
 
   <!-- 底部固定横幅广告容器（固定70px高度 - 增加三分之一）-->
   <div id="fixed-banner-ad-container" class="fixed-banner-ad" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;

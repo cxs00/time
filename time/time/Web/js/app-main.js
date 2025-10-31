@@ -1748,7 +1748,7 @@ function deleteAllProjects() {
   if (confirm('⚠️ 确定要删除所有项目吗？\n\n此操作将：\n• 删除所有项目数据\n• 不影响活动记录\n• 不影响日记和备忘录\n\n此操作不可恢复！')) {
     const confirmation = prompt('请输入项目数量确认删除（当前项目数：' + (JSON.parse(localStorage.getItem('activityTracker_projects') || '[]').length) + '）：');
     const currentProjects = JSON.parse(localStorage.getItem('activityTracker_projects') || '[]');
-    
+
     if (confirmation === String(currentProjects.length)) {
       // 先备份数据
       const backup = {
@@ -1760,15 +1760,15 @@ function deleteAllProjects() {
 
       // 删除项目数据
       localStorage.setItem('activityTracker_projects', '[]');
-      
+
       // 刷新项目管理器
       if (window.projectManager && typeof window.projectManager.loadProjects === 'function') {
         window.projectManager.loadProjects();
       }
-      
+
       console.log('✅ 所有项目已删除（已备份）');
       alert('✅ 成功删除 ' + currentProjects.length + ' 个项目！\n备份已保存。');
-      
+
       // 刷新页面显示
       if (window.location.hash === '#projects') {
         location.reload();
@@ -1785,7 +1785,7 @@ function deleteAllDiaries() {
   if (confirm('⚠️ 确定要删除所有日记吗？\n\n此操作将：\n• 删除所有日记条目\n• 不影响项目数据\n• 不影响活动记录和备忘录\n\n此操作不可恢复！')) {
     const confirmation = prompt('请输入日记数量确认删除（当前日记数：' + (JSON.parse(localStorage.getItem('activityTracker_diary') || '[]').length) + '）：');
     const currentDiaries = JSON.parse(localStorage.getItem('activityTracker_diary') || '[]');
-    
+
     if (confirmation === String(currentDiaries.length)) {
       // 先备份数据
       const backup = {
@@ -1797,15 +1797,15 @@ function deleteAllDiaries() {
 
       // 删除日记数据
       localStorage.setItem('activityTracker_diary', '[]');
-      
+
       // 刷新日记管理器
       if (window.diaryMemoManager && typeof window.diaryMemoManager.loadDiaries === 'function') {
         window.diaryMemoManager.loadDiaries();
       }
-      
+
       console.log('✅ 所有日记已删除（已备份）');
       alert('✅ 成功删除 ' + currentDiaries.length + ' 条日记！\n备份已保存。');
-      
+
       // 刷新页面显示
       if (window.location.hash === '#diary') {
         location.reload();
