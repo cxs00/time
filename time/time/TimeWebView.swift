@@ -33,22 +33,34 @@ struct TimeWebView: UIViewRepresentable {
         webView.scrollView.bounces = true
 
         // 尝试加载Activity Tracker HTML文件
-        if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
-            let fileURL = URL(fileURLWithPath: htmlPath)
-
-            // 使用loadFileURL方法（更稳定）
+        // 优先从 Web 子目录加载
+        if let urlInWeb = Bundle.main.url(forResource: "activity-tracker", withExtension: "html", subdirectory: "Web") {
+            let webDirectory = urlInWeb.deletingLastPathComponent()
+            
             if #available(iOS 9.0, *) {
-                let webDirectory = fileURL.deletingLastPathComponent()
-                webView.loadFileURL(fileURL, allowingReadAccessTo: webDirectory)
-                print("✅ iOS - 正在加载本地HTML文件")
-                print("   文件路径: \(htmlPath)")
+                webView.loadFileURL(urlInWeb, allowingReadAccessTo: webDirectory)
+                print("✅ iOS - 从Web子目录加载HTML文件")
+                print("   文件路径: \(urlInWeb.path)")
                 print("   Web目录: \(webDirectory.path)")
-
+                
                 // 启用开发者工具便于调试
                 webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
             }
+        } else if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
+            // 兜底：从根目录加载
+            let fileURL = URL(fileURLWithPath: htmlPath)
+            
+            if #available(iOS 9.0, *) {
+                let webDirectory = fileURL.deletingLastPathComponent()
+                webView.loadFileURL(fileURL, allowingReadAccessTo: webDirectory)
+                print("✅ iOS - 从根目录加载HTML文件")
+                print("   文件路径: \(htmlPath)")
+                print("   Web目录: \(webDirectory.path)")
+                
+                webView.configuration.preferences.setValue(true, forKey: "developerExtrasEnabled")
+            }
         } else {
-            print("❌ 未找到index.html文件")
+            print("❌ 未找到activity-tracker.html文件")
             // 显示简单的错误页面
             let errorHTML = """
             <!DOCTYPE html>
