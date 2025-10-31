@@ -579,6 +579,26 @@
               <button class="btn btn-secondary" onclick="importData()">导入数据</button>
             </div>
             <div class="setting-item">
+              <label>删除所有项目</label>
+              <button class="btn btn-warning" onclick="deleteAllProjects()" 
+                      style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                🗑️ 删除所有项目
+              </button>
+              <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
+                将删除所有项目数据（不影响活动记录）
+              </small>
+            </div>
+            <div class="setting-item">
+              <label>删除所有日记</label>
+              <button class="btn btn-warning" onclick="deleteAllDiaries()" 
+                      style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                📖 删除所有日记
+              </button>
+              <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
+                将删除所有日记条目（不影响其他数据）
+              </small>
+            </div>
+            <div class="setting-item">
               <label>清除所有数据</label>
               <button class="btn btn-danger" onclick="clearAllData()">清除数据</button>
             </div>
