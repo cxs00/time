@@ -7,6 +7,13 @@
     <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
     <title>Activity Tracker v3.9.0 - 智能活动记录</title>
 
+    <!-- Google AdSense 网站所有权验证 -->
+    <meta name="google-adsense-account" content="ca-pub-6680853179152933">
+
+    <!-- Google AdSense 代码段验证 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6680853179152933"
+      crossorigin="anonymous"></script>
+
     <!-- PWA配置 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#667eea">
@@ -107,6 +114,12 @@
 
       .page.active {
         display: block;
+      }
+
+      /* 容器底部边距 - 为广告预留空间 */
+      .container {
+        padding-bottom: 85px !important;
+        /* 70px广告 + 15px缓冲 */
       }
 
       /* 卡片 */
@@ -280,7 +293,7 @@
       }
     </style>
 
-    <link rel="stylesheet" href="activity-tracker.css">
+    <link rel="stylesheet" href="css/activity-tracker.css">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
   </head>
 
@@ -337,7 +350,8 @@
         <section class="quick-record-card card">
           <div class="card-header-with-action">
             <h3 class="card-title">⚡ 快速记录</h3>
-            <button class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕ 手动添加活动</button>
+            <button class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕
+              手动添加活动</button>
           </div>
           <div class="record-form">
             <div class="input-group">
@@ -581,15 +595,15 @@
 
     <!-- JavaScript -->
 
-    <script src="storage.js"></script>
-    <script src="notification.js"></script>
-    <script src="ai-classifier.js"></script>
-    <script src="activity-tracker.js"></script>
-    <script src="project-manager.js"></script>
-    <script src="diary-memo.js"></script>
-    <script src="statistics.js"></script>
-    <script src="advanced-charts.js"></script>
-    <script src="app-main.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/ai-classifier.js"></script>
+    <script src="js/activity-tracker.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/diary-memo.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/advanced-charts.js"></script>
+    <script src="js/app-main.js"></script>
 
     <!-- 主题和UI尺寸切换 -->
     <script>
@@ -709,17 +723,55 @@
     </script>
 
     <!-- PWA注册脚本 -->
-    <script src="pwa-register.js"></script>
+    <script src="js/pwa-register.js"></script>
 
     <!-- AdSense广告脚本 -->
     <script src="js/adsense.js"></script>
   </body>
 
-  <!-- 底部固定横幅广告容器（方案1）-->
+  <!-- 底部固定横幅广告容器（固定70px高度 - 增加三分之一）-->
   <div id="fixed-banner-ad-container" class="fixed-banner-ad" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
-              min-height: 50px; background: #f0f0f0;
+              height: 70px; min-height: 70px; max-height: 70px; overflow: hidden;
+              background: #f0f0f0;
               display: flex; align-items: center; justify-content: center;">
     <span style="color: #666; font-size: 12px;">广告加载中...</span>
   </div>
+
+  <!-- 广告自适应脚本（简化版 - 固定高度）-->
+  <script>
+    (function () {
+      function adjustAdHeight() {
+        const adContainer = document.getElementById('fixed-banner-ad-container');
+        if (!adContainer) return;
+
+        // 🔧 固定高度方案：70px（增加三分之一以完整显示广告内容）
+        const adHeight = 70;
+
+        // 强制应用样式
+        adContainer.style.height = adHeight + 'px';
+        adContainer.style.minHeight = adHeight + 'px';
+        adContainer.style.maxHeight = adHeight + 'px';
+        adContainer.style.overflow = 'hidden'; // 防止内容溢出
+
+        // 调整主内容区域的底部padding
+        const mainContent = document.querySelector('.container');
+        if (mainContent) {
+          mainContent.style.paddingBottom = (adHeight + 15) + 'px';
+        }
+
+        console.log('📐 广告高度已设置为固定值:', adHeight + 'px');
+      }
+
+      // 确保 DOM 加载后执行
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adjustAdHeight);
+      } else {
+        adjustAdHeight();
+      }
+
+      // 监听窗口变化（确保横竖屏切换时也保持固定高度）
+      window.addEventListener('resize', adjustAdHeight);
+    })();
+  </script>
 
 </html>

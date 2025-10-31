@@ -227,9 +227,22 @@ class AdSenseManager {
         this.saveSettings(settings);
 
         if (enabled) {
-            this.init();
-            this.showBannerAd();
-            this.showToast('广告已启用');
+            const adContainer = document.getElementById('fixed-banner-ad-container');
+
+            // 🔧 智能显示：如果广告已存在，直接显示；否则重新加载
+            if (adContainer && adContainer.querySelector('ins.adsbygoogle')) {
+                console.log('📺 检测到已有广告，直接显示');
+                adContainer.style.display = 'flex';
+                this.showToast('广告已启用');
+            } else {
+                console.log('🔄 未检测到广告，重新加载');
+                this.init();
+                this.showToast('广告已启用，正在加载...');
+                setTimeout(() => {
+                    this.showBannerAd();
+                    console.log('✅ 广告重新加载完成');
+                }, 1000);  // 延迟 1 秒
+            }
         } else {
             this.hideAllAds();
             this.showToast('广告已禁用');
@@ -241,8 +254,9 @@ class AdSenseManager {
     hideAllAds() {
         const adContainer = document.getElementById('fixed-banner-ad-container');
         if (adContainer) {
-            adContainer.innerHTML = '';
+            // 🔧 修复：保留广告内容，只隐藏容器（避免重新创建时的延迟）
             adContainer.style.display = 'none';
+            console.log('✅ 广告容器已隐藏（内容保留）');
         }
         console.log('✅ 所有广告已隐藏');
     }

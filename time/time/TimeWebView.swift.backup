@@ -44,69 +44,96 @@ struct TimeWebView: UIViewRepresentable {
             webView.isInspectable = true
         }
 
-        // 🔧 方案B：统一使用 loadFileURL（与 Mac 一致）
-        // 原因：内联化路径匹配失败，三平台应使用统一加载方式
-        if let htmlURL = Bundle.main.url(forResource: "activity-tracker",
-                                         withExtension: "html",
-                                         subdirectory: "Web") {
-            // 🔧 关键修复：正确设置访问权限（与 Mac 完全一致）
-            let webDir = htmlURL.deletingLastPathComponent()  // .app/Web/
-            let resourcesDir = webDir.deletingLastPathComponent()  // .app/
+        // 🔧 关键修复：使用内联化方案解决 iOS 同源策略问题
+        if let urlInWeb = Bundle.main.url(forResource: "activity-tracker", withExtension: "html", subdirectory: "Web") {
+            let webDirectory = urlInWeb.deletingLastPathComponent()
 
-            print("📱 iOS - 从Web子目录加载（统一方案）")
-            print("   HTML路径: \(htmlURL.path)")
-            print("   Web目录: \(webDir.path)")
-            print("   访问权限根目录: \(resourcesDir.path)")
+            // 读取 HTML 并内联所有本地资源
+            if var html = try? String(contentsOf: urlInWeb) {
+                print("📱 iOS 内联化处理开始...")
 
-            // ✅ 允许访问整个 Resources 目录（包含 Web/js/, Web/css/ 等子目录）
-            webView.loadFileURL(htmlURL, allowingReadAccessTo: resourcesDir)
+                // 1. 内联本地 JS 文件（不包含 adsense.js - AdSense 政策要求）
+                let jsFiles = ["storage.js", "notification.js", "ai-classifier.js",
+                              "activity-tracker.js", "project-manager.js",
+                              "diary-memo.js", "statistics.js", "advanced-charts.js",
+                              "app-main.js", "pwa-register.js"]
 
-            // 📊 详细验证 JavaScript 执行
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                let checks = [
-                    ("window.AppMain", "AppMain 主应用"),
-                    ("window.smartActivityTracker", "Activity Tracker"),
-                    ("window.projectManager", "Project Manager"),
-                    ("window.chartManager", "Chart Manager"),
-                    ("window.diaryMemoManager", "Diary Memo Manager")
-                ]
+                var inlinedCount = 0
+                for jsFile in jsFiles {
+                    let jsURL = webDirectory.appendingPathComponent("js").appendingPathComponent(jsFile)
+                    if let jsContent = try? String(contentsOf: jsURL) {
+                        html = html.replacingOccurrences(
+                            of: "<script src=\"\(jsFile)\"></script>",
+                            with: "<script>/* \(jsFile) */\n\(jsContent)\n</script>"
+                        )
+                        inlinedCount += 1
+                        print("  ✅ 内联: \(jsFile)")
+                    }
+                }
 
-                print("📊 iOS - JavaScript 模块验证:")
-                for (script, name) in checks {
-                    webView.evaluateJavaScript("typeof \(script)") { result, error in
-                        if let error = error {
-                            print("  ❌ \(name): 检查失败 - \(error.localizedDescription)")
-                        } else if let result = result as? String {
-                            if result == "undefined" {
-                                print("  ❌ \(name): 未加载")
-                            } else {
-                                print("  ✅ \(name): 加载成功 (type: \(result))")
-                            }
+                // 2. 内联 CSS
+                let cssURL = webDirectory.appendingPathComponent("css").appendingPathComponent("activity-tracker.css")
+                if let cssContent = try? String(contentsOf: cssURL) {
+                    html = html.replacingOccurrences(
+                        of: "<link rel=\"stylesheet\" href=\"activity-tracker.css\">",
+                        with: "<style>/* activity-tracker.css */\n\(cssContent)\n</style>"
+                    )
+                    print("  ✅ 内联: activity-tracker.css")
+                }
+
+                // 3. 添加加载指示器
+                let loadingIndicator = """
+                <div id="app-loading" style="position:fixed;top:0;left:0;right:0;bottom:0;
+                     background:linear-gradient(135deg,#667eea,#764ba2);z-index:99999;
+                     display:flex;align-items:center;justify-content:center;">
+                    <div style="text-align:center;color:white;">
+                        <h1 style="font-size:48px;margin-bottom:20px;">⏳</h1>
+                        <h2>Activity Tracker</h2>
+                        <p style="opacity:0.8;">正在加载...</p>
+                    </div>
+                </div>
+                <script>
+                    window.addEventListener('load', function() {
+                        setTimeout(function() {
+                            var loading = document.getElementById('app-loading');
+                            if (loading) loading.remove();
+                        }, 300);
+                    });
+                </script>
+                """
+                html = html.replacingOccurrences(
+                    of: "<body>",
+                    with: "<body>\(loadingIndicator)"
+                )
+
+                print("📱 内联化完成:")
+                print("  - JS 文件: \(inlinedCount) 个")
+                print("  - HTML 大小: \(html.count) bytes")
+                print("  - 加载方式: loadHTMLString")
+
+                // 4. 使用 loadHTMLString（关键！）
+                webView.loadHTMLString(html, baseURL: webDirectory)
+
+                // 5. 验证 JavaScript 执行
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    webView.evaluateJavaScript("typeof window.AppMain") { result, error in
+                        if let result = result as? String, result == "undefined" {
+                            print("❌ JavaScript 未正常执行")
+                        } else {
+                            print("✅ JavaScript 执行正常")
                         }
                     }
                 }
-
-                // 验证 DOM 加载
-                webView.evaluateJavaScript("document.readyState") { result, error in
-                    if let state = result as? String {
-                        print("  📄 DOM 状态: \(state)")
-                    }
-                }
-
-                // 验证项目数据
-                webView.evaluateJavaScript("localStorage.getItem('activityTracker_projects')") { result, error in
-                    if let data = result as? String, !data.isEmpty {
-                        print("  💾 项目数据: 已加载")
-                    } else {
-                        print("  ⚠️  项目数据: 空或未加载")
-                    }
-                }
+            } else {
+                // 降级：直接加载文件
+                print("⚠️ 无法读取 HTML，使用降级方案")
+                webView.loadFileURL(urlInWeb, allowingReadAccessTo: webDirectory)
             }
         } else if let htmlPath = Bundle.main.path(forResource: "activity-tracker", ofType: "html") {
-            // 降级方案：从根目录加载
+            // 兜底：从根目录加载
             let fileURL = URL(fileURLWithPath: htmlPath)
             let webDirectory = fileURL.deletingLastPathComponent()
-            print("⚠️ iOS - 降级：使用根目录加载")
+            print("⚠️ 使用根目录加载（兜底方案）")
             webView.loadFileURL(fileURL, allowingReadAccessTo: webDirectory)
         } else {
             print("❌ 未找到activity-tracker.html文件")

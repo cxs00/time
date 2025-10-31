@@ -35,11 +35,26 @@
 - [ ] 等待10秒后执行：`sleep 10 && cd /Users/shanwanjun/Desktop/cxs/time/time && echo "3" | ./run-simulation.sh`
 - [ ] 显示验证清单
 
-### 3. Web资源操作（🟡 MUST FOLLOW）
+### 3. Web资源操作（🔴 CRITICAL）
 涉及Web资源（HTML/CSS/JS）时，**必须**：
-- [ ] 检查路径一致性（`js/`前缀）
+- [ ] **强制路径格式**（见下方路径规范）
+- [ ] 检查三平台一致性（Web, Mac, iPhone）
 - [ ] 验证资源打包策略
 - [ ] 确认WebView加载配置
+
+**🔴 HTML资源路径规范（强制遵守）**：
+```html
+<!-- ✅ 正确格式 -->
+<script src="js/storage.js"></script>
+<script src="js/activity-tracker.js"></script>
+<link rel="stylesheet" href="css/activity-tracker.css">
+
+<!-- ❌ 禁止使用 -->
+<script src="storage.js"></script>  <!-- 无前缀 -->
+<script src="./js/storage.js"></script>  <!-- ./ 前缀 -->
+```
+
+**原因**: 三平台统一加载方案要求路径格式完全一致
 
 ### 4. PWA功能集成（🔴 CRITICAL）
 在集成PWA功能时，**必须**检查：
@@ -1145,6 +1160,114 @@ dataStore.removeData(ofTypes: types, modifiedSince: Date(timeIntervalSince1970: 
 
 ---
 
-**最后更新：** 2025年10月27日
-**版本：** v3.1.1
-**状态：** ✅ 生效中（新增：分步骤Git快照规则 + Web资源路径一致性）
+## 🌍 跨平台统一架构规范 - CRITICAL (2025-10-31)
+
+### 背景
+iPhone 端反复出现 JavaScript 未加载问题（无法切换界面、项目数据为空等），根本原因是三平台资源加载方式不一致导致的循环问题。
+
+### 🔴 强制规范（必须100%遵守）
+
+#### 1. 资源路径格式（HTML）
+
+**✅ 唯一正确格式**：
+```html
+<script src="js/storage.js"></script>
+<script src="js/activity-tracker.js"></script>
+<link rel="stylesheet" href="css/activity-tracker.css">
+```
+
+**❌ 严格禁止**：
+```html
+<script src="storage.js"></script>  <!-- 无前缀 -->
+<script src="./js/storage.js"></script>  <!-- ./ 前缀 -->
+<script src="../js/storage.js"></script>  <!-- ../ 前缀 -->
+```
+
+#### 2. Swift WebView 加载方式（统一）
+
+**Mac 和 iPhone 必须使用相同代码**：
+```swift
+// ✅ 正确：统一使用 loadFileURL
+if let htmlURL = Bundle.main.url(forResource: "activity-tracker",
+                                 withExtension: "html",
+                                 subdirectory: "Web") {
+    let webDir = htmlURL.deletingLastPathComponent()
+    let resourcesDir = webDir.deletingLastPathComponent()  // 关键：父目录
+
+    webView.loadFileURL(htmlURL, allowingReadAccessTo: resourcesDir)
+}
+
+// ❌ 禁止：使用不同的加载方式
+// ❌ 禁止：使用内联化方案
+// ❌ 禁止：Mac 和 iPhone 使用不同逻辑
+```
+
+#### 3. Build Phase Script（资源拷贝）
+
+**必须保留目录结构**：
+```bash
+# macOS: Contents/Resources/Web/
+RESOURCES_DIR="${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources"
+cp -R "${SRCROOT}/time/Web" "$RESOURCES_DIR/"
+
+# iOS: .app/Web/ (注意：无 Contents 目录)
+RESOURCES_DIR="${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH%/}"
+cp -R "${SRCROOT}/time/Web" "$RESOURCES_DIR/"
+
+# ✅ 结果：Web 目录包含完整的 js/ 和 css/ 子目录
+# ❌ 禁止：扁平化拷贝（丢失目录结构）
+```
+
+#### 4. 应用包结构验证
+
+**macOS**:
+```
+TIME.app/Contents/Resources/
+└── Web/
+    ├── activity-tracker.html
+    ├── js/
+    │   ├── storage.js
+    │   └── ...
+    └── css/
+        └── activity-tracker.css
+```
+
+**iOS**:
+```
+TIME.app/
+└── Web/
+    ├── activity-tracker.html
+    ├── js/
+    │   ├── storage.js
+    │   └── ...
+    └── css/
+        └── activity-tracker.css
+```
+
+### 📋 修改代码前必须检查
+
+**每次修改 HTML/Swift/Build Script 前**：
+1. [ ] 是否影响三个平台？（Web, Mac, iPhone）
+2. [ ] 路径格式是否保持一致？
+3. [ ] 是否需要同时修改 Mac 和 iPhone 分支？
+4. [ ] 修改后是否运行三平台仿真？
+
+### 🚨 违反后果
+
+**如果违反本规范**：
+- ❌ iPhone 应用 JavaScript 完全不执行
+- ❌ 所有功能失效（界面切换、数据加载、图表显示）
+- ❌ 三平台轮流出现问题（修复循环）
+- ❌ 用户体验完全损坏
+
+### 📄 相关文档
+
+- **完整技术文档**: `CROSS_PLATFORM_ARCHITECTURE.md`
+- **实施总结**: `IMPLEMENTATION_SUMMARY.md`
+- **修改文件**: `time/TimeWebView.swift`
+
+---
+
+**最后更新：** 2025年10月31日
+**版本：** v3.2.0
+**状态：** ✅ 生效中（新增：跨平台统一架构规范）

@@ -1,526 +1,777 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="TIME - 享受时光，专注当下的时间管理工具">
-        <title>TIME - 时间管理</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Activity Tracker - 智能活动记录与进度管理">
+    <title>Activity Tracker v3.9.0 - 智能活动记录</title>
 
-        <!-- 安全头部 -->
-        <meta http-equiv="X-Content-Type-Options" content="nosniff">
-        <meta http-equiv="X-Frame-Options" content="DENY">
-        <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-        <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-        <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    <!-- Google AdSense 网站所有权验证 -->
+    <meta name="google-adsense-account" content="ca-pub-6680853179152933">
 
-        <!-- 内容安全策略 -->
-        <meta http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src 'self' https://googleads.g.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <!-- Google AdSense 代码段验证 -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6680853179152933"
+      crossorigin="anonymous"></script>
 
-        <link rel="stylesheet" href="style.css">
-    </head>
+    <!-- PWA配置 -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Activity Tracker">
 
-    <body>
-        <!-- 主容器 -->
-        <div class="container">
-            <!-- 头部导航 -->
-            <header class="header">
-                <div class="logo">
-                    <span class="tomato-icon">⏰</span>
-                    <h1>TIME</h1>
+    <!-- 安全头部 -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+
+    <!-- 内联关键CSS确保样式生效 -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f8f9fa;
+        /* iOS安全区域支持 */
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      /* 导航栏 */
+      .navbar {
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        /* iOS安全区域顶部支持 */
+        padding-top: max(1rem, env(safe-area-inset-top));
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .brand-icon {
+        font-size: 1.5rem;
+      }
+
+      .brand-name {
+        color: #667eea;
+      }
+
+      .nav-links {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        gap: 0.5rem;
+      }
+
+      .nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 0.25rem;
+        text-decoration: none;
+        color: #666;
+        border-radius: 8px;
+        flex: 1;
+        max-width: 70px;
+      }
+
+      .nav-link.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .nav-icon {
+        font-size: 1.5rem;
+      }
+
+      .nav-text {
+        font-size: 0.7rem;
+        white-space: nowrap;
+      }
+
+      /* 页面切换 */
+      .page {
+        display: none;
+        padding: 1rem;
+      }
+
+      .page.active {
+        display: block;
+      }
+
+      /* 容器底部边距 - 为广告预留空间 */
+      .container {
+        padding-bottom: 85px !important;
+        /* 70px广告 + 15px缓冲 */
+      }
+
+      /* 卡片 */
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      /* ==================== 模态框样式（内联确保生效） ==================== */
+      .modal {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        z-index: 10001 !important;
+        /* 高于调试面板(10000) */
+        animation: modalFadeIn 0.3s ease;
+      }
+
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal-content {
+        background: white !important;
+        border-radius: 16px !important;
+        padding: 2rem !important;
+        max-width: 500px !important;
+        width: 90% !important;
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+        animation: modalSlideUp 0.3s ease;
+        position: relative !important;
+        z-index: 10002 !important;
+      }
+
+      @keyframes modalSlideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .modal-content h3 {
+        margin: 0 0 1.5rem 0 !important;
+        color: #333 !important;
+        font-size: 1.5rem !important;
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem !important;
+      }
+
+      .form-group label {
+        display: block !important;
+        margin-bottom: 0.5rem !important;
+        color: #555 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="date"],
+      .form-group select,
+      .form-group textarea {
+        width: 100% !important;
+        padding: 0.75rem !important;
+        border: 2px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        transition: all 0.3s !important;
+        font-family: inherit !important;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none !important;
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+      }
+
+      .form-group textarea {
+        min-height: 100px !important;
+        resize: vertical !important;
+      }
+
+      .form-group input[type="range"] {
+        width: calc(100% - 60px) !important;
+        margin-right: 10px !important;
+      }
+
+      .form-actions {
+        display: flex !important;
+        gap: 1rem !important;
+        justify-content: flex-end !important;
+        margin-top: 2rem !important;
+      }
+
+      .form-actions button {
+        padding: 0.75rem 1.5rem !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s !important;
+      }
+
+      .btn-primary,
+      .form-actions button[type="submit"] {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+      }
+
+      .btn-secondary,
+      .form-actions button[type="button"] {
+        background: #f0f0f0 !important;
+        color: #666 !important;
+      }
+
+      /* 移动端优化 */
+      @media (max-width: 768px) {
+        .modal-content {
+          width: 95% !important;
+          padding: 1.5rem !important;
+          max-height: 90vh !important;
+        }
+
+        .modal-content h3 {
+          font-size: 1.25rem !important;
+        }
+
+        .form-actions {
+          flex-direction: column !important;
+        }
+
+        .form-actions button {
+          width: 100% !important;
+        }
+      }
+    </style>
+
+    <link rel="stylesheet" href="css/activity-tracker.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+</head>
+
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+      <div class="nav-brand">
+        <span class="brand-icon">📊</span>
+        <span class="brand-name">Activity Tracker</span>
+      </div>
+      <div class="nav-links">
+        <a href="#home" class="nav-link active" data-page="home">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">记录</span>
+        </a>
+        <a href="#projects" class="nav-link" data-page="projects">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-text">项目</span>
+        </a>
+        <a href="#stats" class="nav-link" data-page="stats">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">统计</span>
+        </a>
+        <a href="#diary" class="nav-link" data-page="diary">
+          <span class="nav-icon">📖</span>
+          <span class="nav-text">日记</span>
+        </a>
+        <a href="#settings" class="nav-link" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">设置</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- 主页面 - 活动记录 -->
+    <main id="home" class="page active">
+    <div class="container">
+        <!-- 当前活动状态 -->
+        <section class="current-activity-card card">
+          <h3 class="card-title">📊 当前活动</h3>
+          <div id="currentActivity" class="activity-display">
+            <div class="activity-info">
+              <span class="activity-name">暂无活动</span>
+              <span class="activity-duration">00:00:00</span>
+            </div>
+            <div class="activity-controls">
+              <button id="pauseActivity" class="btn btn-pause" disabled>⏸️ 暂停</button>
+              <button id="endActivity" class="btn btn-end" disabled>⏹️ 结束</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 快速记录 -->
+        <section class="quick-record-card card">
+          <div class="card-header-with-action">
+            <h3 class="card-title">⚡ 快速记录</h3>
+            <button class="btn btn-secondary btn-sm" onclick="window.smartActivityTracker.addManualActivity()">➕
+              手动添加活动</button>
                 </div>
-                <nav class="nav">
-                    <button class="nav-btn" id="statsBtn">
-                        <span>📊</span>
-                        <span>统计</span>
-                    </button>
-                    <button class="nav-btn" id="analyticsBtn">
-                        <span>📈</span>
-                        <span>分析</span>
-                    </button>
-                    <button class="nav-btn" id="settingsBtn">
-                        <span>⚙️</span>
-                        <span>设置</span>
-                    </button>
-                </nav>
-            </header>
+          <div class="record-form">
+            <div class="input-group">
+              <input type="text" id="activityInput" placeholder="现在在做什么？" class="activity-input">
+              <div class="smart-suggestions" id="smartSuggestions"></div>
+            </div>
 
-            <!-- 主内容区 -->
-            <main class="main-content" id="timerPage">
-                <!-- 状态标签 -->
-                <div class="status-tabs">
-                    <button class="tab-btn active" data-mode="work">工作</button>
-                    <button class="tab-btn" data-mode="shortBreak">短休息</button>
-                    <button class="tab-btn" data-mode="longBreak">长休息</button>
+            <div class="form-row">
+              <div class="form-group">
+                <label>分类：</label>
+                <select id="categorySelect" class="select-input">
+                  <option value="">智能推荐</option>
+                  <option value="工作">💼 工作</option>
+                  <option value="学习">📚 学习</option>
+                  <option value="运动">🏃 运动</option>
+                  <option value="娱乐">🎮 娱乐</option>
+                  <option value="生活">🏠 生活</option>
+                </select>
+                <button id="addCustomCategory" class="btn btn-secondary">+ 自定义</button>
+            </div>
+
+              <div class="form-group">
+                <label>关联项目：</label>
+                <select id="projectSelect" class="select-input">
+                  <option value="">自动关联</option>
+                </select>
                 </div>
+            </div>
 
-                <!-- 计时器显示 -->
-                <div class="timer-display">
-                    <svg class="progress-ring" width="260" height="260" viewBox="0 0 260 260">
-                        <circle class="progress-ring__circle-bg" stroke="#ffffff20" stroke-width="8" fill="transparent"
-                            r="122" cx="130" cy="130" />
-                        <circle class="progress-ring__circle" stroke="url(#gradient)" stroke-width="8"
-                            fill="transparent" r="122" cx="130" cy="130" />
-                        <defs>
-                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#E74C3C;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                    <div class="time-text">
-                        <div class="time" id="timeDisplay">25:00</div>
-                        <div class="mode-label" id="modeLabel">工作时间</div>
+            <button id="startActivity" class="btn btn-primary btn-start">🚀 开始记录</button>
+            </div>
+        </section>
+
+        <!-- 今日概览 -->
+        <section class="today-overview-card card">
+          <h3 class="card-title">📈 今日概览</h3>
+          <div class="activity-summary">
+            <div class="summary-stats">
+                        <div class="stat-item">
+                <span class="stat-label">总时间</span>
+                <span class="stat-value" id="totalTime">0小时</span>
+                        </div>
+                        <div class="stat-item">
+                <span class="stat-label">活动数</span>
+                <span class="stat-value" id="activityCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                <span class="stat-label">效率</span>
+                <span class="stat-value" id="efficiency">0%</span>
+                        </div>
+            </div>
+            <!-- 今日活动分布饼图 -->
+            <div class="activity-distribution">
+              <h4 class="distribution-title">📊 今日活动分布</h4>
+              <div class="chart-container-small">
+                <div id="todayDistributionChart" style="width: 100%; height: 200px;"></div>
                     </div>
                 </div>
+            <div class="activity-timeline" id="activityTimeline"></div>
+                    </div>
+        </section>
+                        </div>
+    </main>
 
-                <!-- 控制按钮 -->
-                <div class="controls">
-                    <button class="control-btn start-btn" id="startBtn">
-                        <span class="btn-icon">▶️</span>
-                        <span class="btn-text">开始</span>
-                    </button>
-                    <button class="control-btn pause-btn hidden" id="pauseBtn">
-                        <span class="btn-icon">⏸️</span>
-                        <span class="btn-text">暂停</span>
-                    </button>
-                    <button class="control-btn reset-btn" id="resetBtn">
-                        <span class="btn-icon">🔄</span>
-                        <span class="btn-text">重置</span>
-                    </button>
-                    <button class="control-btn skip-btn" id="skipBtn">
-                        <span class="btn-icon">⏭️</span>
-                        <span class="btn-text">跳过</span>
-                    </button>
-                </div>
-
-                <!-- 番茄计数 -->
-                <div class="pomodoro-counter">
-                    <div class="counter-label">今日完成</div>
-                    <div class="counter-display">
-                        <span class="tomato-icons" id="tomatoIcons"></span>
-                        <span class="counter-text" id="counterText">0/8</span>
+    <!-- 项目页面 -->
+    <main id="projects" class="page">
+      <div class="container">
+        <div class="page-header">
+          <h2>🎯 项目进度</h2>
+          <button id="createProject" class="btn btn-primary">+ 新建项目</button>
+                        </div>
+        <div class="projects-grid" id="projectsGrid">
+          <p class="no-projects">还没有创建任何项目</p>
                     </div>
                 </div>
-            </main>
+    </main>
 
-            <!-- 统计页面 -->
-            <section class="stats-page hidden" id="statsPage">
-                <div class="page-header">
-                    <button class="back-btn" id="statsBackBtn">← 返回</button>
-                    <h2>统计数据</h2>
-                </div>
+    <!-- 统计页面 -->
+    <main id="stats" class="page">
+      <div class="container">
+        <section class="time-selector-card card">
+          <h3 class="card-title">📊 活动统计</h3>
+          <div class="time-range-selector">
+            <select id="timeRange" class="select-input">
+              <option value="today">今天</option>
+              <option value="week">本周</option>
+              <option value="month">本月</option>
+              <option value="quarter">本季度</option>
+              <option value="year">今年</option>
+              <option value="custom">自定义</option>
+            </select>
+            <input type="date" id="startDate" class="date-input" style="display:none;">
+            <input type="date" id="endDate" class="date-input" style="display:none;">
+            <button id="applyTimeRange" class="btn btn-primary" style="display:none;">应用</button>
+                        </div>
+        </section>
 
-                <div class="stats-content">
-                    <!-- 今日统计 -->
-                    <div class="stat-card">
-                        <h3>📅 今日统计</h3>
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <div class="stat-value" id="todayPomodoros">0</div>
-                                <div class="stat-label">完成番茄</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="todayTime">0</div>
-                                <div class="stat-label">工作时长(分钟)</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="todayBreakTime">0</div>
-                                <div class="stat-label">休息时长(分钟)</div>
-                            </div>
+        <div class="charts-container">
+          <section class="chart-card card">
+            <h3 class="card-title">📊 活动时间分布</h3>
+            <div id="activityPieChart" class="chart"></div>
+          </section>
+
+          <section class="chart-card card">
+            <h3 class="card-title">📈 时间趋势</h3>
+            <div id="trendLineChart" class="chart"></div>
+          </section>
+
+          <section class="chart-card card">
+            <h3 class="card-title">🔥 活动热力图</h3>
+            <div id="activityHeatmap" class="chart"></div>
+          </section>
                         </div>
                     </div>
+    </main>
 
-                    <!-- 本周统计 -->
-                    <div class="stat-card">
-                        <h3>📊 本周统计</h3>
-                        <div class="chart-container">
-                            <canvas id="weekChart"></canvas>
-                        </div>
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <div class="stat-value" id="weekPomodoros">0</div>
-                                <div class="stat-label">本周番茄</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="weekAvg">0</div>
-                                <div class="stat-label">日均番茄</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 历史统计 -->
-                    <div class="stat-card">
-                        <h3>🏆 历史记录</h3>
-                        <div class="stat-grid">
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalPomodoros">0</div>
-                                <div class="stat-label">总计番茄</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="totalDays">0</div>
-                                <div class="stat-label">使用天数</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-value" id="streak">0</div>
-                                <div class="stat-label">连续天数</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 最近记录 -->
-                    <div class="stat-card">
-                        <h3>📝 最近记录</h3>
-                        <div class="recent-list" id="recentList">
-                            <!-- 动态生成 -->
-                        </div>
-                    </div>
+    <!-- 日记页面 -->
+    <main id="diary" class="page">
+      <div class="container">
+        <div class="diary-memo-grid">
+          <!-- 日记功能 -->
+          <section class="diary-card card">
+            <h3 class="card-title">📖 今日日记</h3>
+            <div class="diary-editor">
+              <div class="diary-header">
+                <span class="diary-date" id="diaryDate"></span>
+                <div class="mood-selector">
+                  <label>心情：</label>
+                  <select id="moodSelect" class="select-input">
+                    <option value="😊">😊 开心</option>
+                    <option value="😐">😐 平静</option>
+                    <option value="😔">😔 低落</option>
+                    <option value="😤">😤 愤怒</option>
+                    <option value="😴">😴 疲惫</option>
+                  </select>
                 </div>
-            </section>
-
-            <!-- 设置页面 -->
-            <section class="settings-page hidden" id="settingsPage">
-                <div class="page-header">
-                    <button class="back-btn" id="settingsBackBtn">← 返回</button>
-                    <h2>设置</h2>
-                </div>
-
-                <div class="settings-content">
-                    <!-- 时间设置 -->
-                    <div class="setting-card">
-                        <h3>⏱️ 时间设置</h3>
-                        <div class="setting-item">
-                            <label for="workDuration">工作时长 (分钟)</label>
-                            <input type="number" id="workDuration" min="1" max="60" value="25">
-                        </div>
-                        <div class="setting-item">
-                            <label for="shortBreakDuration">短休息时长 (分钟)</label>
-                            <input type="number" id="shortBreakDuration" min="1" max="30" value="5">
-                        </div>
-                        <div class="setting-item">
-                            <label for="longBreakDuration">长休息时长 (分钟)</label>
-                            <input type="number" id="longBreakDuration" min="1" max="60" value="15">
-                        </div>
-                        <div class="setting-item">
-                            <label for="longBreakInterval">长休息间隔 (个番茄)</label>
-                            <input type="number" id="longBreakInterval" min="2" max="10" value="4">
-                        </div>
                     </div>
+              <input type="text" id="diaryTitle" class="diary-title-input" placeholder="给今天的日记起个标题...">
+              <textarea id="diaryContent" class="diary-textarea" placeholder="记录今天的心情和想法..."></textarea>
+              <div class="diary-actions">
+                <button id="saveDiary" class="btn btn-primary">💾 保存</button>
+                <button id="aiSuggest" class="btn btn-secondary">🤖 AI建议</button>
+                </div>
+            </div>
+        </section>
 
-                    <!-- 功能设置 -->
-                    <div class="setting-card">
-                        <h3>🔔 功能设置</h3>
-                        <div class="setting-item toggle-item">
-                            <label for="notificationEnabled">启用通知</label>
-                            <label class="toggle">
-                                <input type="checkbox" id="notificationEnabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="setting-item toggle-item">
-                            <label for="soundEnabled">启用音效</label>
-                            <label class="toggle">
-                                <input type="checkbox" id="soundEnabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="setting-item toggle-item">
-                            <label for="autoStartBreaks">自动开始休息</label>
-                            <label class="toggle">
-                                <input type="checkbox" id="autoStartBreaks">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="setting-item toggle-item">
-                            <label for="autoStartPomodoros">自动开始工作</label>
-                            <label class="toggle">
-                                <input type="checkbox" id="autoStartPomodoros">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        <div class="setting-item toggle-item">
-                            <label for="adsEnabled">显示广告（支持开发）</label>
-                            <label class="toggle">
-                                <input type="checkbox" id="adsEnabled" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+          <!-- 历史日记列表 -->
+          <section class="diary-history-card card">
+            <h3 class="card-title">📚 历史日记</h3>
+            <div class="diary-list" id="diaryList">
+              <p class="no-diaries">还没有写任何日记</p>
+            </div>
+          </section>
+
+          <!-- 备忘录功能 -->
+          <section class="memo-card card">
+            <h3 class="card-title">📌 备忘录</h3>
+            <div class="memo-input-group">
+              <input type="text" id="memoInput" class="memo-input" placeholder="记录想法或提醒...">
+              <button id="addMemo" class="btn btn-primary">+</button>
                     </div>
-
-                    <!-- 主题设置 -->
-                    <div class="setting-card">
-                        <h3>🎨 主题设置</h3>
-                        <div class="setting-item">
-                            <label for="theme">主题模式</label>
-                            <select id="theme">
-                                <option value="light">浅色</option>
-                                <option value="dark">深色</option>
-                                <option value="auto">跟随系统</option>
-                            </select>
-                        </div>
+            <div class="memo-list" id="memoList">
+              <p class="no-memos">还没有添加任何备忘录</p>
                     </div>
-
-                    <!-- 数据管理 -->
-                    <div class="setting-card">
-                        <h3>💾 数据管理</h3>
-                        <div class="setting-item">
-                            <button class="action-btn" id="exportDataBtn">导出数据</button>
-                            <button class="action-btn danger" id="clearDataBtn">清除所有数据</button>
-                        </div>
-                    </div>
-
-                    <!-- 保存按钮 -->
-                    <button class="save-btn" id="saveSettingsBtn">保存设置</button>
-                </div>
-            </section>
-
-            <!-- 隐私声明页面 -->
-            <section class="declaration-page hidden" id="privacyPage">
-                <div class="page-header">
-                    <button class="back-btn" id="privacyBackBtn">← 返回</button>
-                    <h2>隐私声明</h2>
-                </div>
-                <div class="declaration-content">
-                    <h3>📋 隐私政策</h3>
-                    <p>最后更新日期：2025年10月</p>
-
-                    <h4>1. 信息收集</h4>
-                    <p>TIME 是一款注重隐私保护的时间管理应用。我们承诺：</p>
-                    <ul>
-                        <li>所有数据均存储在您的设备本地</li>
-                        <li>不会收集、上传或共享您的个人信息</li>
-                        <li>不会追踪您的使用行为</li>
-                    </ul>
-
-                    <h4>2. 数据存储</h4>
-                    <p>应用使用浏览器的 LocalStorage 存储以下信息：</p>
-                    <ul>
-                        <li>您的个人设置（工作时长、休息时长等）</li>
-                        <li>统计数据（完成的番茄钟数量、使用记录等）</li>
-                        <li>所有数据仅保存在您的设备上，我们无法访问</li>
-                    </ul>
-
-                    <h4>3. 通知权限</h4>
-                    <p>应用可能请求通知权限，用于：</p>
-                    <ul>
-                        <li>提醒您工作或休息时间到了</li>
-                        <li>您可以随时在设置中关闭此功能</li>
-                    </ul>
-
-                    <h4>4. 第三方服务</h4>
-                    <p>如果您选择启用广告支持开发，我们使用 Google AdSense 展示广告。Google 可能会收集一些信息用于广告投放，详情请查看 <a
-                            href="https://policies.google.com/privacy" target="_blank">Google 隐私政策</a>。</p>
-
-                    <h4>5. 数据安全</h4>
-                    <p>您可以随时：</p>
-                    <ul>
-                        <li>导出您的数据</li>
-                        <li>清除所有数据</li>
-                        <li>关闭广告功能</li>
-                    </ul>
-
-                    <p>如有任何隐私相关问题，欢迎联系我们。</p>
-                </div>
-            </section>
-
-            <!-- 开源声明页面 -->
-            <section class="declaration-page hidden" id="openSourcePage">
-                <div class="page-header">
-                    <button class="back-btn" id="openSourceBackBtn">← 返回</button>
-                    <h2>开源声明</h2>
-                </div>
-                <div class="declaration-content">
-                    <h3>💻 开源项目</h3>
-                    <p>TIME 是一个开源项目，遵循 MIT 许可证。</p>
-
-                    <h4>1. 开源协议</h4>
-                    <p>MIT License - 您可以自由地：</p>
-                    <ul>
-                        <li>使用本软件用于任何目的</li>
-                        <li>修改本软件</li>
-                        <li>分发本软件的副本</li>
-                        <li>将本软件用于商业用途</li>
-                    </ul>
-
-                    <h4>2. 源代码</h4>
-                    <p>本项目完全开源，您可以查看、学习和改进代码。</p>
-                    <p>技术栈：</p>
-                    <ul>
-                        <li>前端：HTML5、CSS3、JavaScript</li>
-                        <li>App：Swift、SwiftUI</li>
-                        <li>存储：LocalStorage</li>
-                    </ul>
-
-                    <h4>3. 贡献</h4>
-                    <p>欢迎贡献代码、报告问题或提出建议：</p>
-                    <ul>
-                        <li>提交 Issue 报告问题</li>
-                        <li>提交 Pull Request 贡献代码</li>
-                        <li>分享您的使用体验</li>
-                    </ul>
-
-                    <h4>4. 致谢</h4>
-                    <p>感谢所有为开源社区做出贡献的开发者。本项目的诞生离不开开源精神的支持。</p>
-
-                    <h4>5. 免责声明</h4>
-                    <p>本软件按"原样"提供，不提供任何形式的明示或暗示保证。</p>
-                </div>
-            </section>
-
-            <!-- 广告声明页面 -->
-            <section class="declaration-page hidden" id="adsPage">
-                <div class="page-header">
-                    <button class="back-btn" id="adsBackBtn">← 返回</button>
-                    <h2>广告声明</h2>
-                </div>
-                <div class="declaration-content">
-                    <h3>📢 关于广告</h3>
-                    <p>TIME 是一款免费应用，我们通过展示少量广告来维持运营。</p>
-
-                    <h4>1. 为什么有广告</h4>
-                    <p>广告收入用于：</p>
-                    <ul>
-                        <li>支付服务器和域名费用</li>
-                        <li>持续改进和维护应用</li>
-                        <li>开发新功能</li>
-                        <li>保持应用免费使用</li>
-                    </ul>
-
-                    <h4>2. 广告服务</h4>
-                    <p>我们使用 Google AdSense 提供广告服务：</p>
-                    <ul>
-                        <li>广告内容由 Google 自动匹配</li>
-                        <li>广告不会干扰您的使用体验</li>
-                        <li>广告位置固定在页面底部</li>
-                    </ul>
-
-                    <h4>3. 隐私保护</h4>
-                    <p>关于广告与隐私：</p>
-                    <ul>
-                        <li>我们不会向广告商提供您的个人信息</li>
-                        <li>Google 可能使用 Cookie 来展示相关广告</li>
-                        <li>您可以访问 <a href="https://www.google.com/settings/ads" target="_blank">Google 广告设置</a> 管理广告偏好
-                        </li>
-                    </ul>
-
-                    <h4>4. 关闭广告</h4>
-                    <p>我们理解广告可能会影响体验，您可以：</p>
-                    <ul>
-                        <li>在设置中关闭广告功能</li>
-                        <li>关闭后，应用将不再显示任何广告</li>
-                        <li>您可以随时重新开启</li>
-                    </ul>
-
-                    <h4>5. 支持开发</h4>
-                    <p>如果您觉得应用有用，保持广告开启是对我们最大的支持。如果您希望通过其他方式支持，欢迎推荐给朋友使用或为项目贡献代码。</p>
-
-                    <p>感谢您的理解与支持！❤️</p>
-                </div>
-            </section>
-
-            <!-- 数据分析页面 -->
-            <section class="analytics-page hidden" id="analyticsPage">
-                <div class="page-header">
-                    <button class="back-btn" id="analyticsBackBtn">← 返回</button>
-                    <h2>📊 数据分析</h2>
-                </div>
-
-                <div class="analytics-content">
-                    <!-- 数据卡片 -->
-                    <div class="stats-cards">
-                        <div class="stat-card-mini">
-                            <div class="stat-icon">⏱️</div>
-                            <div class="stat-info">
-                                <div class="stat-value-mini" id="totalTime">0h</div>
-                                <div class="stat-label">总专注时长</div>
-                            </div>
-                        </div>
-                        <div class="stat-card-mini">
-                            <div class="stat-icon">📊</div>
-                            <div class="stat-info">
-                                <div class="stat-value-mini" id="avgPomodoros">0</div>
-                                <div class="stat-label">日均番茄数</div>
-                            </div>
-                        </div>
-                        <div class="stat-card-mini">
-                            <div class="stat-icon">🏆</div>
-                            <div class="stat-info">
-                                <div class="stat-value-mini" id="maxPomodoros">0</div>
-                                <div class="stat-label">最高记录</div>
-                            </div>
-                        </div>
-                        <div class="stat-card-mini">
-                            <div class="stat-icon">🔥</div>
-                            <div class="stat-info">
-                                <div class="stat-value-mini" id="streakDays">0</div>
-                                <div class="stat-label">连续天数</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 7日趋势图 -->
-                    <div class="chart-card">
-                        <div id="trendChart" style="width: 100%; height: 300px;"></div>
-                    </div>
-
-                    <!-- 工作时段热力图 -->
-                    <div class="chart-card">
-                        <div id="heatmapChart" style="width: 100%; height: 400px;"></div>
-                    </div>
-
-                    <!-- 下方两个图表 -->
-                    <div class="charts-row">
-                        <!-- 类型分布饼图 -->
-                        <div class="chart-card half">
-                            <div id="pieChart" style="width: 100%; height: 300px;"></div>
-                        </div>
-
-                        <!-- 本周对比柱状图 -->
-                        <div class="chart-card half">
-                            <div id="comparisonChart" style="width: 100%; height: 300px;"></div>
-                        </div>
+          </section>
                     </div>
                 </div>
-            </section>
+    </main>
 
-            <!-- 页脚 - 移到广告上方 -->
-            <footer class="footer">
-                <p>享受时光</p>
-                <div class="footer-links">
-                    <a href="#" id="privacyLink">隐私声明</a>
-                    <span>•</span>
-                    <a href="#" id="openSourceLink">开源声明</a>
-                    <span>•</span>
-                    <a href="#" id="adsLink">广告声明</a>
+
+    <!-- 设置页面 -->
+    <main id="settings" class="page">
+      <div class="container">
+        <section class="settings-card card">
+          <h3 class="card-title">⚙️ 设置</h3>
+          <div class="settings-content">
+            <!-- 主题设置 -->
+            <div class="setting-item">
+              <label>🎨 界面主题</label>
+              <select id="themeSelect" class="select-input"
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0;">
+                <option value="default">默认主题</option>
+                <option value="starry-night">✨ 星夜</option>
+                <option value="water-lilies">💧 睡莲</option>
+              </select>
                 </div>
-            </footer>
-        </div>
 
-        <!-- 通知提示 -->
-        <div class="toast hidden" id="toast">
-            <span class="toast-icon">✓</span>
-            <span class="toast-message" id="toastMessage"></span>
-        </div>
+            <!-- UI尺寸设置 -->
+                    <div class="setting-item">
+              <label>📐 UI尺寸</label>
+              <select id="sizeSelect" class="select-input"
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0;">
+                <option value="standard">标准</option>
+                <option value="large">大</option>
+                <option value="extra-large">超大</option>
+                        </select>
+                    </div>
 
-        <!-- 广告容器 - AdSense横幅广告位 -->
-        <div id="banner-ad-container" class="ad-container banner-ad"
-            style="min-height: 50px; background: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center;">
-            <span style="color: #666; font-size: 12px;">广告加载中...</span>
-        </div>
+            <!-- 广告设置 -->
+            <div class="setting-item">
+              <label>📢 显示广告（支持开发）</label>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <label class="switch" style="position: relative; display: inline-block; width: 60px; height: 34px;">
+                  <input type="checkbox" id="adsEnabledToggle" checked style="opacity: 0; width: 0; height: 0;">
+                  <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+                               background-color: #ccc; transition: .4s; border-radius: 34px;"></span>
+                  <span style="position: absolute; content: ''; height: 26px; width: 26px; left: 4px; bottom: 4px;
+                               background-color: white; transition: .4s; border-radius: 50%;"></span>
+                </label>
+                <span id="adsStatusText" style="color: #28a745; font-weight: 600;">已启用</span>
+              </div>
+              <small style="color: #6c757d; display: block; margin-top: 0.5rem;">
+                广告收入用于支持项目维护和功能开发
+              </small>
+                </div>
 
-        <!-- JavaScript -->
-        <!-- 安全模块 - 优先加载 -->
-        <script src="js/security-config.js"></script>
-        <!-- ECharts图表库 -->
-        <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
-        <script src="storage.js"></script>
-        <script src="notification.js"></script>
-        <script src="statistics.js"></script>
-        <script src="analytics.js"></script>
-        <script src="adsense.js"></script>
-        <script src="timer.js"></script>
-        <script src="app.js"></script>
-    </body>
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #e0e0e0;">
+
+                    <div class="setting-item">
+              <label>数据导出</label>
+              <button class="btn btn-secondary" onclick="exportData()">导出数据</button>
+                    </div>
+            <div class="setting-item">
+              <label>数据导入</label>
+              <button class="btn btn-secondary" onclick="importData()">导入数据</button>
+                </div>
+            <div class="setting-item">
+              <label>清除所有数据</label>
+              <button class="btn btn-danger" onclick="clearAllData()">清除数据</button>
+            </div>
+            </div>
+        </section>
+    </div>
+    </main>
+
+    <!-- Toast通知 -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage"></span>
+    </div>
+
+    <!-- JavaScript -->
+
+    <script src="js/storage.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/ai-classifier.js"></script>
+    <script src="js/activity-tracker.js"></script>
+    <script src="js/project-manager.js"></script>
+    <script src="js/diary-memo.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/advanced-charts.js"></script>
+    <script src="js/app-main.js"></script>
+
+    <!-- 主题和UI尺寸切换 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const themeSelect = document.getElementById('themeSelect');
+        const sizeSelect = document.getElementById('sizeSelect');
+
+        // 加载保存的设置
+        const savedTheme = localStorage.getItem('app-theme') || 'default';
+        const savedSize = localStorage.getItem('app-size') || 'standard';
+
+        if (themeSelect) {
+          themeSelect.value = savedTheme;
+          applyTheme(savedTheme);
+
+          themeSelect.addEventListener('change', function () {
+            const theme = this.value;
+            applyTheme(theme);
+            localStorage.setItem('app-theme', theme);
+            showToast('主题已切换');
+          });
+        }
+
+        if (sizeSelect) {
+          sizeSelect.value = savedSize;
+          applySize(savedSize);
+
+          sizeSelect.addEventListener('change', function () {
+            const size = this.value;
+            applySize(size);
+            localStorage.setItem('app-size', size);
+            showToast('UI尺寸已更改');
+          });
+        }
+
+        // 广告开关设置
+        const adsEnabledToggle = document.getElementById('adsEnabledToggle');
+        const adsStatusText = document.getElementById('adsStatusText');
+
+        if (adsEnabledToggle && window.adSenseManager) {
+          // 加载保存的设置
+          const settings = window.adSenseManager.getSettings();
+          const adsEnabled = settings.adsEnabled !== false;
+
+          adsEnabledToggle.checked = adsEnabled;
+          adsStatusText.textContent = adsEnabled ? '已启用' : '已禁用';
+          adsStatusText.style.color = adsEnabled ? '#28a745' : '#6c757d';
+
+          // 监听开关变化
+          adsEnabledToggle.addEventListener('change', function () {
+            const enabled = this.checked;
+            if (window.adSenseManager) {
+              window.adSenseManager.setAdsEnabled(enabled);
+              adsStatusText.textContent = enabled ? '已启用' : '已禁用';
+              adsStatusText.style.color = enabled ? '#28a745' : '#6c757d';
+              showToast(enabled ? '广告已启用' : '广告已禁用');
+            }
+          });
+        }
+
+        // 监听DOM变化，确保后续动态渲染的元素也应用尺寸设置
+        const mo = new MutationObserver(() => {
+          try {
+            const currentSize = localStorage.getItem('app-size') || 'standard';
+            applySize(currentSize);
+          } catch (e) {
+            console.warn('MutationObserver applySize error:', e);
+          }
+        });
+        mo.observe(document.body, { childList: true, subtree: true });
+      });
+
+      function applyTheme(theme) {
+        document.body.className = document.body.className.replace(/theme-\S+/g, '');
+        if (theme !== 'default') {
+          document.body.classList.add('theme-' + theme);
+        }
+
+        if (theme === 'starry-night') {
+          document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%)';
+        } else if (theme === 'water-lilies') {
+          document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else {
+          document.body.style.background = '';
+        }
+      }
+
+      function applySize(size) {
+        const sizes = {
+          'standard': { input: '48px', button: '48px', font: '16px', padding: '14px 18px', buttonPadding: '14px 26px' },
+          'large': { input: '54px', button: '54px', font: '17px', padding: '16px 20px', buttonPadding: '16px 28px' },
+          'extra-large': { input: '60px', button: '60px', font: '18px', padding: '18px 22px', buttonPadding: '18px 32px' }
+        };
+
+        const config = sizes[size] || sizes.standard;
+
+        // 直接应用到所有输入框和按钮
+        const inputs = document.querySelectorAll('.activity-input, input[type="text"], textarea, select');
+        inputs.forEach(el => {
+          el.style.minHeight = config.input;
+          el.style.fontSize = config.font;
+          el.style.padding = config.padding;
+        });
+
+        const buttons = document.querySelectorAll('.btn, button');
+        buttons.forEach(el => {
+          el.style.minHeight = config.button;
+          el.style.fontSize = config.font;
+          el.style.padding = config.buttonPadding;
+          el.style.borderRadius = '10px';
+        });
+      }
+
+      // 暴露到window，便于其他模块在渲染后主动调用
+      window.applySize = applySize;
+      window.applyTheme = applyTheme;
+    </script>
+
+    <!-- PWA注册脚本 -->
+    <script src="js/pwa-register.js"></script>
+
+    <!-- AdSense广告脚本 -->
+    <script src="js/adsense.js"></script>
+</body>
+
+  <!-- 底部固定横幅广告容器（固定70px高度 - 增加三分之一）-->
+  <div id="fixed-banner-ad-container" class="fixed-banner-ad" style="position: fixed; bottom: 0; left: 0; right: 0; z-index: 999;
+              height: 70px; min-height: 70px; max-height: 70px; overflow: hidden;
+              background: #f0f0f0;
+              display: flex; align-items: center; justify-content: center;">
+    <span style="color: #666; font-size: 12px;">广告加载中...</span>
+  </div>
+
+  <!-- 广告自适应脚本（简化版 - 固定高度）-->
+  <script>
+    (function () {
+      function adjustAdHeight() {
+        const adContainer = document.getElementById('fixed-banner-ad-container');
+        if (!adContainer) return;
+
+        // 🔧 固定高度方案：70px（增加三分之一以完整显示广告内容）
+        const adHeight = 70;
+
+        // 强制应用样式
+        adContainer.style.height = adHeight + 'px';
+        adContainer.style.minHeight = adHeight + 'px';
+        adContainer.style.maxHeight = adHeight + 'px';
+        adContainer.style.overflow = 'hidden'; // 防止内容溢出
+
+        // 调整主内容区域的底部padding
+        const mainContent = document.querySelector('.container');
+        if (mainContent) {
+          mainContent.style.paddingBottom = (adHeight + 15) + 'px';
+        }
+
+        console.log('📐 广告高度已设置为固定值:', adHeight + 'px');
+      }
+
+      // 确保 DOM 加载后执行
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', adjustAdHeight);
+      } else {
+        adjustAdHeight();
+      }
+
+      // 监听窗口变化（确保横竖屏切换时也保持固定高度）
+      window.addEventListener('resize', adjustAdHeight);
+    })();
+  </script>
 
 </html>

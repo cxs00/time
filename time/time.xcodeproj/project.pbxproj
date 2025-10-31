@@ -116,6 +116,7 @@
 			buildPhases = (
 				974287B5011D4C878F74B0B4 /* Copy Web Resources */,
 				ABC70D462EA3E6CE00466629 /* Sources */,
+				42CA86A6E22249D49F846E40 /* Copy Web Resources */,
 				ABC70D472EA3E6CE00466629 /* Frameworks */,
 				ABC70D482EA3E6CE00466629 /* Resources */,
 			);
@@ -246,6 +247,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		42CA86A6E22249D49F846E40 /* Copy Web Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Web Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# 复制 Web 资源到应用包\nRESOURCES_DIR=\"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Resources\"\n\nif [ \"${PLATFORM_NAME}\" == \"macosx\" ]; then\n    # macOS: Contents/Resources/Web/\n    mkdir -p \"$RESOURCES_DIR/Web\"\n    cp -R \"${SRCROOT}/time/Web/\" \"$RESOURCES_DIR/Web/\"\n    echo \"✅ macOS Web资源已拷贝\"\nelif [ \"${PLATFORM_NAME}\" == \"iphonesimulator\" ] || [ \"${PLATFORM_NAME}\" == \"iphoneos\" ]; then\n    # iOS: .app/Web/\n    mkdir -p \"$RESOURCES_DIR/Web\"\n    cp -R \"${SRCROOT}/time/Web/\" \"$RESOURCES_DIR/Web/\"\n    echo \"✅ iOS Web资源已拷贝\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		ABC70D462EA3E6CE00466629 /* Sources */ = {
